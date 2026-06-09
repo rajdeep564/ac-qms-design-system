@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS Design System</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="ds-pdf.css" />
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#fff" text-anchor="middle">AC</text><text x="50" y="78" font-family="Inter,sans-serif" font-size="9" fill="#EAF1F2" text-anchor="middle">QMS</text></svg></template>
+
+  <!-- ============ COVER ============ -->
+  <section class="page cover">
+    <div class="top-mark">
+      <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+      <span class="pname">AC<span class="sep">·</span>QMS</span>
+    </div>
+    <div>
+      <div class="section-eyebrow">Design System · Clinical</div>
+      <h1>AC-QMS<br/>Design System</h1>
+      <p class="lede">
+        The visual and interaction language for Aditya Chemicals' regulated Quality
+        Management System. Overwhelmingly white and neutral; color is functional only —
+        it signals department, document status, or out-of-specification danger. Built
+        for the restraint of a lab instrument readout: precise, calm, inspection-ready.
+      </p>
+      <div class="swatch-strip">
+        <span style="background:var(--primary)"></span>
+        <span style="background:var(--qc)"></span>
+        <span style="background:var(--qa)"></span>
+        <span style="background:var(--submitted)"></span>
+        <span style="background:var(--oos)"></span>
+        <span style="background:var(--text)"></span>
+        <span style="background:var(--border-strong)"></span>
+        <span style="background:var(--canvas)"></span>
+      </div>
+    </div>
+    <div class="cover-meta">
+      <div class="item"><div class="k">Version</div><div class="v mono">1.0</div></div>
+      <div class="item"><div class="k">Issued</div><div class="v mono">29-May-2026</div></div>
+      <div class="item"><div class="k">Typeface</div><div class="v">Inter · JetBrains Mono</div></div>
+      <div class="item"><div class="k">Compliance</div><div class="v">21 CFR Part 11 · GxP</div></div>
+      <div class="item"><div class="k">Scope</div><div class="v">Foundations · Components · UI kit</div></div>
+    </div>
+  </section>
+
+  <!-- ============ COLOR ============ -->
+  <section class="page">
+    <div class="runner top">
+      <span class="brand"><b>AC·QMS</b><span class="sep">/</span>Foundations</span>
+      <span class="mono">01 · Color</span>
+    </div>
+    <div class="section-eyebrow">Foundations</div>
+    <div class="page-title">Color is functional only</div>
+    <p class="page-sub">Color never decorates. It signals one of three things — department, document status, or out-of-specification danger. One accent (teal) drives primary actions; everything else lives in neutrals.</p>
+
+    <div class="content grid-2">
+      <div class="col">
+        <div class="panel">
+          <div class="panel-label">Brand accent <span class="note">primary actions &amp; active nav · max one per view</span></div>
+          <div class="tok-row">
+            <div class="tok"><div class="chip" style="background:var(--primary)"></div><div class="name">Primary</div><div class="var">--primary</div><div class="hex">#0F5560</div></div>
+            <div class="tok"><div class="chip" style="background:var(--primary-hover)"></div><div class="name">Primary hover</div><div class="var">--primary-hover</div><div class="hex">#0A434C</div></div>
+            <div class="tok"><div class="chip" style="background:var(--primary-soft)"></div><div class="name">Primary soft</div><div class="var">--primary-soft</div><div class="hex">#EAF1F2</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Departments <span class="note">the only standing identity colors · badge only</span></div>
+          <div class="tok-row">
+            <div class="tok"><div class="chip" style="background:var(--qc); display:flex; align-items:center; padding:0 10px;"><span class="pill pill--qc">QC</span></div><div class="name">QC green</div><div class="var">--qc · --qc-soft</div></div>
+            <div class="tok"><div class="chip" style="background:var(--qa); display:flex; align-items:center; padding:0 10px;"><span class="pill pill--qa">QA</span></div><div class="name">QA blue</div><div class="var">--qa · --qa-soft</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">OOS — the one strong color <span class="note">danger / destructive only</span></div>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <div style="width:64px; height:46px; border-radius:var(--radius-sm); background:var(--oos); flex-shrink:0;"></div>
+            <div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">
+              <span style="font-family:var(--font-mono); color:var(--text);">--oos #B42318</span> is reserved exclusively for Out-Of-Specification results and destructive warnings. It must never appear otherwise.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="panel">
+          <div class="panel-label">Status pills <span class="note">soft tint background · solid colored text</span></div>
+          <div class="pill-row">
+            <span class="pill pill--draft">Draft</span>
+            <span class="pill pill--submitted">Submitted</span>
+            <span class="pill pill--approved">QC approved</span>
+            <span class="pill pill--signed">QA signed</span>
+            <span class="pill pill--issued">Issued</span>
+            <span class="pill pill--oos">OOS</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Neutrals <span class="note">the real palette — everything sits here</span></div>
+          <div class="tok-row">
+            <div class="tok"><div class="chip" style="background:var(--bg)"></div><div class="name">Surface</div><div class="hex">#FFFFFF</div></div>
+            <div class="tok"><div class="chip" style="background:var(--canvas)"></div><div class="name">Canvas</div><div class="hex">#FAFBFC</div></div>
+            <div class="tok"><div class="chip" style="background:var(--border)"></div><div class="name">Border</div><div class="hex">#E4E7EC</div></div>
+            <div class="tok"><div class="chip" style="background:var(--border-strong)"></div><div class="name">Strong</div><div class="hex">#D0D5DD</div></div>
+          </div>
+          <div class="tok-row">
+            <div class="tok"><div class="chip" style="background:var(--text-muted)"></div><div class="name">Muted</div><div class="hex">#98A2B3</div></div>
+            <div class="tok"><div class="chip" style="background:var(--text-secondary)"></div><div class="name">Secondary</div><div class="hex">#475467</div></div>
+            <div class="tok"><div class="chip" style="background:var(--text)"></div><div class="name">Text</div><div class="hex">#1D2939</div></div>
+            <div class="tok"><div class="chip" style="visibility:hidden"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runner bot"><span>Aditya Chemicals · Quality Management System</span><span class="mono">Functional color only · no gradients</span></div>
+  </section>
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <section class="page">
+    <div class="runner top">
+      <span class="brand"><b>AC·QMS</b><span class="sep">/</span>Foundations</span>
+      <span class="mono">02 · Typography</span>
+    </div>
+    <div class="section-eyebrow">Foundations</div>
+    <div class="page-title">One neutral family, compact scale</div>
+    <p class="page-sub">Inter throughout, base 14px. Hierarchy comes from weight and spacing — not color or large size jumps. Tabular numerals wherever numbers stack; monospace for document IDs and timestamps.</p>
+
+    <div class="content grid-2">
+      <div class="col">
+        <div class="panel">
+          <div class="panel-label">Inter <span class="note">UI family · weights 400 / 500 / 600 / 700</span></div>
+          <div class="weights">
+            <div class="w"><span class="glyph" style="font-weight:400">Aa 0123</span><span class="lbl">400</span></div>
+            <div class="w"><span class="glyph" style="font-weight:500">Aa 0123</span><span class="lbl">500</span></div>
+            <div class="w"><span class="glyph" style="font-weight:600">Aa 0123</span><span class="lbl">600</span></div>
+            <div class="w"><span class="glyph" style="font-weight:700">Aa 0123</span><span class="lbl">700</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">JetBrains Mono <span class="note">IDs, batch numbers, timestamps</span></div>
+          <div style="display:flex; flex-direction:column; gap:5px; font-family:var(--font-mono); font-size:13px; color:var(--text); font-variant-numeric:tabular-nums;">
+            <span>SPEC-API-0142 r3</span>
+            <span>BR-2026-04781 · Lot A4781</span>
+            <span>24-May-2026 14:02 IST</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Tabular &amp; spec syntax <span class="note">results align by column</span></div>
+          <div style="display:flex; gap:40px;">
+            <div style="display:flex; flex-direction:column; gap:3px; font-variant-numeric:tabular-nums; font-size:16px; color:var(--text);">
+              <span>99.74 %</span><span>102.10 %</span><span>&nbsp;&nbsp;0.08 %</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--text-secondary); justify-content:center;">
+              <span>Not less than · <b style="color:var(--text); font-weight:500;">NLT 98.0 %</b></span>
+              <span>Not more than · <b style="color:var(--text); font-weight:500;">NMT 0.10 %</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Type scale <span class="note">token · sample · px / weight</span></div>
+        <div>
+          <div class="type-row"><span class="var">--text-2xl</span><span class="spec" style="font-size:28px; font-weight:600; letter-spacing:-0.01em;">Page title</span><span class="px">28 / 600</span></div>
+          <div class="type-row"><span class="var">--text-xl</span><span class="spec" style="font-size:22px; font-weight:600;">Section title</span><span class="px">22 / 600</span></div>
+          <div class="type-row"><span class="var">--text-lg</span><span class="spec" style="font-size:18px; font-weight:500;">Subsection</span><span class="px">18 / 500</span></div>
+          <div class="type-row"><span class="var">--text-md</span><span class="spec" style="font-size:16px; font-weight:600;">Card title</span><span class="px">16 / 600</span></div>
+          <div class="type-row"><span class="var">--text-base</span><span class="spec" style="font-size:14px;">Body — base 14px, compact</span><span class="px">14 / 400</span></div>
+          <div class="type-row"><span class="var">--text-sm</span><span class="spec" style="font-size:13px; color:var(--text-secondary);">Secondary · dense cells</span><span class="px">13 / 400</span></div>
+          <div class="type-row"><span class="var">--text-xs</span><span class="spec" style="font-size:12px; color:var(--text-muted);">Meta, labels, timestamps</span><span class="px">12 / 400</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="runner bot"><span>Aditya Chemicals · Quality Management System</span><span class="mono">Hierarchy by weight, not color</span></div>
+  </section>
+
+  <!-- ============ SPACING & ELEVATION ============ -->
+  <section class="page">
+    <div class="runner top">
+      <span class="brand"><b>AC·QMS</b><span class="sep">/</span>Foundations</span>
+      <span class="mono">03 · Spacing &amp; elevation</span>
+    </div>
+    <div class="section-eyebrow">Foundations</div>
+    <div class="page-title">Strict 4 / 8 grid, minimal elevation</div>
+    <p class="page-sub">All spacing comes from a 4 / 8px scale — never bare pixel values. Corners are 6px for cards and buttons, 4px for pills and cells. Shadows are nearly absent: a focus lift and a single popover shadow are the entire elevation system. Surfaces separate by hairline.</p>
+
+    <div class="content grid-3">
+      <div class="panel">
+        <div class="panel-label">Spacing scale <span class="note">--s1 → --s10</span></div>
+        <div>
+          <div class="sbar-row"><span class="name">--s1</span><div class="bar" style="width:4px"></div><span class="px">4</span></div>
+          <div class="sbar-row"><span class="name">--s2</span><div class="bar" style="width:8px"></div><span class="px">8</span></div>
+          <div class="sbar-row"><span class="name">--s3</span><div class="bar" style="width:12px"></div><span class="px">12</span></div>
+          <div class="sbar-row"><span class="name">--s4</span><div class="bar" style="width:16px"></div><span class="px">16</span></div>
+          <div class="sbar-row"><span class="name">--s5</span><div class="bar" style="width:20px"></div><span class="px">20</span></div>
+          <div class="sbar-row"><span class="name">--s6</span><div class="bar" style="width:24px"></div><span class="px">24</span></div>
+          <div class="sbar-row"><span class="name">--s8</span><div class="bar" style="width:32px"></div><span class="px">32</span></div>
+          <div class="sbar-row"><span class="name">--s10</span><div class="bar" style="width:40px"></div><span class="px">40</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="panel panel--canvas">
+          <div class="panel-label">Radius</div>
+          <div class="radius-demo">
+            <div class="r"><div class="box" style="border-radius:4px"></div><span class="cap"><b>--radius-sm</b> · 4px</span><span class="cap">pills, badges, cells</span></div>
+            <div class="r"><div class="box" style="border-radius:6px"></div><span class="cap"><b>--radius</b> · 6px</span><span class="cap">cards, modals, buttons</span></div>
+          </div>
+        </div>
+        <div class="panel panel--canvas">
+          <div class="panel-label">Elevation <span class="note">the maximum</span></div>
+          <div class="elev-demo">
+            <div class="e"><div class="box" style="box-shadow:0 1px 2px rgba(16,24,40,0.04)"></div><span class="cap" style="font-size:10px;color:var(--text-secondary)"><b style="font-family:var(--font-mono);color:var(--text)">--shadow-sm</b></span><span class="cap" style="font-size:10px;color:var(--text-secondary)">focus lift</span></div>
+            <div class="e"><div class="box" style="box-shadow:0 1px 3px rgba(16,24,40,0.06)"></div><span class="cap" style="font-size:10px;color:var(--text-secondary)"><b style="font-family:var(--font-mono);color:var(--text)">--shadow</b></span><span class="cap" style="font-size:10px;color:var(--text-secondary)">popovers only</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="panel">
+          <div class="panel-label">Card <span class="note">white on canvas</span></div>
+          <div style="background:var(--canvas); padding:16px; border-radius:var(--radius-sm);">
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:14px;">
+              <div style="font-size:13px; font-weight:600; color:var(--text);">Card title</div>
+              <div style="height:1px; background:var(--border); margin:10px 0;"></div>
+              <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">1px solid border, 6px radius, no drop shadow. Hairlines do the separating.</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Borders</div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:11px; color:var(--text-secondary);">
+            <div style="display:flex; align-items:center; gap:10px;"><span style="width:40px; height:0; border-top:1px solid var(--border);"></span><span style="font-family:var(--font-mono); color:var(--text);">--border</span> hairlines, dividers</div>
+            <div style="display:flex; align-items:center; gap:10px;"><span style="width:40px; height:0; border-top:1px solid var(--border-strong);"></span><span style="font-family:var(--font-mono); color:var(--text);">--border-strong</span> inputs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="runner bot"><span>Aditya Chemicals · Quality Management System</span><span class="mono">No puffy cards · hairlines separate</span></div>
+  </section>
+
+  <!-- ============ COMPONENTS I ============ -->
+  <section class="page">
+    <div class="runner top">
+      <span class="brand"><b>AC·QMS</b><span class="sep">/</span>Components</span>
+      <span class="mono">04 · Buttons, pills &amp; inputs</span>
+    </div>
+    <div class="section-eyebrow">Components</div>
+    <div class="page-title">Buttons, pills &amp; inputs</div>
+    <p class="page-sub">One primary action per view; everything else is a neutral outline or ghost button. Destructive actions sit quiet at rest and only flush red on hover. Inputs use the stronger border weight, a teal focus ring, and OOS-only error styling.</p>
+
+    <div class="content grid-2">
+      <div class="col">
+        <div class="panel">
+          <div class="panel-label">Buttons <span class="note">one colored button per view</span></div>
+          <div class="btn-row">
+            <button class="btn btn--primary">Submit for QA review</button>
+            <button class="btn btn--neutral">Cancel</button>
+            <button class="btn btn--ghost">View history</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn--danger">Reject batch</button>
+            <button class="btn btn--primary btn--disabled">Disabled</button>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); line-height:1.5;">Primary = teal fill. Neutral = outline. Ghost = transparent. Danger = neutral at rest, red on hover. Disabled = 0.5 opacity, structure kept.</div>
+        </div>
+        <div class="panel">
+          <div class="panel-label">Document lifecycle <span class="note">status as quiet pills</span></div>
+          <div class="pill-row">
+            <span class="pill pill--draft">Draft</span>
+            <span style="font-family:var(--font-mono); color:var(--text-muted);">→</span>
+            <span class="pill pill--submitted">Submitted</span>
+            <span style="font-family:var(--font-mono); color:var(--text-muted);">→</span>
+            <span class="pill pill--approved">QC approved</span>
+            <span style="font-family:var(--font-mono); color:var(--text-muted);">→</span>
+            <span class="pill pill--signed">QA signed</span>
+            <span style="font-family:var(--font-mono); color:var(--text-muted);">→</span>
+            <span class="pill pill--issued">Issued</span>
+          </div>
+          <div class="pill-row" style="margin-top:4px;">
+            <span style="font-size:11px; color:var(--text-secondary);">Departments &amp; danger:</span>
+            <span class="pill pill--qc">QC</span>
+            <span class="pill pill--qa">QA</span>
+            <span class="pill pill--oos">OOS</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Inputs <span class="note">default · focus · error</span></div>
+        <div class="field"><span class="field-label">Specification</span><div class="input" style="font-family:var(--font-mono);">SPEC-API-0142 r3</div><span class="help">Document ID, monospace in tables.</span></div>
+        <div class="field"><span class="field-label">Assay result (%)</span><div class="input input--focus" style="font-variant-numeric:tabular-nums;">99.74</div><span class="help">Focused — teal ring · NLT 98.0 %</span></div>
+        <div class="field"><span class="field-label">Lot number</span><div class="input input--error" style="color:var(--text-muted);">Required</div><span class="help help--err">Lot number is required.</span></div>
+      </div>
+    </div>
+    <div class="runner bot"><span>Aditya Chemicals · Quality Management System</span><span class="mono">Soft-tint pills · never saturated fills</span></div>
+  </section>
+
+  <!-- ============ COMPONENTS II ============ -->
+  <section class="page">
+    <div class="runner top">
+      <span class="brand"><b>AC·QMS</b><span class="sep">/</span>Components</span>
+      <span class="mono">05 · Tables &amp; iconography</span>
+    </div>
+    <div class="section-eyebrow">Components</div>
+    <div class="page-title">Tables &amp; iconography</div>
+    <p class="page-sub">AC-QMS is fundamentally tabular. The ID column is leftmost and monospace; status is rightmost; selected rows take a primary-soft wash with no border change. Icons are Lucide line icons at 1.75 stroke, currentColor, paired with text labels in navigation.</p>
+
+    <div class="content" style="display:flex; flex-direction:column; gap:22px;">
+      <div class="panel">
+        <div class="panel-label">Data table <span class="note">ID left · status right · selected row in primary-soft</span></div>
+        <table class="mini">
+          <thead><tr><th>Document</th><th>Title</th><th>Dept</th><th class="num">Rev</th><th>Status</th><th>Last modified</th></tr></thead>
+          <tbody>
+            <tr><td class="id">SPEC-API-0142</td><td>Acetaminophen API release spec</td><td><span class="pill pill--qc">QC</span></td><td class="num">r3</td><td><span class="pill pill--approved">QC approved</span></td><td style="color:var(--text-secondary); font-family:var(--font-mono); font-size:11px;">24-May-2026 14:02 IST</td></tr>
+            <tr class="sel"><td class="id">BR-2026-04781</td><td>Batch record · Lot A4781</td><td><span class="pill pill--qa">QA</span></td><td class="num">r1</td><td><span class="pill pill--signed">QA signed</span></td><td style="color:var(--text-secondary); font-family:var(--font-mono); font-size:11px;">24-May-2026 11:48 IST</td></tr>
+            <tr><td class="id">OOS-2026-0089</td><td>Dissolution outside specification</td><td><span class="pill pill--qc">QC</span></td><td class="num">r0</td><td><span class="pill pill--oos">OOS</span></td><td style="color:var(--text-secondary); font-family:var(--font-mono); font-size:11px;">25-May-2026 09:14 IST</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Iconography <span class="note">Lucide · 1.75 stroke · currentColor · 16px in chrome</span></div>
+        <div class="icon-grid">
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><span class="nm">file-text</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8 12 13 3 8"/><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8"/><path d="M12 22V12"/></svg><span class="nm">package</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><span class="nm">triangle-alert</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg><span class="nm">pen-line</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="nm">check</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="nm">search</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nm">user</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span class="nm">history</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="nm">lock</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="nm">bell</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="nm">map-pin</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span class="nm">dashboard</span></div>
+          <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="nm">x</span></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.5;">No emoji, ever. No Unicode pictographs as iconography. Status is conveyed by the pill component, not a glyph.</div>
+      </div>
+    </div>
+    <div class="runner bot"><span>Aditya Chemicals · Quality Management System</span><span class="mono">Tabular product · IDs in mono</span></div>
+  </section>
+
+  <!-- ============ VOICE ============ -->
+  <section class="page">
+    <div class="runner top">
+      <span class="brand"><b>AC·QMS</b><span class="sep">/</span>Content</span>
+      <span class="mono">06 · Voice</span>
+    </div>
+    <div class="section-eyebrow">Content fundamentals</div>
+    <div class="page-title">Voice — exact, brief, without affect</div>
+    <p class="page-sub">The product reads the way a calibrated balance reads. No marketing voice, no encouragement, no exclamation. Imperative for actions, past tense for log entries, sentence case for chrome, ALL CAPS only for pills and badges.</p>
+
+    <div class="content grid-2">
+      <div class="panel">
+        <div class="panel-label">Principles</div>
+        <div class="principles">
+          <div class="principle"><span class="n">01</span><div><div class="h">Sentence case in chrome</div><div class="d">Buttons, tabs, menus, headers. "Submit for QA review" — never Title Case.</div></div></div>
+          <div class="principle"><span class="n">02</span><div><div class="h">ALL CAPS for state</div><div class="d">Status pills, department badges, document codes. "DRAFT", "QC", "OOS".</div></div></div>
+          <div class="principle"><span class="n">03</span><div><div class="h">Exact dates</div><div class="d"><code>DD-MMM-YYYY</code> + 24-hour time + timezone. "24-May-2026 14:02 IST".</div></div></div>
+          <div class="principle"><span class="n">04</span><div><div class="h">Units always</div><div class="d">Non-breaking space before the unit: "99.7 %", "250 mg". Specs use NLT / NMT.</div></div></div>
+          <div class="principle"><span class="n">05</span><div><div class="h">No emoji, no exclamation</div><div class="d">A QMS does not congratulate the user. The OOS color is loud enough.</div></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Write / avoid</div>
+        <div class="dd-grid">
+          <div class="dd do"><span class="tag">Write</span>Submitted to QA. Awaiting review.</div>
+          <div class="dd dont"><span class="tag">Avoid</span>Awesome — sent for review!</div>
+          <div class="dd do"><span class="tag">Write</span>Result outside specification. Investigation required (21 CFR 211.192).</div>
+          <div class="dd dont"><span class="tag">Avoid</span>Uh oh — value out of range!</div>
+          <div class="dd do"><span class="tag">Write</span>No deviations open.</div>
+          <div class="dd dont"><span class="tag">Avoid</span>You're all caught up!</div>
+        </div>
+      </div>
+    </div>
+    <div class="runner bot"><span>Aditya Chemicals · Quality Management System</span><span class="mono">First person never appears</span></div>
+  </section>
+
+  <!-- ============ UI KIT — SCREENS I (login + shell) ============ -->
+  <section class="page screen-page">
+    <div class="screen-head">
+      <div>
+        <div class="section-eyebrow">UI Kit · The system in use</div>
+        <div class="cap-title">Sign in &amp; app shell</div>
+        <div class="cap-desc">Authentication and the chrome that wraps every screen. Centered login card with forced password-change and lockout states; fixed sidebar + breadcrumb top bar with active nav in primary-soft.</div>
+      </div>
+      <div class="meta">
+        <span class="num">07 · Screens I</span>
+        <div class="chips"><span class="chip-tag">Login</span><span class="chip-tag">App shell</span></div>
+      </div>
+    </div>
+    <div class="screen-duo">
+      <div class="cell">
+        <div class="cap"><span class="num">01</span><span class="t">Sign in</span><span class="d">· forced change · lockout</span></div>
+        <div class="frame"><img src="screenshots/kit-login.png" alt="Login screen" /></div>
+      </div>
+      <div class="cell">
+        <div class="cap"><span class="num">02</span><span class="t">App shell</span><span class="d">· sidebar · breadcrumb</span></div>
+        <div class="frame"><img src="screenshots/kit-appshell.png" alt="App shell" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ UI KIT — SCREENS II (dashboard + notifications) ============ -->
+  <section class="page screen-page">
+    <div class="screen-head">
+      <div>
+        <div class="section-eyebrow">UI Kit · The system in use</div>
+        <div class="cap-title">Dashboard &amp; notifications</div>
+        <div class="cap-desc">The reusable dashboard frame and the bell popover. Numbers stay neutral; only pills, badges, and the unread mark carry color. Restrained stats row — no colored tiles.</div>
+      </div>
+      <div class="meta">
+        <span class="num">08 · Screens II</span>
+        <div class="chips"><span class="chip-tag">Dashboard</span><span class="chip-tag">Notifications</span></div>
+      </div>
+    </div>
+    <div class="screen-duo">
+      <div class="cell">
+        <div class="cap"><span class="num">03</span><span class="t">Dashboard</span><span class="d">· stats · pending · timeline</span></div>
+        <div class="frame"><img src="screenshots/kit-dashboard.png" alt="Dashboard" /></div>
+      </div>
+      <div class="cell">
+        <div class="cap"><span class="num">04</span><span class="t">Notifications</span><span class="d">· tabs · unread tint</span></div>
+        <div class="frame"><img src="screenshots/kit-notifications.png" alt="Notifications" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ UI KIT — SCREENS III (sign modal + workspace) ============ -->
+  <section class="page screen-page">
+    <div class="screen-head">
+      <div>
+        <div class="section-eyebrow">UI Kit · The system in use</div>
+        <div class="cap-title">E-signature &amp; document workspace</div>
+        <div class="cap-desc">The regulated signing moment — reused for every approve, sign, and issue action — and the full document workspace with spec parameters, signatures, and audit trail.</div>
+      </div>
+      <div class="meta">
+        <span class="num">09 · Screens III</span>
+        <div class="chips"><span class="chip-tag">Sign modal</span><span class="chip-tag">Workspace</span></div>
+      </div>
+    </div>
+    <div class="screen-duo">
+      <div class="cell">
+        <div class="cap"><span class="num">05</span><span class="t">Sign &amp; approve modal</span><span class="d">· 21 CFR Part 11</span></div>
+        <div class="frame"><img src="screenshots/kit-signmodal.png" alt="Sign modal" /></div>
+      </div>
+      <div class="cell">
+        <div class="cap"><span class="num">06</span><span class="t">Document workspace</span><span class="d">· spec · sigs · audit</span></div>
+        <div class="frame"><img src="screenshots/01-kit-app-dashboard.png" alt="Document workspace" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING ============ -->
+  <section class="page closing">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" style="height:24px;" />
+      <span style="font-size:16px; font-weight:600; color:var(--primary);">AC<span style="color:var(--text-muted); font-weight:400; margin:0 3px;">·</span>QMS</span>
+    </div>
+    <div class="section-eyebrow" style="margin-top:18px;">Above all</div>
+    <div class="page-title">Two rules hold the system together</div>
+    <div class="rules">
+      <div class="rule"><h3>Color is functional only</h3><p>Department, status, or danger — nothing decorative. The teal accent is the one button per view; OOS red is danger alone. No gradients, no vibrant accents, no playful color.</p></div>
+      <div class="rule danger"><h3>Hairlines, not shadows</h3><p>White cards on a near-white canvas, separated by 1px borders. The system should read as a lab instrument readout: precise, calm, inspection-ready.</p></div>
+    </div>
+    <div class="manifest">
+      <div><div class="k">Tokens</div><div class="v">colors_and_type.css</div></div>
+      <div><div class="k">Components</div><div class="v">ui_kits/ac_qms/</div></div>
+      <div><div class="k">Skill</div><div class="v">SKILL.md · README.md</div></div>
+      <div><div class="k">Screens</div><div class="v">Login · Shell · Dashboard<br/>Notifications · Sign modal</div></div>
+    </div>
+    <div class="runner bot" style="margin-top:32px;"><span>Aditya Chemicals Ltd. — Internal design reference</span><span class="mono">DS-AC-QMS · v1.0 · 29-May-2026</span></div>
+  </section>
+
+  <!-- PAGES_GO_HERE -->
+
+</body>
+</html>

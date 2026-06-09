@@ -1,0 +1,718 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="User Management Console" subtitle="Super Admin · user table, status/dept badges, locked row, Add User modal" viewport="1440x900" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — User management</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      font-size: var(--text-base);
+      color: var(--text);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+    input, select { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item .admin-tag { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 2px 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--canvas); }
+    .nav-item.active .admin-tag { color: var(--primary); border-color: color-mix(in srgb, var(--primary) 30%, var(--border)); background: var(--bg); }
+
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); min-width: 0; }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: auto; background: var(--canvas); }
+    .main-inner { max-width: 1280px; margin: 0 auto; padding: var(--s6) var(--s8) var(--s8); display: flex; flex-direction: column; gap: var(--s5); }
+
+    /* ---------- Page header ---------- */
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s5); }
+    .ph-left { display: flex; flex-direction: column; gap: 4px; }
+    .ph-title { font-size: var(--text-2xl); font-weight: 600; color: var(--text); letter-spacing: -0.01em; line-height: 1.1; }
+    .ph-sub { font-size: var(--text-sm); color: var(--text-secondary); display: flex; align-items: center; gap: 7px; }
+    .ph-sub .mono { font-family: var(--font-mono); color: var(--text); font-variant-numeric: tabular-nums; }
+    .ph-sub .sep { color: var(--border-strong); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 38px; padding: 0 var(--s4); border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 600; line-height: 1; cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; white-space: nowrap; }
+    .btn .ico { width: 16px; height: 16px; }
+    .btn--primary { background: var(--primary); color: #fff; }
+    .btn--primary:hover { background: var(--primary-hover); }
+    .btn--ghost { background: var(--bg); color: var(--text-secondary); border-color: var(--border-strong); }
+    .btn--ghost:hover { background: var(--canvas); color: var(--text); }
+
+    /* ---------- Stats row ---------- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s4); }
+    .stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s4) var(--s5); display: flex; flex-direction: column; gap: 6px; }
+    .stat .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
+    .stat .v { font-size: var(--text-2xl); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+    .stat .meta { font-size: var(--text-xs); color: var(--text-muted); }
+    .stat.is-locked .v { color: var(--oos); }
+
+    /* ---------- Filter bar ---------- */
+    .filters { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+    .search { position: relative; flex: 1; min-width: 240px; max-width: 380px; }
+    .search .ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+    .search input { width: 100%; height: 38px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); padding: 0 12px 0 34px; font-size: var(--text-sm); color: var(--text); transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .search input::placeholder { color: var(--text-muted); }
+    .search input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+
+    .select-wrap { position: relative; }
+    .select-wrap .chev { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted); pointer-events: none; }
+    .select-wrap select { appearance: none; height: 38px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); padding: 0 30px 0 12px; font-size: var(--text-sm); color: var(--text); cursor: pointer; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .select-wrap select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .select-wrap .flabel { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+    .filter-field { display: flex; flex-direction: column; }
+
+    /* ============================== TABLE ============================== */
+    .table-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table-scroll { overflow-x: auto; }
+    table.users { width: 100%; border-collapse: collapse; min-width: 1080px; }
+    table.users thead th {
+      position: sticky; top: 0; z-index: 2;
+      background: var(--canvas);
+      text-align: left;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      padding: 11px var(--s3);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    table.users thead th.sortable { cursor: pointer; user-select: none; transition: color 120ms ease; }
+    table.users thead th.sortable:hover { color: var(--text); }
+    table.users thead th .th-in { display: inline-flex; align-items: center; gap: 5px; }
+    table.users thead th .sort-ic { width: 12px; height: 12px; color: var(--text-muted); opacity: 0; transition: opacity 120ms ease, transform 120ms ease; }
+    table.users thead th.sortable:hover .sort-ic { opacity: 0.5; }
+    table.users thead th[data-dir="asc"] .sort-ic { opacity: 1; color: var(--primary); }
+    table.users thead th[data-dir="desc"] .sort-ic { opacity: 1; color: var(--primary); transform: rotate(180deg); }
+    table.users thead th.num { text-align: center; }
+    table.users thead th.act-col { text-align: right; }
+
+    table.users tbody td { padding: 12px var(--s3); border-bottom: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); vertical-align: middle; }
+    table.users tbody tr:last-child td { border-bottom: none; }
+    table.users tbody tr { transition: background-color 120ms ease; position: relative; }
+    table.users tbody tr:hover { background: var(--primary-soft); }
+
+    /* Locked row: 4px oos left edge */
+    table.users tbody tr.locked td:first-child { box-shadow: inset 4px 0 0 var(--oos); }
+
+    .u-name { display: flex; align-items: center; gap: var(--s3); }
+    .u-name .avatar { width: 30px; height: 30px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .u-name .nm { font-weight: 500; color: var(--text); white-space: nowrap; }
+    .u-uname { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .u-email { color: var(--text-secondary); max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .role-chip { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 500; color: var(--text-secondary); background: var(--draft-soft); border: 1px solid var(--border); white-space: nowrap; }
+
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 16px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+    .dept-badge--qa { color: var(--qa); background: var(--qa-soft); }
+    .dept-none { color: var(--text-muted); font-size: var(--text-xs); }
+
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
+    .status-pill .sdot { width: 6px; height: 6px; border-radius: 999px; }
+    .status-pill--active { color: var(--approved); background: var(--approved-soft); }
+    .status-pill--active .sdot { background: var(--approved); }
+    .status-pill--locked { color: var(--oos); background: var(--oos-soft); }
+    .status-pill--locked .sdot { background: var(--oos); }
+    .status-pill--inactive { color: var(--draft); background: var(--draft-soft); }
+    .status-pill--inactive .sdot { background: var(--draft); }
+
+    .fails { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: var(--text-sm); color: var(--text-muted); text-align: center; display: block; }
+    .fails.warn { color: var(--oos); font-weight: 600; }
+
+    .last-login { color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .last-login.never { color: var(--text-muted); font-style: italic; }
+
+    /* Actions */
+    .actions { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+    .act-btn { width: 28px; height: 28px; border-radius: var(--radius-sm); border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease; position: relative; }
+    .act-btn:hover { background: var(--bg); border-color: var(--border-strong); color: var(--text); }
+    .act-btn.unlock:hover { color: var(--oos); border-color: color-mix(in srgb, var(--oos) 40%, var(--border-strong)); }
+    .act-btn .ico { width: 15px; height: 15px; }
+    .act-btn .tip { position: absolute; bottom: calc(100% + 6px); right: 0; background: var(--text); color: #fff; font-size: 11px; font-weight: 500; padding: 5px 8px; border-radius: var(--radius-sm); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 120ms ease; z-index: 5; }
+    .act-btn:hover .tip { opacity: 1; }
+
+    /* Locked row tooltip on the status pill */
+    .lock-cell { position: relative; }
+    .lock-cell .lock-tip { position: absolute; bottom: calc(100% + 6px); left: 0; background: var(--text); color: #fff; font-size: 11px; font-weight: 500; padding: 6px 9px; border-radius: var(--radius-sm); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 120ms ease; z-index: 5; box-shadow: var(--shadow); }
+    .lock-cell:hover .lock-tip { opacity: 1; }
+
+    /* ---------- Pagination ---------- */
+    .pagination { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s5); border-top: 1px solid var(--border); background: var(--canvas); }
+    .pg-info { font-size: var(--text-xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .pg-info .mono { font-family: var(--font-mono); color: var(--text); }
+    .pg-controls { display: flex; align-items: center; gap: var(--s2); }
+    .pg-btn { height: 30px; min-width: 30px; padding: 0 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--bg); font-size: var(--text-xs); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .pg-btn:disabled { color: var(--text-muted); cursor: not-allowed; opacity: 0.6; }
+    .pg-btn .ico { width: 13px; height: 13px; }
+
+    /* ============================== MODAL ============================== */
+    .modal-scrim { position: fixed; inset: 0; background: rgba(16, 32, 38, 0.42); z-index: 200; display: none; align-items: flex-start; justify-content: center; padding: 64px var(--s5); overflow-y: auto; }
+    .modal-scrim.open { display: flex; }
+    .modal { width: 100%; max-width: 480px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 16px 48px rgba(16,32,38,0.22), 0 2px 8px rgba(16,32,38,0.12); display: flex; flex-direction: column; overflow: hidden; }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s4); padding: var(--s5) var(--s6); border-bottom: 1px solid var(--border); }
+    .modal-head .mh-title { font-size: var(--text-lg); font-weight: 600; color: var(--text); }
+    .modal-head .mh-sub { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 3px; }
+    .modal-close { width: 30px; height: 30px; border-radius: var(--radius-sm); border: 1px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color 120ms ease, color 120ms ease; }
+    .modal-close:hover { background: var(--canvas); color: var(--text); }
+    .modal-close .ico { width: 16px; height: 16px; }
+    .modal-body { padding: var(--s6); display: flex; flex-direction: column; gap: var(--s4); }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: var(--text-xs); font-weight: 600; color: var(--text-secondary); letter-spacing: 0.01em; }
+    .field label .req { color: var(--oos); margin-left: 2px; }
+    .field input, .field select { height: 38px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); padding: 0 12px; font-size: var(--text-sm); color: var(--text); width: 100%; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .field select { appearance: none; padding-right: 30px; cursor: pointer; }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .field input::placeholder { color: var(--text-muted); }
+    .field.select-field { position: relative; }
+    .field.select-field .chev { position: absolute; right: 10px; bottom: 12px; width: 14px; height: 14px; color: var(--text-muted); pointer-events: none; }
+    .field.hidden { display: none; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); }
+
+    /* Password strength */
+    .pw-strength { display: flex; flex-direction: column; gap: 6px; }
+    .pw-bars { display: flex; gap: 5px; }
+    .pw-bars .seg { flex: 1; height: 4px; border-radius: 999px; background: var(--border); transition: background-color 150ms ease; }
+    .pw-strength[data-level="1"] .seg:nth-child(1) { background: var(--oos); }
+    .pw-strength[data-level="2"] .seg:nth-child(-n+2) { background: var(--submitted); }
+    .pw-strength[data-level="3"] .seg:nth-child(-n+3) { background: var(--approved); }
+    .pw-strength[data-level="4"] .seg { background: var(--approved); }
+    .pw-label { font-size: var(--text-xs); color: var(--text-muted); display: flex; justify-content: space-between; }
+    .pw-label .lv { font-weight: 500; }
+    .pw-label[data-level="1"] .lv { color: var(--oos); }
+    .pw-label[data-level="2"] .lv { color: var(--submitted); }
+    .pw-label[data-level="3"] .lv, .pw-label[data-level="4"] .lv { color: var(--approved); }
+
+    .helper { display: flex; align-items: flex-start; gap: var(--s2); padding: var(--s3) var(--s3); background: var(--primary-soft); border-radius: var(--radius-sm); }
+    .helper .ico { width: 15px; height: 15px; color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+    .helper .txt { font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; }
+    .helper .txt b { color: var(--primary); font-weight: 600; }
+
+    .modal-foot { display: flex; align-items: center; justify-content: flex-end; gap: var(--s3); padding: var(--s4) var(--s6); border-top: 1px solid var(--border); background: var(--canvas); }
+
+    @media (max-width: 1080px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark">
+          <span class="name">AC<span class="sep">·</span>QMS</span>
+          <span class="tagline">Quality Management</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item" href="QC Executive Dashboard.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item" href="Batch Pipeline.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">89</span>
+        </a>
+        <a class="nav-item" href="Product Master Editor.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Masters</span>
+        </a>
+        <a class="nav-item" href="Instrument Master.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
+          <span class="label">Audit log</span>
+        </a>
+
+        <span class="nav-group-label">Administration</span>
+        <a class="nav-item active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+          <span class="label">Users</span>
+          <span class="admin-tag">Super</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-user" role="button" aria-label="Account menu">
+        <span class="avatar">RP</span>
+        <div class="who">
+          <span class="name">Rohan Patel</span>
+          <span class="role">Super Admin</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current">Users</span>
+      </nav>
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">3</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">RP</span><span>R. Patel</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+      <div class="main-inner">
+
+        <!-- Page header -->
+        <div class="page-head">
+          <div class="ph-left">
+            <h1 class="ph-title">User Management</h1>
+            <p class="ph-sub"><span class="mono">5</span> users<span class="sep">·</span><span class="mono">4</span> active<span class="sep">·</span><span class="mono">1</span> locked</p>
+          </div>
+          <button class="btn btn--primary" id="addUserBtn">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14" /></svg>
+            Add User
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+          <div class="stat"><span class="k">Total Users</span><span class="v">5</span><span class="meta">All accounts</span></div>
+          <div class="stat"><span class="k">Active</span><span class="v">4</span><span class="meta">Can sign in</span></div>
+          <div class="stat is-locked"><span class="k">Locked</span><span class="v">1</span><span class="meta">Failed-attempt lockout</span></div>
+          <div class="stat"><span class="k">Inactive</span><span class="v">0</span><span class="meta">Soft-deleted / disabled</span></div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+          <div class="search">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+            <input type="text" id="searchInput" placeholder="Search by name, username, email" />
+          </div>
+          <div class="filter-field">
+            <div class="select-wrap">
+              <select id="roleFilter" aria-label="Role filter">
+                <option value="all">All roles</option>
+                <option>Super Admin</option>
+                <option>QC Executive</option>
+                <option>QC Manager</option>
+                <option>QA Executive</option>
+                <option>QA Manager</option>
+              </select>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+            </div>
+          </div>
+          <div class="filter-field">
+            <div class="select-wrap">
+              <select id="deptFilter" aria-label="Department filter">
+                <option value="all">All departments</option>
+                <option>QC</option>
+                <option>QA</option>
+              </select>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+            </div>
+          </div>
+          <div class="filter-field">
+            <div class="select-wrap">
+              <select id="statusFilter" aria-label="Status filter">
+                <option value="all">All statuses</option>
+                <option>Active</option>
+                <option>Locked</option>
+                <option>Inactive</option>
+              </select>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="users" id="usersTable">
+              <thead>
+                <tr>
+                  <th class="sortable" data-key="name"><span class="th-in">Name <svg class="sort-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable" data-key="username"><span class="th-in">Username <svg class="sort-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th>Email</th>
+                  <th class="sortable" data-key="role"><span class="th-in">Role <svg class="sort-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th>Department</th>
+                  <th class="sortable" data-key="status"><span class="th-in">Status <svg class="sort-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable num" data-key="fails"><span class="th-in">Failed <svg class="sort-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable" data-key="login"><span class="th-in">Last Login <svg class="sort-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="act-col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody">
+                <!-- Row: Kavya Patel -->
+                <tr data-name="Kavya Patel" data-username="qc.exec" data-role="QC Executive" data-dept="QC" data-status="Active" data-fails="0" data-login="2">
+                  <td><div class="u-name"><span class="avatar">KP</span><span class="nm">Kavya Patel</span></div></td>
+                  <td><span class="u-uname">qc.exec</span></td>
+                  <td><span class="u-email" title="kavya.patel@adityachemicals.com">kavya.patel@adityachemicals.com</span></td>
+                  <td><span class="role-chip">QC Executive</span></td>
+                  <td><span class="dept-badge dept-badge--qc">QC</span></td>
+                  <td><span class="status-pill status-pill--active"><span class="sdot"></span>Active</span></td>
+                  <td><span class="fails">0</span></td>
+                  <td><span class="last-login">2h ago</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="act-btn" aria-label="Edit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg><span class="tip">Edit</span></button>
+                      <button class="act-btn" aria-label="Reset password"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg><span class="tip">Reset password</span></button>
+                      <button class="act-btn" aria-label="Toggle status"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg><span class="tip">Disable user</span></button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row: Priya Mehta -->
+                <tr data-name="Priya Mehta" data-username="qc.mgr" data-role="QC Manager" data-dept="QC" data-status="Active" data-fails="0" data-login="26">
+                  <td><div class="u-name"><span class="avatar">PM</span><span class="nm">Priya Mehta</span></div></td>
+                  <td><span class="u-uname">qc.mgr</span></td>
+                  <td><span class="u-email" title="priya.mehta@adityachemicals.com">priya.mehta@adityachemicals.com</span></td>
+                  <td><span class="role-chip">QC Manager</span></td>
+                  <td><span class="dept-badge dept-badge--qc">QC</span></td>
+                  <td><span class="status-pill status-pill--active"><span class="sdot"></span>Active</span></td>
+                  <td><span class="fails">0</span></td>
+                  <td><span class="last-login">1d ago</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="act-btn" aria-label="Edit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg><span class="tip">Edit</span></button>
+                      <button class="act-btn" aria-label="Reset password"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg><span class="tip">Reset password</span></button>
+                      <button class="act-btn" aria-label="Toggle status"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg><span class="tip">Disable user</span></button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row: Sanjay Reddy -->
+                <tr data-name="Sanjay Reddy" data-username="qa.mgr" data-role="QA Manager" data-dept="QA" data-status="Active" data-fails="1" data-login="3">
+                  <td><div class="u-name"><span class="avatar">SR</span><span class="nm">Sanjay Reddy</span></div></td>
+                  <td><span class="u-uname">qa.mgr</span></td>
+                  <td><span class="u-email" title="sanjay.reddy@adityachemicals.com">sanjay.reddy@adityachemicals.com</span></td>
+                  <td><span class="role-chip">QA Manager</span></td>
+                  <td><span class="dept-badge dept-badge--qa">QA</span></td>
+                  <td><span class="status-pill status-pill--active"><span class="sdot"></span>Active</span></td>
+                  <td><span class="fails">1</span></td>
+                  <td><span class="last-login">3h ago</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="act-btn" aria-label="Edit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg><span class="tip">Edit</span></button>
+                      <button class="act-btn" aria-label="Reset password"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg><span class="tip">Reset password</span></button>
+                      <button class="act-btn" aria-label="Toggle status"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg><span class="tip">Disable user</span></button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row: Anand Joshi — LOCKED -->
+                <tr class="locked" data-name="Anand Joshi" data-username="qa.exec" data-role="QA Executive" data-dept="QA" data-status="Locked" data-fails="5" data-login="5">
+                  <td><div class="u-name"><span class="avatar">AJ</span><span class="nm">Anand Joshi</span></div></td>
+                  <td><span class="u-uname">qa.exec</span></td>
+                  <td><span class="u-email" title="anand.joshi@adityachemicals.com">anand.joshi@adityachemicals.com</span></td>
+                  <td><span class="role-chip">QA Executive</span></td>
+                  <td><span class="dept-badge dept-badge--qa">QA</span></td>
+                  <td class="lock-cell">
+                    <span class="status-pill status-pill--locked"><span class="sdot"></span>Locked</span>
+                    <span class="lock-tip">Locked until 14:32 (after 5 failed attempts)</span>
+                  </td>
+                  <td><span class="fails warn">5</span></td>
+                  <td><span class="last-login">5h ago</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="act-btn" aria-label="Edit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg><span class="tip">Edit</span></button>
+                      <button class="act-btn" aria-label="Reset password"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg><span class="tip">Reset password</span></button>
+                      <button class="act-btn unlock" aria-label="Unlock account"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg><span class="tip">Unlock account</span></button>
+                      <button class="act-btn" aria-label="Toggle status"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg><span class="tip">Disable user</span></button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row: Rajesh Kumar — Super Admin -->
+                <tr data-name="Rajesh Kumar" data-username="admin" data-role="Super Admin" data-dept="" data-status="Active" data-fails="0" data-login="0">
+                  <td><div class="u-name"><span class="avatar">RK</span><span class="nm">Rajesh Kumar</span></div></td>
+                  <td><span class="u-uname">admin</span></td>
+                  <td><span class="u-email" title="rajesh.kumar@adityachemicals.com">rajesh.kumar@adityachemicals.com</span></td>
+                  <td><span class="role-chip">Super Admin</span></td>
+                  <td><span class="dept-none">—</span></td>
+                  <td><span class="status-pill status-pill--active"><span class="sdot"></span>Active</span></td>
+                  <td><span class="fails">0</span></td>
+                  <td><span class="last-login">Just now</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="act-btn" aria-label="Edit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg><span class="tip">Edit</span></button>
+                      <button class="act-btn" aria-label="Reset password"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg><span class="tip">Reset password</span></button>
+                      <button class="act-btn" aria-label="Toggle status"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg><span class="tip">Disable user</span></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <span class="pg-info" id="pgInfo">Showing <span class="mono">1–5</span> of <span class="mono">5</span></span>
+            <div class="pg-controls">
+              <button class="pg-btn" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>Prev</button>
+              <button class="pg-btn" disabled>Next<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ============================== ADD USER MODAL ============================== -->
+  <div class="modal-scrim" id="modalScrim">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Add user">
+      <div class="modal-head">
+        <div>
+          <div class="mh-title">Add User</div>
+          <div class="mh-sub">Create a new account. The user receives sign-in details by email.</div>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="Close"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Full Name<span class="req">*</span></label>
+          <input type="text" placeholder="e.g. Aarav Sharma" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Username<span class="req">*</span></label>
+            <input type="text" placeholder="e.g. qc.exec2" />
+          </div>
+          <div class="field">
+            <label>Email<span class="req">*</span></label>
+            <input type="email" placeholder="name@adityachemicals.com" />
+          </div>
+        </div>
+        <div class="field select-field">
+          <label>Role<span class="req">*</span></label>
+          <select id="modalRole">
+            <option value="" disabled selected>Select a role…</option>
+            <option>Super Admin</option>
+            <option>QC Executive</option>
+            <option>QC Manager</option>
+            <option>QA Executive</option>
+            <option>QA Manager</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="field select-field" id="deptField">
+          <label>Department<span class="req">*</span></label>
+          <select id="modalDept">
+            <option value="" disabled selected>Select a department…</option>
+            <option>QC</option>
+            <option>QA</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="field">
+          <label>Initial Password<span class="req">*</span></label>
+          <input type="password" id="modalPw" placeholder="Set a temporary password" />
+          <div class="pw-strength" id="pwStrength" data-level="0">
+            <div class="pw-bars"><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span></div>
+            <div class="pw-label" id="pwLabel" data-level="0"><span>Strength</span><span class="lv">—</span></div>
+          </div>
+        </div>
+        <div class="helper">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+          <span class="txt"><b>User will be forced to change password on first login.</b> The initial password is temporary and single-use.</span>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn--ghost" id="modalCancel">Cancel</button>
+        <button class="btn btn--primary" id="modalCreate">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+          Create User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (!hasRole('SUPER_ADMIN')) {
+        var u = getCurrentUser();
+        location.href = u ? getDashboardForUser(u) : 'index.html';
+      }
+    });
+  </script>
+
+  <script>
+    (function () {
+      /* ---------- Filtering ---------- */
+      var body = document.getElementById('usersBody');
+      var rows = Array.prototype.slice.call(body.querySelectorAll('tr'));
+      var search = document.getElementById('searchInput');
+      var roleF = document.getElementById('roleFilter');
+      var deptF = document.getElementById('deptFilter');
+      var statusF = document.getElementById('statusFilter');
+      var pgInfo = document.getElementById('pgInfo');
+
+      function applyFilters() {
+        var q = search.value.trim().toLowerCase();
+        var role = roleF.value, dept = deptF.value, status = statusF.value;
+        var shown = 0;
+        rows.forEach(function (r) {
+          var hay = (r.dataset.name + ' ' + r.dataset.username + ' ' + (r.querySelector('.u-email') || {}).textContent).toLowerCase();
+          var ok = (!q || hay.indexOf(q) > -1)
+            && (role === 'all' || r.dataset.role === role)
+            && (dept === 'all' || r.dataset.dept === dept)
+            && (status === 'all' || r.dataset.status === status);
+          r.style.display = ok ? '' : 'none';
+          if (ok) shown++;
+        });
+        pgInfo.innerHTML = shown
+          ? 'Showing <span class="mono">1\u2013' + shown + '</span> of <span class="mono">' + shown + '</span>'
+          : 'No users match the current filters';
+      }
+      [search].forEach(function (el) { el.addEventListener('input', applyFilters); });
+      [roleF, deptF, statusF].forEach(function (el) { el.addEventListener('change', applyFilters); });
+
+      /* ---------- Sorting ---------- */
+      var ths = document.querySelectorAll('th.sortable');
+      ths.forEach(function (th) {
+        th.addEventListener('click', function () {
+          var key = th.dataset.key;
+          var cur = th.getAttribute('data-dir');
+          var dir = cur === 'asc' ? 'desc' : 'asc';
+          ths.forEach(function (o) { o.removeAttribute('data-dir'); });
+          th.setAttribute('data-dir', dir);
+          var sorted = rows.slice().sort(function (a, b) {
+            var av, bv;
+            if (key === 'fails' || key === 'login') { av = +a.dataset[key]; bv = +b.dataset[key]; }
+            else { av = (a.dataset[key] || '').toLowerCase(); bv = (b.dataset[key] || '').toLowerCase(); }
+            if (av < bv) return dir === 'asc' ? -1 : 1;
+            if (av > bv) return dir === 'asc' ? 1 : -1;
+            return 0;
+          });
+          sorted.forEach(function (r) { body.appendChild(r); });
+        });
+      });
+
+      /* ---------- Modal ---------- */
+      var scrim = document.getElementById('modalScrim');
+      var openBtn = document.getElementById('addUserBtn');
+      var closeBtn = document.getElementById('modalClose');
+      var cancelBtn = document.getElementById('modalCancel');
+      function openModal() { scrim.classList.add('open'); }
+      function closeModal() { scrim.classList.remove('open'); }
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      var createBtn = document.getElementById('modalCreate');
+      if (createBtn) {
+        createBtn.addEventListener('click', function () {
+          closeModal();
+        });
+      }
+      scrim.addEventListener('click', function (e) { if (e.target === scrim) closeModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+      /* Role → Department auto-hide for Super Admin */
+      var modalRole = document.getElementById('modalRole');
+      var deptField = document.getElementById('deptField');
+      var modalDept = document.getElementById('modalDept');
+      modalRole.addEventListener('change', function () {
+        var sup = modalRole.value === 'Super Admin';
+        deptField.classList.toggle('hidden', sup);
+        if (sup) { modalDept.value = ''; modalDept.disabled = true; }
+        else { modalDept.disabled = false; }
+      });
+
+      /* Password strength */
+      var pw = document.getElementById('modalPw');
+      var strength = document.getElementById('pwStrength');
+      var label = document.getElementById('pwLabel');
+      var labels = ['—', 'Weak', 'Fair', 'Good', 'Strong'];
+      pw.addEventListener('input', function () {
+        var v = pw.value, score = 0;
+        if (v.length >= 8) score++;
+        if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+        if (/\d/.test(v)) score++;
+        if (/[^A-Za-z0-9]/.test(v)) score++;
+        if (v.length === 0) score = 0;
+        else if (score === 0) score = 1;
+        strength.setAttribute('data-level', score);
+        label.setAttribute('data-level', score);
+        label.querySelector('.lv').textContent = labels[score];
+      });
+    })();
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

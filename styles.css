@@ -1,0 +1,23 @@
+/* ============================================================
+   AC-QMS DESIGN SYSTEM — ROOT STYLESHEET
+   Aditya Chemicals — Quality Management System
+   ============================================================
+   Single entry point for consuming projects. Link THIS file and
+   you get the brand fonts plus the full design-token + typography
+   layer in one import:
+
+       <link rel="stylesheet" href="styles.css" />
+
+   Specialized sheets are intentionally NOT pulled in here, because
+   each carries page-level resets / backgrounds that should only
+   apply in their own context:
+     · ds-pdf.css            — landscape A4 print/PDF page model
+     · ui_kits/ac_qms/app.css — full app reset for the React UI kit
+     · preview/_card.css     — Design-System tab card chrome
+   ============================================================ */
+
+/* Brand typefaces — Inter (UI) + JetBrains Mono (codes, tabular data) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Design tokens + typography scale (colors, spacing, radii, status hues) */
+@import url('colors_and_type.css');

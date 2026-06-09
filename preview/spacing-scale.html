@@ -1,0 +1,21 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" name="Spacing · 4 / 8 grid" subtitle="s1 → s10, strict 4 / 8 px increments" viewport="700x280" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items:stretch; gap: var(--s3); }
+  .lbl { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; font-weight:500; }
+  .row { display:flex; align-items: center; gap: var(--s4); }
+  .bar { background: var(--primary); height: 8px; border-radius: 2px; }
+  .name { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); width: 64px; }
+  .px { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); width: 40px; text-align: right; }
+</style></head><body>
+<div class="lbl">4 / 8 grid</div>
+<div class="row"><span class="name">--s1</span><div class="bar" style="width:4px"></div><span class="px">4</span></div>
+<div class="row"><span class="name">--s2</span><div class="bar" style="width:8px"></div><span class="px">8</span></div>
+<div class="row"><span class="name">--s3</span><div class="bar" style="width:12px"></div><span class="px">12</span></div>
+<div class="row"><span class="name">--s4</span><div class="bar" style="width:16px"></div><span class="px">16</span></div>
+<div class="row"><span class="name">--s5</span><div class="bar" style="width:20px"></div><span class="px">20</span></div>
+<div class="row"><span class="name">--s6</span><div class="bar" style="width:24px"></div><span class="px">24</span></div>
+<div class="row"><span class="name">--s8</span><div class="bar" style="width:32px"></div><span class="px">32</span></div>
+<div class="row"><span class="name">--s10</span><div class="bar" style="width:40px"></div><span class="px">40</span></div>
+</body></html>

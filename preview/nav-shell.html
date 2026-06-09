@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Components · App shell" subtitle="Top bar + left nav, hairline-separated, no shadows" viewport="700x240" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: 0; background: var(--canvas); align-items:stretch; }
+  .shell { display: grid; grid-template-columns: 200px 1fr; grid-template-rows: 44px 1fr; width:100%; height: 100%; min-height: 200px; }
+  .topbar { grid-column: 1 / -1; background: var(--bg); border-bottom: 1px solid var(--border); display:flex; align-items:center; padding: 0 16px; gap: 12px; }
+  .topbar img { height: 22px; }
+  .nav { background: var(--bg); border-right: 1px solid var(--border); padding: 10px 8px; display: flex; flex-direction:column; gap: 2px; }
+  .nav-item { display:flex; align-items:center; gap: 8px; padding: 6px 10px; border-radius: 4px; font-size: var(--text-sm); color: var(--text); cursor: pointer; }
+  .nav-item .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--text-muted); }
+  .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+  .nav-item.active .dot { background: var(--primary); }
+  .main { padding: 16px 20px; display:flex; flex-direction: column; gap: 8px; }
+  .crumb { font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; }
+  .page-title { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; line-height: 1.2; }
+  .env { margin-left:auto; display:inline-flex; gap: 6px; align-items:center; font-size: 11px; color: var(--text-secondary); }
+  .env .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+</style></head><body>
+<div class="shell">
+  <div class="topbar">
+    <img src="../assets/aditya-chemicals-logo.png" alt="Aditya Chemicals">
+    <span class="secondary" style="font-size:13px;margin-left:8px">AC-QMS</span>
+    <span class="env"><span class="dot"></span>PROD · IST</span>
+  </div>
+  <div class="nav">
+    <div class="nav-item"><span class="dot"></span>Dashboard</div>
+    <div class="nav-item active"><span class="dot"></span>Documents</div>
+    <div class="nav-item"><span class="dot"></span>Batch records</div>
+    <div class="nav-item"><span class="dot"></span>Deviations</div>
+    <div class="nav-item"><span class="dot"></span>OOS</div>
+    <div class="nav-item"><span class="dot"></span>Audit trail</div>
+  </div>
+  <div class="main">
+    <span class="crumb">Documents › Specifications</span>
+    <span class="page-title">Specifications</span>
+  </div>
+</div></body></html>

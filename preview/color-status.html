@@ -1,0 +1,19 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Colors · Status" subtitle="Quiet pills — soft tint background, solid text" viewport="700x150" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items: stretch; gap: var(--s3); }
+  .row { display: flex; gap: var(--s3); flex-wrap: wrap; }
+  .stack { display:flex; flex-direction:column; gap: 6px; align-items: flex-start; }
+  .var { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+</style></head><body>
+<div class="row">
+  <div class="stack"><span class="pill pill--draft">Draft</span><span class="var">--draft</span></div>
+  <div class="stack"><span class="pill pill--submitted">Submitted</span><span class="var">--submitted</span></div>
+  <div class="stack"><span class="pill pill--approved">Approved</span><span class="var">--approved</span></div>
+  <div class="stack"><span class="pill pill--signed">Signed</span><span class="var">--signed</span></div>
+  <div class="stack"><span class="pill pill--issued">Issued</span><span class="var">--issued</span></div>
+  <div class="stack"><span class="pill pill--oos">OOS</span><span class="var">--oos</span></div>
+</div>
+<div class="secondary" style="font-size:11px">Soft tinted background, solid colored text. Never full-saturated fills.</div>
+</body></html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" name="Borders & dividers" subtitle="Hairlines do all the work — no shadows separate surfaces" viewport="700x170" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); background: var(--canvas); flex-direction:column; align-items:stretch; gap: var(--s4); }
+  .row { display:flex; gap: var(--s4); align-items:stretch; }
+  .demo { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s3) var(--s4); flex: 1; display:flex; flex-direction:column; gap: var(--s2); }
+  .demo .lbl { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; }
+  .divider { height: 1px; background: var(--border); }
+  .strong-input { height: 28px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--bg); }
+  .name { font-size: var(--text-sm); font-weight: 600; color: var(--text); }
+  .var { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+</style></head><body>
+<div class="row">
+  <div class="demo">
+    <span class="lbl">Hairline · --border</span>
+    <span class="name">Card outline</span>
+    <span class="var">1 px solid #E4E7EC</span>
+  </div>
+  <div class="demo">
+    <span class="lbl">Divider</span>
+    <span class="name">Inside-card rule</span>
+    <div class="divider"></div>
+    <span class="var">1 px solid #E4E7EC</span>
+  </div>
+  <div class="demo">
+    <span class="lbl">--border-strong</span>
+    <span class="name">Input border</span>
+    <div class="strong-input"></div>
+    <span class="var">1 px solid #D0D5DD</span>
+  </div>
+</div>
+</body></html>

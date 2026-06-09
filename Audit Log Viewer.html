@@ -1,0 +1,651 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="Audit Log Viewer" subtitle="System-wide append-only audit trail · dense table, filters, detail drawer, CSV export" viewport="1440x900" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Audit log</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); font-size: var(--text-base); color: var(--text); background: var(--canvas); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+    input, select { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item .admin-tag { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 2px 5px; border: 1px solid var(--border); border-radius: 3px; background: var(--canvas); }
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); min-width: 0; }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: auto; background: var(--canvas); }
+    .main-inner { max-width: 1480px; margin: 0 auto; padding: var(--s6) var(--s6) var(--s8); display: flex; flex-direction: column; gap: var(--s5); }
+
+    /* ---------- Page header ---------- */
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s5); }
+    .ph-left { display: flex; flex-direction: column; gap: 4px; }
+    .ph-title { font-size: var(--text-2xl); font-weight: 600; color: var(--text); letter-spacing: -0.01em; line-height: 1.1; }
+    .ph-sub { font-size: var(--text-sm); color: var(--text-secondary); display: flex; align-items: center; gap: 7px; }
+    .ph-sub .sep { color: var(--border-strong); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 38px; padding: 0 var(--s4); border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 600; line-height: 1; cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; white-space: nowrap; }
+    .btn .ico { width: 15px; height: 15px; }
+    .btn--primary { background: var(--primary); color: #fff; }
+    .btn--primary:hover { background: var(--primary-hover); }
+    .btn--outline { background: var(--bg); color: var(--text); border-color: var(--border-strong); }
+    .btn--outline:hover { background: var(--canvas); border-color: var(--text-muted); }
+
+    /* ============================== FILTER BAR ============================== */
+    .filter-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s4) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+    .filter-grid { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: flex-end; }
+    .ff { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .ff .flabel { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
+    .ctrl { height: 36px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); padding: 0 11px; font-size: var(--text-sm); color: var(--text); transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .ctrl:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .ctrl::placeholder { color: var(--text-muted); }
+    .select-wrap { position: relative; }
+    .select-wrap select { appearance: none; padding-right: 28px; cursor: pointer; width: 100%; }
+    .select-wrap .chev { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: var(--text-muted); pointer-events: none; }
+    .ff--date .ctrl { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; min-width: 168px; }
+    .ff--date .ctrl .cal { width: 14px; height: 14px; color: var(--text-muted); }
+    .ff--date .ctrl .val { color: var(--text); }
+    .ff--search .ctrl { min-width: 150px; }
+    .ff--freetext { flex: 1; min-width: 200px; }
+    .ff--freetext .search { position: relative; }
+    .ff--freetext .search .ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted); pointer-events: none; }
+    .ff--freetext .search .ctrl { width: 100%; padding-left: 32px; }
+
+    .filter-actions { display: flex; align-items: center; gap: var(--s3); margin-left: auto; }
+    .reset-link { font-size: var(--text-sm); color: var(--text-secondary); cursor: pointer; background: none; border: none; transition: color 120ms ease; }
+    .reset-link:hover { color: var(--text); text-decoration: underline; }
+
+    /* Stats line */
+    .stat-line { display: flex; align-items: center; gap: var(--s3); font-size: var(--text-xs); color: var(--text-secondary); padding-top: var(--s2); border-top: 1px solid var(--border); }
+    .stat-line .count { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+    .stat-line .applied { color: var(--text-muted); }
+    .stat-line .applied b { color: var(--text-secondary); font-weight: 500; }
+
+    /* ============================== TABLE ============================== */
+    .table-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table-scroll { overflow-x: auto; }
+    table.audit { width: 100%; border-collapse: collapse; min-width: 1560px; }
+    table.audit thead th {
+      position: sticky; top: 0; z-index: 2; background: var(--canvas);
+      text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--text-secondary); padding: 9px var(--s3); border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.audit tbody td { padding: 8px var(--s3); border-bottom: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); vertical-align: top; line-height: 1.4; }
+    table.audit tbody tr:last-child td { border-bottom: none; }
+    table.audit tbody tr { cursor: pointer; transition: background-color 100ms ease; }
+    table.audit tbody tr.sel { background: var(--primary-soft); }
+
+    .c-ts { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .c-ts .d { color: var(--text); font-weight: 500; display: block; }
+    .c-ts .t { color: var(--text-muted); }
+
+    .c-user { white-space: nowrap; }
+    .c-user .nm { font-weight: 500; color: var(--text); display: block; }
+    .c-user .rl { font-size: var(--text-xs); color: var(--text-muted); }
+
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 16px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+    .dept-badge--qa { color: var(--qa); background: var(--qa-soft); }
+    .dept-none { color: var(--text-muted); }
+
+    .action-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; color: var(--text-secondary); background: var(--draft-soft); border: 1px solid var(--border); }
+    .action-pill.rejected { color: var(--oos); background: var(--oos-soft); border-color: color-mix(in srgb, var(--oos) 22%, var(--border)); }
+    .action-pill.signed { color: var(--signed); background: var(--signed-soft); border-color: color-mix(in srgb, var(--signed) 22%, var(--border)); }
+
+    .c-entity { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .c-entity .etype { color: var(--text-muted); }
+    .c-field { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+
+    .c-change { font-family: var(--font-mono); font-size: var(--text-xs); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; max-width: 230px; }
+    .c-change .old { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
+    .c-change .arr { width: 11px; height: 11px; color: var(--text-muted); flex-shrink: 0; }
+    .c-change .new { color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+    .c-change .none { color: var(--text-muted); }
+
+    .c-comment { color: var(--text-secondary); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .c-ip { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .c-geo { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+    .c-geo .pin { width: 12px; height: 12px; flex-shrink: 0; }
+    .c-geo.denied { color: color-mix(in srgb, var(--oos) 65%, var(--text-muted)); }
+
+    /* ---------- Pagination ---------- */
+    .pagination { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s5); border-top: 1px solid var(--border); background: var(--canvas); flex-wrap: wrap; }
+    .pg-info { font-size: var(--text-xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .pg-info .mono { font-family: var(--font-mono); color: var(--text); }
+    .pg-controls { display: flex; align-items: center; gap: var(--s2); }
+    .pg-btn { height: 30px; min-width: 30px; padding: 0 9px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--bg); font-size: var(--text-xs); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-variant-numeric: tabular-nums; transition: background-color 120ms ease; }
+    .pg-btn:hover:not(:disabled) { background: var(--canvas); }
+    .pg-btn.cur { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); font-weight: 600; }
+    .pg-btn:disabled { color: var(--text-muted); cursor: not-allowed; opacity: 0.55; }
+    .pg-btn .ico { width: 13px; height: 13px; }
+    .pg-jump { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--text-secondary); margin-left: var(--s2); }
+    .pg-jump input { width: 48px; height: 30px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); text-align: center; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text); }
+    .pg-jump input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+
+    /* ---------- Immutability note ---------- */
+    .immut-note { display: flex; align-items: flex-start; gap: var(--s2); font-size: var(--text-xs); color: var(--text-muted); line-height: 1.5; padding: 0 var(--s1); }
+    .immut-note .ico { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+    .immut-note b { color: var(--text-secondary); font-weight: 500; }
+
+    /* ============================== DETAIL DRAWER ============================== */
+    .drawer-scrim { position: fixed; inset: 0; background: rgba(16, 32, 38, 0.34); z-index: 300; opacity: 0; pointer-events: none; transition: opacity 160ms ease; }
+    .drawer-scrim.open { opacity: 1; pointer-events: auto; }
+    .drawer { position: fixed; top: 0; right: 0; height: 100vh; width: 440px; max-width: 92vw; background: var(--bg); border-left: 1px solid var(--border); box-shadow: -8px 0 32px rgba(16,32,38,0.12); z-index: 301; transform: translateX(100%); transition: transform 200ms cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { flex-shrink: 0; padding: var(--s5) var(--s6) var(--s4); border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s3); }
+    .drawer-head .dh-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
+    .drawer-head .dh-title { font-size: var(--text-lg); font-weight: 600; color: var(--text); margin-top: 4px; display: flex; align-items: center; gap: var(--s2); }
+    .drawer-head .dh-evt { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px; }
+    .drawer-close { width: 30px; height: 30px; border-radius: var(--radius-sm); border: 1px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color 120ms ease, color 120ms ease; }
+    .drawer-close:hover { background: var(--canvas); color: var(--text); }
+    .drawer-close .ico { width: 16px; height: 16px; }
+    .drawer-body { flex: 1; overflow-y: auto; padding: var(--s5) var(--s6); display: flex; flex-direction: column; gap: var(--s2); }
+    .dfield { display: grid; grid-template-columns: 116px 1fr; gap: var(--s3); padding: 9px 0; border-bottom: 1px solid var(--border); align-items: baseline; }
+    .dfield .dk { font-size: var(--text-xs); color: var(--text-muted); font-weight: 500; }
+    .dfield .dv { font-size: var(--text-sm); color: var(--text); min-width: 0; word-break: break-word; }
+    .dfield .dv.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .dfield .copy-id { display: inline-flex; align-items: center; gap: 6px; }
+    .copy-btn { border: 1px solid var(--border-strong); background: var(--bg); border-radius: 4px; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); flex-shrink: 0; transition: background-color 120ms ease, color 120ms ease; }
+    .copy-btn:hover { background: var(--canvas); color: var(--text); }
+    .copy-btn .ico { width: 13px; height: 13px; }
+    .copy-btn.copied { color: var(--approved); border-color: color-mix(in srgb, var(--approved) 40%, var(--border-strong)); }
+    .drawer-foot { flex-shrink: 0; padding: var(--s4) var(--s6); border-top: 1px solid var(--border); background: var(--canvas); }
+    .related-link { display: inline-flex; align-items: center; gap: 7px; font-size: var(--text-sm); font-weight: 500; color: var(--primary); cursor: pointer; }
+    .related-link:hover { color: var(--primary-hover); text-decoration: underline; }
+    .related-link .ico { width: 15px; height: 15px; }
+    .dv .change-pair { font-family: var(--font-mono); font-size: var(--text-sm); display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .dv .change-pair .old { color: var(--text-muted); }
+    .dv .change-pair .arr { width: 12px; height: 12px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item" href="QC Manager Dashboard.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item" href="Batch Pipeline.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">89</span>
+        </a>
+        <a class="nav-item" href="Product Master Editor.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Masters</span>
+        </a>
+        <a class="nav-item" href="Instrument Master.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+        <a class="nav-item active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
+          <span class="label">Audit log</span>
+        </a>
+      </nav>
+      <div class="sidebar-user" role="button" aria-label="Account menu">
+        <span class="avatar">RP</span>
+        <div class="who"><span class="name">Rohan Patel</span><span class="role">Super Admin</span></div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current">Audit Log</span>
+      </nav>
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">3</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">RP</span><span>R. Patel</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+      <div class="main-inner">
+
+        <!-- Page header -->
+        <div class="page-head">
+          <div class="ph-left">
+            <h1 class="ph-title">Audit Log</h1>
+            <p class="ph-sub">All system activity<span class="sep">·</span>append-only<span class="sep">·</span>retained indefinitely</p>
+          </div>
+          <button class="btn btn--outline" id="exportBtn">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+            Export CSV
+          </button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-card">
+          <div class="filter-grid">
+            <div class="ff ff--date">
+              <span class="flabel">Date range</span>
+              <div class="ctrl" role="button" tabindex="0">
+                <svg class="cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+                <span class="val">Last 7 days</span>
+              </div>
+            </div>
+            <div class="ff">
+              <span class="flabel">User</span>
+              <div class="select-wrap">
+                <select class="ctrl" id="fUser">
+                  <option value="all">All users</option>
+                  <option>Rajesh Kumar</option>
+                  <option>Kavya Patel</option>
+                  <option>Priya Mehta</option>
+                  <option>Anand Joshi</option>
+                  <option>Sanjay Reddy</option>
+                </select>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+              </div>
+            </div>
+            <div class="ff">
+              <span class="flabel">Role</span>
+              <div class="select-wrap">
+                <select class="ctrl" id="fRole">
+                  <option value="all">All roles</option>
+                  <option>Super Admin</option>
+                  <option>QC Executive</option>
+                  <option>QC Manager</option>
+                  <option>QA Executive</option>
+                  <option>QA Manager</option>
+                </select>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+              </div>
+            </div>
+            <div class="ff">
+              <span class="flabel">Department</span>
+              <div class="select-wrap">
+                <select class="ctrl" id="fDept">
+                  <option value="all">All</option>
+                  <option>QC</option>
+                  <option>QA</option>
+                </select>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+              </div>
+            </div>
+            <div class="ff">
+              <span class="flabel">Entity type</span>
+              <div class="select-wrap">
+                <select class="ctrl" id="fEntity">
+                  <option value="all">All types</option>
+                  <option>Document</option>
+                  <option>Batch</option>
+                  <option>Master</option>
+                  <option>User</option>
+                  <option>Instrument</option>
+                  <option>Reagent</option>
+                  <option>Session</option>
+                </select>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+              </div>
+            </div>
+            <div class="ff ff--search">
+              <span class="flabel">Document no.</span>
+              <input class="ctrl" type="text" id="fDoc" placeholder="e.g. SPEC/FG00132" />
+            </div>
+            <div class="ff">
+              <span class="flabel">Action</span>
+              <div class="select-wrap">
+                <select class="ctrl" id="fAction">
+                  <option value="all">All actions</option>
+                  <option>Login</option>
+                  <option>Create</option>
+                  <option>Submit</option>
+                  <option>Approve</option>
+                  <option>Sign</option>
+                  <option>Reject</option>
+                  <option>Issue</option>
+                  <option>OOS Ack</option>
+                  <option>Expired Ack</option>
+                </select>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+              </div>
+            </div>
+            <div class="ff ff--freetext">
+              <span class="flabel">Search</span>
+              <div class="search">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+                <input class="ctrl" type="text" id="fText" placeholder="Search action, comment, field…" />
+              </div>
+            </div>
+            <div class="filter-actions">
+              <button class="reset-link" id="resetBtn">Reset</button>
+              <button class="btn btn--primary" id="applyBtn">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" /></svg>
+                Apply Filters
+              </button>
+            </div>
+          </div>
+
+          <div class="stat-line">
+            <span class="count" id="eventCount">Showing 247 events</span>
+            <span class="sep">·</span>
+            <span class="applied" id="appliedFilters">Filters: <b>last 7 days</b> · <b>all users</b> · <b>all actions</b></span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="audit" id="auditTable">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User</th>
+                  <th>Dept</th>
+                  <th>Action</th>
+                  <th>Entity</th>
+                  <th>Field</th>
+                  <th>Old → New</th>
+                  <th>Comment</th>
+                  <th>IP</th>
+                  <th>Geo</th>
+                </tr>
+              </thead>
+              <tbody id="auditBody">
+                <!-- rows injected by script -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <span class="pg-info">Showing <span class="mono">1–50</span> of <span class="mono">1,247</span></span>
+            <div class="pg-controls">
+              <button class="pg-btn" disabled aria-label="Previous"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
+              <button class="pg-btn cur">1</button>
+              <button class="pg-btn">2</button>
+              <button class="pg-btn">3</button>
+              <span style="color: var(--text-muted); font-size: var(--text-xs);">…</span>
+              <button class="pg-btn">25</button>
+              <button class="pg-btn" aria-label="Next"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
+              <span class="pg-jump">Jump to <input type="text" inputmode="numeric" value="1" aria-label="Jump to page" /></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Immutability note -->
+        <p class="immut-note">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+          <span><b>Audit log entries cannot be edited or deleted.</b> This is enforced at the database layer per ICH Q7.</span>
+        </p>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ============================== DETAIL DRAWER ============================== -->
+  <div class="drawer-scrim" id="drawerScrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Event detail">
+    <div class="drawer-head">
+      <div>
+        <span class="dh-eyebrow">Audit event</span>
+        <div class="dh-title"><span id="dActionPill"></span></div>
+        <div class="dh-evt" id="dEvtId">EVT-0000</div>
+      </div>
+      <button class="drawer-close" id="drawerClose" aria-label="Close"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <!-- fields injected -->
+    </div>
+    <div class="drawer-foot">
+      <a class="related-link" id="relatedLink">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+        View related events for this entity
+      </a>
+    </div>
+  </aside>
+
+  <script>
+    (function () {
+      // ---------- Event data (shared demo catalog) ----------
+      var EVENTS = typeof getAuditLog === 'function' ? getAuditLog() : [];
+
+      var ACTION_CLASS = { 'Reject':'rejected', 'Sign':'signed' };
+      function actionPill(a) {
+        var cls = ACTION_CLASS[a] || '';
+        return '<span class="action-pill ' + cls + '">' + a.toUpperCase() + '</span>';
+      }
+      function deptCell(d) {
+        if (d === 'QC') return '<span class="dept-badge dept-badge--qc">QC</span>';
+        if (d === 'QA') return '<span class="dept-badge dept-badge--qa">QA</span>';
+        return '<span class="dept-none">—</span>';
+      }
+      function etypePrefix(t) {
+        var m = { Document:'DOC', Batch:'BATCH', Master:'MSTR', User:'USER', Instrument:'INST', Reagent:'REA', Session:'SESS' };
+        return m[t] || t.toUpperCase();
+      }
+      function changeCell(e) {
+        if (!e.old && !e.neu) return '<span class="none">—</span>';
+        var oldp = e.old ? '<span class="old">' + e.old + '</span>' : '<span class="old">—</span>';
+        return oldp + '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6"/></svg><span class="new">' + (e.neu || '—') + '</span>';
+      }
+      function geoCell(g) {
+        var denied = g === 'Permission Denied';
+        var pin = denied
+          ? '<svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/><path d="m2 2 20 20"/></svg>'
+          : '<svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+        return '<span class="c-geo' + (denied ? ' denied' : '') + '">' + pin + g + '</span>';
+      }
+
+      var body = document.getElementById('auditBody');
+      function render(list) {
+        body.innerHTML = list.map(function (e, i) {
+          return '<tr data-i="' + EVENTS.indexOf(e) + '">' +
+            '<td><span class="c-ts"><span class="d">' + e.ts + '</span><span class="t">' + e.tt + ' IST</span></span></td>' +
+            '<td><span class="c-user"><span class="nm">' + e.user + '</span><span class="rl">' + e.role + '</span></span></td>' +
+            '<td>' + deptCell(e.dept) + '</td>' +
+            '<td>' + actionPill(e.action) + '</td>' +
+            '<td><span class="c-entity">' + (e.entity === '—' ? '<span class="etype">—</span>' : '<span class="etype">' + etypePrefix(e.etype) + ' · </span>' + e.entity) + '</span></td>' +
+            '<td><span class="c-field">' + e.field + '</span></td>' +
+            '<td><span class="c-change">' + changeCell(e) + '</span></td>' +
+            '<td><span class="c-comment" title="' + e.comment.replace(/"/g,'&quot;') + '">' + (e.comment || '—') + '</span></td>' +
+            '<td><span class="c-ip">' + e.ip + '</span></td>' +
+            '<td>' + geoCell(e.geo) + '</td>' +
+          '</tr>';
+        }).join('');
+      }
+      render(EVENTS);
+
+      // ---------- Filtering ----------
+      var fUser = document.getElementById('fUser'), fRole = document.getElementById('fRole'),
+          fDept = document.getElementById('fDept'), fEntity = document.getElementById('fEntity'),
+          fDoc = document.getElementById('fDoc'), fAction = document.getElementById('fAction'),
+          fText = document.getElementById('fText');
+      var eventCount = document.getElementById('eventCount');
+      var appliedFilters = document.getElementById('appliedFilters');
+      if (eventCount) eventCount.textContent = 'Showing ' + EVENTS.length + ' event' + (EVENTS.length === 1 ? '' : 's');
+
+      function apply() {
+        var u = fUser.value, r = fRole.value, d = fDept.value, et = fEntity.value,
+            doc = fDoc.value.trim().toLowerCase(), ac = fAction.value, q = fText.value.trim().toLowerCase();
+        var filtered = EVENTS.filter(function (e) {
+          return (u === 'all' || e.user === u)
+            && (r === 'all' || e.role === r)
+            && (d === 'all' || e.dept === d)
+            && (et === 'all' || e.etype === et)
+            && (!doc || e.entity.toLowerCase().indexOf(doc) > -1)
+            && (ac === 'all' || e.action === ac)
+            && (!q || (e.action + ' ' + e.comment + ' ' + e.field + ' ' + e.neu + ' ' + e.old).toLowerCase().indexOf(q) > -1);
+        });
+        render(filtered);
+        eventCount.textContent = 'Showing ' + filtered.length + ' event' + (filtered.length === 1 ? '' : 's');
+        appliedFilters.innerHTML = 'Filters: <b>last 7 days</b> · <b>' + (u === 'all' ? 'all users' : u) + '</b> · <b>' + (ac === 'all' ? 'all actions' : ac) + '</b>';
+      }
+      document.getElementById('applyBtn').addEventListener('click', apply);
+      document.getElementById('fText').addEventListener('keydown', function (e) { if (e.key === 'Enter') apply(); });
+      document.getElementById('fDoc').addEventListener('keydown', function (e) { if (e.key === 'Enter') apply(); });
+      document.getElementById('resetBtn').addEventListener('click', function () {
+        [fUser, fRole, fDept, fEntity, fAction].forEach(function (s) { s.value = 'all'; });
+        fDoc.value = ''; fText.value = '';
+        render(EVENTS);
+        eventCount.textContent = 'Showing ' + EVENTS.length + ' events';
+        appliedFilters.innerHTML = 'Filters: <b>last 7 days</b> · <b>all users</b> · <b>all actions</b>';
+      });
+
+      // ---------- Detail drawer ----------
+      var drawer = document.getElementById('drawer');
+      var scrim = document.getElementById('drawerScrim');
+      var dBody = document.getElementById('drawerBody');
+      function openDrawer(e) {
+        document.getElementById('dActionPill').innerHTML = actionPill(e.action);
+        document.getElementById('dEvtId').textContent = e.evt;
+        var rows = [
+          ['Timestamp', '<span class="mono">' + e.ts + ' · ' + e.tt + ' IST</span>'],
+          ['User', e.user],
+          ['Role', e.role],
+          ['Department', e.dept ? e.dept : '—'],
+          ['Action', e.action],
+          ['Entity type', e.etype],
+          ['Entity ID', '<span class="copy-id"><span class="mono">' + (e.entity === '—' ? '—' : etypePrefix(e.etype) + ' · ' + e.entity) + '</span>' + (e.entity === '—' ? '' : '<button class="copy-btn" id="copyId" aria-label="Copy entity ID"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>') + '</span>'],
+          ['Field', e.field],
+          ['Change', (e.old || e.neu) ? '<span class="change-pair"><span class="old">' + (e.old || '—') + '</span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6"/></svg><span class="new">' + (e.neu || '—') + '</span></span>' : '—'],
+          ['Comment', e.comment || '—'],
+          ['IP address', '<span class="mono">' + e.ip + '</span>'],
+          ['Geolocation', e.geo]
+        ];
+        dBody.innerHTML = rows.map(function (r) {
+          return '<div class="dfield"><span class="dk">' + r[0] + '</span><span class="dv' + (r[0]==='Comment'?'':'') + '">' + r[1] + '</span></div>';
+        }).join('');
+        var copyId = document.getElementById('copyId');
+        if (copyId) {
+          copyId.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            var txt = etypePrefix(e.etype) + ' · ' + e.entity;
+            if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
+            copyId.classList.add('copied');
+            copyId.innerHTML = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+            setTimeout(function () { copyId.classList.remove('copied'); }, 1400);
+          });
+        }
+        var rel = document.getElementById('relatedLink');
+        if (rel) {
+          if (e.etype === 'Document' && e.entity && e.entity !== '—' && typeof docUrl === 'function') {
+            rel.href = docUrl('Document Timeline.html', e.entity);
+            rel.style.display = '';
+          } else if (e.etype === 'Batch' && e.entity && e.entity !== '—' && typeof batchUrl === 'function') {
+            rel.href = batchUrl(e.entity);
+            rel.style.display = '';
+          } else {
+            rel.style.display = 'none';
+          }
+        }
+        scrim.classList.add('open');
+        drawer.classList.add('open');
+      }
+      function closeDrawer() { scrim.classList.remove('open'); drawer.classList.remove('open'); document.querySelectorAll('#auditBody tr.sel').forEach(function(t){t.classList.remove('sel');}); }
+      body.addEventListener('click', function (ev) {
+        var tr = ev.target.closest('tr');
+        if (!tr) return;
+        document.querySelectorAll('#auditBody tr.sel').forEach(function(t){t.classList.remove('sel');});
+        tr.classList.add('sel');
+        openDrawer(EVENTS[+tr.dataset.i]);
+      });
+      document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+      scrim.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDrawer(); });
+
+      // ---------- Export CSV ----------
+      document.getElementById('exportBtn').addEventListener('click', function () {
+        var visibleIdx = Array.prototype.map.call(document.querySelectorAll('#auditBody tr'), function (t) { return +t.dataset.i; });
+        var cols = ['Event ID','Date','Time','User','Role','Department','Action','Entity Type','Entity','Field','Old Value','New Value','Comment','IP','Geolocation'];
+        var lines = [cols.join(',')];
+        visibleIdx.forEach(function (i) {
+          var e = EVENTS[i];
+          var row = [e.evt, e.ts, e.tt + ' IST', e.user, e.role, e.dept || '-', e.action, e.etype, e.entity, e.field, e.old || '-', e.neu || '-', e.comment, e.ip, e.geo];
+          lines.push(row.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','));
+        });
+        var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'ac-qms-audit-log.csv';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      });
+    })();
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

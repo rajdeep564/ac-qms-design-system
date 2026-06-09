@@ -1,0 +1,602 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="AC-QMS Notifications" viewport="1280x800" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Notifications</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      font-size: var(--text-base);
+      color: var(--text);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+    }
+    button { font-family: inherit; }
+
+    /* ---------- Top-bar slice (context anchor) ---------- */
+    .topbar-slice {
+      height: 56px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 var(--s5);
+      gap: var(--s2);
+      position: relative;
+      z-index: 50;
+    }
+    .env-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 11px; color: var(--text-secondary);
+      font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+
+    .bell-wrap { position: relative; }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: var(--radius-sm);
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--text); cursor: pointer;
+      position: relative;
+    }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge {
+      position: absolute; top: 4px; right: 4px;
+      min-width: 16px; height: 16px; padding: 0 4px;
+      border-radius: 999px;
+      background: var(--oos); color: #fff;
+      font-size: 10px; font-weight: 600;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-variant-numeric: tabular-nums; line-height: 1;
+      border: 1.5px solid var(--bg);
+    }
+    .user-chip {
+      display: inline-flex; align-items: center; gap: var(--s2);
+      padding: 3px 10px 3px 3px;
+      border-radius: 999px; border: 1px solid var(--border);
+      font-size: var(--text-sm); color: var(--text);
+      background: var(--bg); cursor: pointer; white-space: nowrap;
+      margin-left: var(--s2);
+    }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ---------- Dimmed backdrop so the panel reads as a popover, not a blank page ---------- */
+    .scrim {
+      position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+      background: rgba(16, 32, 38, 0.38);
+      z-index: 40;
+      cursor: pointer;
+    }
+
+    /* ---------- The panel ---------- */
+    .panel-host {
+      position: relative;
+      z-index: 50;
+      padding: var(--s2) var(--s5) var(--s10);
+      display: flex; justify-content: flex-end;
+      pointer-events: none;
+    }
+    .panel-host .panel { pointer-events: auto; }
+    .panel {
+      width: 380px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-right: 80px;  /* aligns with where the bell sits */
+      display: flex; flex-direction: column;
+      max-height: 580px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Beak pointing at the bell */
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      right: 28px;
+      width: 10px; height: 10px;
+      background: var(--bg);
+      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      transform: rotate(45deg);
+    }
+
+    /* ---------- Header ---------- */
+    .p-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--s4) var(--s4);
+      border-bottom: 1px solid var(--border);
+      gap: var(--s3);
+    }
+    .p-header .title {
+      font-size: var(--text-md);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .p-header .title .count {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 6px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    .p-header .link {
+      font-size: var(--text-xs);
+      color: var(--primary);
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      background: none; border: none; padding: 0;
+    }
+    .p-header .link:hover { color: var(--primary-hover); text-decoration: underline; }
+
+    /* ---------- Tabs ---------- */
+    .p-tabs {
+      display: flex;
+      padding: 0 var(--s4);
+      border-bottom: 1px solid var(--border);
+      gap: var(--s5);
+    }
+    .p-tab {
+      position: relative;
+      background: none; border: none; padding: var(--s3) 0;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 120ms ease;
+    }
+    .p-tab:hover { color: var(--text); }
+    .p-tab.active {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .p-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--primary);
+    }
+    .p-tab .badge-count {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: var(--canvas);
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .p-tab.active .badge-count {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    /* ---------- List ---------- */
+    .p-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex; flex-direction: column;
+    }
+
+    /* Day group label */
+    .day-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: var(--s3) var(--s4) var(--s2);
+      background: var(--canvas);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Row */
+    .n-row {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: var(--s3);
+      padding: var(--s3) var(--s4);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: background-color 120ms ease;
+    }
+    .n-row:hover { background: var(--canvas); }
+    .n-row:last-child { border-bottom: none; }
+
+    /* Unread treatment: very subtle primary-soft tint */
+    .n-row.unread { background: var(--primary-soft); }
+    .n-row.unread:hover { background: var(--primary-soft); filter: brightness(0.985); }
+
+    /* Category dot — muted neutrals only.
+       Filled circle = pending action (your turn).
+       Hollow ring   = informational (system / FYI). */
+    .n-row .cat-dot {
+      width: 8px; height: 8px;
+      margin-top: 6px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .n-row.cat-action .cat-dot {
+      background: var(--text-secondary);
+    }
+    .n-row.cat-info .cat-dot {
+      background: transparent;
+      border: 1.5px solid var(--text-muted);
+      width: 9px; height: 9px;
+      margin-top: 5.5px;
+    }
+
+    .n-row .body {
+      display: flex; flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .n-row .head-line {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      gap: var(--s2);
+    }
+    .n-row .title-text {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.35;
+      letter-spacing: -0.005em;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .n-row.unread .title-text { font-weight: 600; }
+    .n-row .title-text .doc {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .n-row .ts {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .n-row .msg {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      line-height: 1.45;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .n-row .msg .who { color: var(--text); font-weight: 500; }
+
+    /* Unread indicator dot — small primary circle, top right */
+    .n-row .unread-mark {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 6px; height: 6px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    /* ---------- Footer ---------- */
+    .p-footer {
+      padding: var(--s3) var(--s4);
+      border-top: 1px solid var(--border);
+      background: var(--canvas);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--s2);
+    }
+    .p-footer .link {
+      font-size: var(--text-xs);
+      color: var(--primary);
+      font-weight: 500;
+      cursor: pointer;
+      background: none; border: none; padding: 0;
+    }
+    .p-footer .link:hover { color: var(--primary-hover); text-decoration: underline; }
+    .p-footer .pref {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer;
+    }
+    .p-footer .pref:hover { color: var(--text-secondary); }
+    .p-footer .pref svg { width: 12px; height: 12px; }
+
+    /* ---------- Backdrop dim (just a vibe — shows panel is "open") ---------- */
+    .dim {
+      position: fixed; inset: 0; pointer-events: none;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <!-- Top-bar slice: anchors the bell so the panel reads as a real popover -->
+  <div class="topbar-slice">
+    <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+    <div class="topbar-divider"></div>
+
+    <div class="bell-wrap">
+      <button class="icon-btn" aria-label="Notifications (open)">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+        <span class="badge">5</span>
+      </button>
+    </div>
+
+    <button class="user-chip" aria-label="Account">
+      <span class="avatar">RP</span>
+      <span>R. Patel</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Dimmed backdrop — click to dismiss; makes the panel read as a popover -->
+  <div class="scrim" id="scrim"></div>
+
+  <!-- The panel itself -->
+  <div class="panel-host">
+    <div class="panel" role="dialog" aria-label="Notifications">
+
+      <!-- Header -->
+      <header class="p-header">
+        <div class="title">Notifications<span class="count">5 unread</span></div>
+        <button class="link">Mark all as read</button>
+      </header>
+
+      <!-- Tabs -->
+      <nav class="p-tabs" role="tablist">
+        <button class="p-tab active" role="tab" aria-selected="true">
+          All <span class="badge-count">12</span>
+        </button>
+        <button class="p-tab" role="tab">
+          Pending action <span class="badge-count">4</span>
+        </button>
+        <button class="p-tab" role="tab">
+          Informational <span class="badge-count">8</span>
+        </button>
+      </nav>
+
+      <!-- List -->
+      <div class="p-list" id="notificationList">
+
+        <span class="day-label">Today · 28-May-2026</span>
+
+        <a class="n-row unread cat-action" tabindex="0" style="display:none">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Approval pending: <span class="doc">SPEC/FG00132/01</span></span>
+              <span class="ts">2 h ago</span>
+            </div>
+            <span class="msg"><span class="who">S. Kulkarni (QC)</span> submitted for QA review</span>
+          </div>
+          <span class="unread-mark" aria-label="Unread"></span>
+        </a>
+
+        <a class="n-row unread cat-action" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">OOS opened: <span class="doc">OOS-2026-0089</span></span>
+              <span class="ts">5 h ago</span>
+            </div>
+            <span class="msg">Dissolution 72 % vs NLT 80 % on <span class="who">BR-2026-04781</span></span>
+          </div>
+          <span class="unread-mark"></span>
+        </a>
+
+        <a class="n-row unread cat-action" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Signature required: <span class="doc">DEV-2026-0156 r2</span></span>
+              <span class="ts">6 h ago</span>
+            </div>
+            <span class="msg"><span class="who">M. Joshi (QA)</span> requested QA head sign-off</span>
+          </div>
+          <span class="unread-mark"></span>
+        </a>
+
+        <a class="n-row unread cat-info" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Mentioned: <span class="doc">BR-2026-04781 r1</span></span>
+              <span class="ts">8 h ago</span>
+            </div>
+            <span class="msg"><span class="who">A. Nair</span> mentioned you in a review comment</span>
+          </div>
+          <span class="unread-mark"></span>
+        </a>
+
+        <a class="n-row unread cat-info" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Issued: <span class="doc">SPEC-EXC-0078 r5</span></span>
+              <span class="ts">10 h ago</span>
+            </div>
+            <span class="msg">Now effective for incoming materials inspection</span>
+          </div>
+          <span class="unread-mark"></span>
+        </a>
+
+        <span class="day-label">Yesterday · 27-May-2026</span>
+
+        <a class="n-row cat-action" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Approval pending: <span class="doc">SOP-LAB-0034 r7</span></span>
+              <span class="ts">Yesterday</span>
+            </div>
+            <span class="msg"><span class="who">A. Nair (QC)</span> submitted HPLC method validation</span>
+          </div>
+        </a>
+
+        <a class="n-row cat-info" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Calibration overdue: <span class="doc">INST-HPLC-04</span></span>
+              <span class="ts">Yesterday</span>
+            </div>
+            <span class="msg">Next calibration was due 26-May-2026 · in-use locked</span>
+          </div>
+        </a>
+
+        <a class="n-row cat-info" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">QC approved: <span class="doc">SPEC-API-0142 r3</span></span>
+              <span class="ts">Yesterday</span>
+            </div>
+            <span class="msg"><span class="who">A. Nair (QC)</span> marked Reviewed · awaiting QA</span>
+          </div>
+        </a>
+
+        <span class="day-label">Earlier this week</span>
+
+        <a class="n-row cat-info" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Released: <span class="doc">BR-2026-04780</span></span>
+              <span class="ts">2 d ago</span>
+            </div>
+            <span class="msg">Lot A4780 — Paracetamol 500 mg released by QA head</span>
+          </div>
+        </a>
+
+        <a class="n-row cat-info" tabindex="0">
+          <span class="cat-dot"></span>
+          <div class="body">
+            <div class="head-line">
+              <span class="title-text">Reagent expiry: <span class="doc">REA-2026-0412</span></span>
+              <span class="ts">3 d ago</span>
+            </div>
+            <span class="msg">Sodium hydroxide 0.1 N expires in 14 days</span>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- Footer -->
+      <footer class="p-footer">
+        <button class="link">View all notifications</button>
+        <button class="pref" aria-label="Notification preferences">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          Preferences
+        </button>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var user = getCurrentUser();
+      if (!user) return;
+      var notifs = getNotificationsForUser(user.username);
+      renderNotificationList(document.getElementById('notificationList'), notifs);
+      var unread = notifs.filter(function (n) { return n.unread; }).length;
+      var actionCount = notifs.filter(function (n) { return n.category === 'action'; }).length;
+      var infoCount = notifs.filter(function (n) { return n.category === 'info'; }).length;
+      var titleCount = document.querySelector('.p-header .count');
+      if (titleCount) titleCount.textContent = unread + ' unread';
+      var tabs = document.querySelectorAll('.p-tab .badge-count');
+      if (tabs[0]) tabs[0].textContent = String(notifs.length);
+      if (tabs[1]) tabs[1].textContent = String(actionCount);
+      if (tabs[2]) tabs[2].textContent = String(infoCount);
+
+      document.querySelectorAll('.p-tab').forEach(function (tab, idx) {
+        tab.addEventListener('click', function () {
+          document.querySelectorAll('.p-tab').forEach(function (t) {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          document.querySelectorAll('#notificationList .n-row').forEach(function (row) {
+            if (idx === 0) row.style.display = '';
+            else if (idx === 1) row.style.display = row.classList.contains('cat-action') ? '' : 'none';
+            else row.style.display = row.classList.contains('cat-info') ? '' : 'none';
+          });
+        });
+      });
+
+      var markAll = document.querySelector('.p-header .link');
+      if (markAll) {
+        markAll.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelectorAll('#notificationList .n-row.unread').forEach(function (row) {
+            row.classList.remove('unread');
+            var mark = row.querySelector('.unread-mark');
+            if (mark) mark.remove();
+          });
+          if (titleCount) titleCount.textContent = '0 unread';
+        });
+      }
+    });
+    // Bell (panel open state) closes back to the prior screen if available.
+    var bell = document.querySelector('.bell-wrap .icon-btn');
+    if (bell) bell.addEventListener('click', function () { if (history.length > 1) history.back(); });
+
+    // Click the dimmed backdrop (or press Esc) to dismiss the panel.
+    var scrim = document.getElementById('scrim');
+    function dismiss() {
+      if (history.length > 1) history.back();
+      else {
+        var u = getCurrentUser();
+        location.href = u ? getDashboardForUser(u) : 'index.html';
+      }
+    }
+    if (scrim) scrim.addEventListener('click', dismiss);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') dismiss(); });
+  </script>
+
+</body>
+</html>

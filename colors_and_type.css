@@ -1,0 +1,156 @@
+/* ============================================================
+   AC-QMS DESIGN TOKENS (Clinical)
+   Aditya Chemicals — Quality Management System
+   ============================================================
+   Visual language: clean, clinical, pharma-regulated.
+   Color is FUNCTIONAL ONLY — department, status, or danger.
+   White cards on near-white canvas, hairline borders, no shadows.
+   ============================================================ */
+
+:root {
+  /* ---------- Brand ----------
+     Single restrained teal, used sparingly for primary actions only.
+     The Aditya Chemicals corporate logo (purple) is brand identity;
+     in-product UI never uses the corporate purple as an accent. */
+  --primary:        #0F5560;  /* deep muted teal — primary buttons, active nav */
+  --primary-hover:  #0A434C;
+  --primary-soft:   #EAF1F2;  /* faint teal tint for selected rows / active bg */
+
+  /* ---------- Departments ----------
+     The ONLY standing identity colors. Kept muted, badge-only. */
+  --qc:             #2E7D32;  /* QC green */
+  --qc-soft:        #EDF5EE;
+  --qa:             #1565C0;  /* QA blue  */
+  --qa-soft:        #EAF1FB;
+
+  /* ---------- Status ----------
+     Desaturated. Communicate state, not excitement.
+     Pills: soft tinted background + solid colored text. */
+  --draft:          #6B7280;  --draft-soft:     #F3F4F6;
+  --submitted:      #92710A;  --submitted-soft: #FAF6EC;
+  --approved:       #2E7D32;  --approved-soft:  #EDF5EE;
+  --signed:         #1565C0;  --signed-soft:    #EAF1FB;
+  --issued:         #0F5560;  --issued-soft:    #EAF1F2;
+  --oos:            #B42318;  --oos-soft:       #FBEAE8;  /* danger only */
+
+  /* ---------- Neutrals (the real palette) ---------- */
+  --bg:             #FFFFFF;  /* cards, inputs, modals */
+  --canvas:         #FAFBFC;  /* page background behind cards */
+  --border:         #E4E7EC;  /* hairlines, dividers, input borders */
+  --border-strong:  #D0D5DD;
+  --text:           #1D2939;  /* primary text */
+  --text-secondary: #475467;  /* labels, secondary */
+  --text-muted:     #98A2B3;  /* placeholders, meta */
+
+  /* ---------- Type ----------
+     One neutral family. Base 14px — clinical tools run compact. */
+  --font: 'Inter', system-ui, 'Segoe UI', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --text-xs:   12px;
+  --text-sm:   13px;
+  --text-base: 14px;
+  --text-md:   16px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.45;
+  --leading-loose:  1.6;
+
+  /* ---------- Spacing (strict 4/8px grid) ---------- */
+  --s1:  4px;
+  --s2:  8px;
+  --s3:  12px;
+  --s4:  16px;
+  --s5:  20px;
+  --s6:  24px;
+  --s8:  32px;
+  --s10: 40px;
+
+  /* ---------- Radius & elevation ----------
+     Minimal — no soft puffy cards. */
+  --radius:    6px;
+  --radius-sm: 4px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow:    0 1px 3px rgba(16, 24, 40, 0.06);  /* max — no big drops */
+}
+
+/* ============================================================
+   Semantic type classes
+   Hierarchy comes from weight + spacing, NOT color or size jumps.
+   ============================================================ */
+
+html, body {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.t-page-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.t-section-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+
+.t-card-title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+
+.t-body {
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  color: var(--text);
+}
+
+.t-secondary {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.t-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+.t-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.t-numeric {
+  font-variant-numeric: tabular-nums;
+}

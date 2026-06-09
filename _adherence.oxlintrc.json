@@ -1,0 +1,172 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "notifications-overlay.js",
+              "ui_kits/ac_qms/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Inter|JetBrains Mono))/i]",
+        "message": "Font not provided by the design system. Available: Inter, JetBrains Mono."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {},
+    "tokens": [
+      "--approved",
+      "--approved-soft",
+      "--bg",
+      "--border",
+      "--border-strong",
+      "--canvas",
+      "--draft",
+      "--draft-soft",
+      "--font",
+      "--font-mono",
+      "--issued",
+      "--issued-soft",
+      "--leading-loose",
+      "--leading-normal",
+      "--leading-tight",
+      "--oos",
+      "--oos-soft",
+      "--primary",
+      "--primary-hover",
+      "--primary-soft",
+      "--qa",
+      "--qa-soft",
+      "--qc",
+      "--qc-soft",
+      "--radius",
+      "--radius-sm",
+      "--s1",
+      "--s10",
+      "--s2",
+      "--s3",
+      "--s4",
+      "--s5",
+      "--s6",
+      "--s8",
+      "--shadow",
+      "--shadow-sm",
+      "--signed",
+      "--signed-soft",
+      "--submitted",
+      "--submitted-soft",
+      "--text",
+      "--text-2xl",
+      "--text-base",
+      "--text-lg",
+      "--text-md",
+      "--text-muted",
+      "--text-secondary",
+      "--text-sm",
+      "--text-xl",
+      "--text-xs",
+      "--weight-bold",
+      "--weight-medium",
+      "--weight-regular",
+      "--weight-semibold"
+    ],
+    "tokenKinds": {
+      "--primary": "color",
+      "--primary-hover": "color",
+      "--primary-soft": "color",
+      "--qc": "color",
+      "--qc-soft": "color",
+      "--qa": "color",
+      "--qa-soft": "color",
+      "--draft": "color",
+      "--draft-soft": "color",
+      "--submitted": "color",
+      "--submitted-soft": "color",
+      "--approved": "color",
+      "--approved-soft": "color",
+      "--signed": "color",
+      "--signed-soft": "color",
+      "--issued": "color",
+      "--issued-soft": "color",
+      "--oos": "color",
+      "--oos-soft": "color",
+      "--bg": "color",
+      "--canvas": "color",
+      "--border": "color",
+      "--border-strong": "color",
+      "--text": "font",
+      "--text-secondary": "font",
+      "--text-muted": "font",
+      "--font": "font",
+      "--font-mono": "font",
+      "--text-xs": "font",
+      "--text-sm": "font",
+      "--text-base": "font",
+      "--text-md": "font",
+      "--text-lg": "font",
+      "--text-xl": "font",
+      "--text-2xl": "font",
+      "--weight-regular": "font",
+      "--weight-medium": "font",
+      "--weight-semibold": "font",
+      "--weight-bold": "font",
+      "--leading-tight": "font",
+      "--leading-normal": "font",
+      "--leading-loose": "font",
+      "--s1": "spacing",
+      "--s2": "spacing",
+      "--s3": "spacing",
+      "--s4": "spacing",
+      "--s5": "spacing",
+      "--s6": "spacing",
+      "--s8": "spacing",
+      "--s10": "spacing",
+      "--radius": "radius",
+      "--radius-sm": "radius",
+      "--shadow-sm": "shadow",
+      "--shadow": "shadow"
+    },
+    "fontFamilies": [
+      "Inter",
+      "JetBrains Mono"
+    ]
+  }
+}

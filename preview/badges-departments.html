@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Components · Department badges" subtitle="QC / QA as identity, and people attribution" viewport="700x150" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items:stretch; gap: var(--s3); }
+  .row { display:flex; gap: var(--s2); align-items: center; }
+  .lbl { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; font-weight:500; width: 80px; }
+  .person { display:inline-flex; align-items:center; gap: 8px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg); font-size: var(--text-sm); }
+  .avatar { width: 20px; height: 20px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display:inline-flex; align-items:center; justify-content:center; font-size: 10px; font-weight: 600; color: var(--text); }
+</style></head><body>
+<div class="row"><span class="lbl">Department</span>
+  <span class="pill pill--qc">QC</span>
+  <span class="pill pill--qa">QA</span>
+  <span class="secondary" style="font-size:11px">— the only standing identity colors. Badge form only.</span>
+</div>
+<div class="row"><span class="lbl">Attribution</span>
+  <span class="person"><span class="avatar">RP</span> R. Patel <span class="pill pill--qa">QA</span></span>
+  <span class="person"><span class="avatar">SK</span> S. Kulkarni <span class="pill pill--qc">QC</span></span>
+</div>
+</body></html>

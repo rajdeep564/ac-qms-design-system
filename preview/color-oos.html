@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Colors · OOS (danger)" subtitle="Reserved for Out-Of-Specification and destructive only" viewport="700x170" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); gap: var(--s4); }
+  .row { display:flex; gap: var(--s4); align-items: stretch; width:100%; }
+  .swatch { width: 88px; height: 88px; border-radius: var(--radius); background: #B42318; border: 1px solid var(--border); display:flex; align-items:flex-end; padding: 8px; }
+  .swatch .h { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.9); }
+  .body { display:flex; flex-direction:column; gap: var(--s2); flex:1; min-width:0; justify-content: center; }
+  .name { font-weight: 700; font-size: var(--text-md); color: var(--text); }
+  .rule { font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; }
+  .demo { display:flex; align-items:center; gap: var(--s2); padding: 8px var(--s3); background: var(--oos-soft); border-left: 3px solid var(--oos); border-radius: 4px; }
+  .demo b { color: var(--oos); font-weight: 600; font-size: var(--text-sm); }
+  .demo span { color: var(--text); font-size: var(--text-sm); }
+</style></head><body>
+<div class="row">
+  <div class="swatch"><span class="h">#B42318</span></div>
+  <div class="body">
+    <div class="name">OOS — the one strong color</div>
+    <div class="rule">Reserved for Out-Of-Specification results and destructive warnings. Never appears anywhere else.</div>
+    <div class="demo"><b>OOS</b><span>Assay 97.4 % — outside spec NLT 98.0 %.</span></div>
+  </div>
+</div></body></html>

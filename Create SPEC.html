@@ -1,0 +1,651 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="Create SPEC" subtitle="Step 2 · Tests — auto-filled params, locked mandatory, optional toggles" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Create SPEC · GCN/010526</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    :root { --accent: #1A8FA3; --accent-hover: #156F80; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); font-size: var(--text-base); color: var(--text); background: var(--canvas); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; min-height: 100vh; }
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item.active .count { color: var(--primary); }
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role-row { display: flex; align-items: center; gap: 6px; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 14px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); min-width: 0; }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .crumb.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: auto; background: var(--canvas); display: flex; justify-content: center; }
+    .main-inner { width: 100%; max-width: 1280px; padding: var(--s6) var(--s8) var(--s8); display: flex; flex-direction: column; gap: var(--s5); }
+
+    /* ============================== WIZARD HEADER ============================== */
+    .wizard-head { display: flex; flex-direction: column; gap: var(--s5); padding-bottom: var(--s4); border-bottom: 1px solid var(--border); }
+    .wh-title-row { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
+    .wh-title { font-size: var(--text-2xl); font-weight: 600; letter-spacing: -0.01em; color: var(--text); line-height: 1.15; }
+    .wh-title .batch { font-family: var(--font-mono); font-weight: 600; }
+    .wh-sub { font-size: var(--text-sm); color: var(--text-secondary); }
+    .wh-sub .mono { font-family: var(--font-mono); color: var(--text-muted); }
+
+    /* Step indicator */
+    .steps { display: flex; align-items: center; }
+    .step-i { display: flex; align-items: center; gap: var(--s2); }
+    .step-i .num { width: 24px; height: 24px; border-radius: 999px; border: 1.5px solid var(--border-strong); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+    .step-i .num .chk { width: 12px; height: 12px; color: #fff; }
+    .step-i .txt { font-size: var(--text-sm); color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+    .step-i.done .num { background: var(--approved); border-color: var(--approved); color: #fff; }
+    .step-i.done .txt { color: var(--text-secondary); }
+    .step-i.active .num { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .step-i.active .txt { color: var(--primary); font-weight: 600; }
+    .step-sep { flex: 1; height: 1.5px; background: var(--border); margin: 0 var(--s3); min-width: 20px; }
+    .step-sep.done { background: var(--approved); }
+
+    /* ============================== WIZARD BODY ============================== */
+    .wizard-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: var(--s5); align-items: start; }
+    @media (max-width: 1080px) { .wizard-grid { grid-template-columns: 1fr; } .rail { position: static !important; } }
+
+    .list-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s3); }
+    .list-head .title { font-size: var(--text-md); font-weight: 600; color: var(--text); flex-shrink: 0; white-space: nowrap; }
+    .list-head .meta { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; text-align: right; }
+    .list-head .meta .mono { font-family: var(--font-mono); }
+
+    .test-list { display: flex; flex-direction: column; gap: var(--s3); }
+
+    /* ---------- Test card ---------- */
+    .test-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; transition: border-color 120ms ease, opacity 120ms ease; }
+    .test-card.locked { background: var(--canvas); }
+    .test-card.optional.off { background: var(--bg); }
+    .test-card.optional.off .test-head { opacity: 0.62; }
+
+    .test-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s4); padding: var(--s4); }
+    .tc-left { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; }
+    .tc-name-row { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+    .tc-sortno { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; min-width: 18px; }
+    .tc-name { font-size: var(--text-base); font-weight: 500; color: var(--text); }
+    .tc-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-left: 28px; }
+
+    .tbadge { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 7px; border-radius: var(--radius-sm); line-height: 15px; white-space: nowrap; }
+    .tbadge--quant    { color: var(--primary);   background: var(--primary-soft); }
+    .tbadge--qual     { color: var(--submitted); background: var(--submitted-soft); }
+    .tbadge--passfail { color: var(--signed);    background: var(--signed-soft); }
+
+    .pharma { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-secondary); background: var(--bg); border: 1px solid var(--border-strong); border-radius: 3px; padding: 1px 6px; line-height: 14px; white-space: nowrap; }
+    .test-card.locked .pharma { background: var(--bg); }
+
+    .tc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex-shrink: 0; text-align: right; max-width: 320px; }
+    .tc-criteria { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.4; }
+    .test-card.locked .tc-criteria { color: var(--text-secondary); }
+    .tc-criteria .unit { color: var(--text-muted); }
+
+    .tc-controls { display: flex; align-items: center; gap: var(--s3); }
+    .mand { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+    .mand .ico { width: 13px; height: 13px; }
+    .opt-label { font-size: var(--text-xs); color: var(--text-secondary); font-weight: 500; white-space: nowrap; }
+
+    .reset-btn { font-size: var(--text-xs); color: var(--text-secondary); background: none; border: none; cursor: pointer; padding: 0; display: inline-flex; align-items: center; gap: 4px; transition: color 120ms ease; white-space: nowrap; }
+    .reset-btn:hover:not(:disabled) { color: var(--primary); text-decoration: underline; }
+    .reset-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .reset-btn .ico { width: 12px; height: 12px; }
+
+    /* Toggle switch */
+    .switch { width: 36px; height: 20px; border-radius: 999px; background: var(--border-strong); position: relative; cursor: pointer; transition: background-color 120ms ease; flex-shrink: 0; border: none; padding: 0; }
+    .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 999px; background: #fff; transition: left 120ms ease; box-shadow: var(--shadow-sm); }
+    .switch.on { background: var(--primary); }
+    .switch.on::after { left: 18px; }
+
+    /* Sub-tests */
+    .subtests { border-top: 1px solid var(--border); background: var(--bg); padding: var(--s1) var(--s4) var(--s2) var(--s6); display: flex; flex-direction: column; }
+    .test-card.locked .subtests { background: var(--bg); }
+    .subtests-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; padding: var(--s3) 0 var(--s2); }
+    .subtest { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: 9px 0; border-bottom: 1px dashed var(--border); }
+    .subtest:last-child { border-bottom: none; }
+    .st-left { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
+    .st-marker { width: 14px; height: 1px; background: var(--border-strong); flex-shrink: 0; }
+    .st-variant { font-size: var(--text-sm); font-weight: 500; color: var(--text); }
+    .st-criteria { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    /* ============================== RIGHT RAIL ============================== */
+    .rail { position: sticky; top: 0; display: flex; flex-direction: column; gap: var(--s4); }
+
+    .info-note { display: flex; gap: var(--s3); align-items: flex-start; background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s4); }
+    .info-note .ico { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; margin-top: 1px; }
+    .info-note .txt { font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; }
+    .info-note .txt b { color: var(--text); font-weight: 600; }
+
+    .summary-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+    .sum-stat { display: flex; align-items: baseline; gap: var(--s2); }
+    .sum-stat .n { font-size: var(--text-2xl); font-weight: 600; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.01em; }
+    .sum-stat .l { font-size: var(--text-sm); color: var(--text-secondary); }
+    .sum-divider { height: 1px; background: var(--border); }
+    .sum-issues { display: flex; align-items: center; gap: var(--s2); font-size: var(--text-sm); color: var(--text-secondary); }
+    .sum-issues .ok { width: 16px; height: 16px; color: var(--approved); }
+    .sum-detail { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; line-height: 1.6; }
+    .sum-detail b { color: var(--text-secondary); font-weight: 500; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 38px; padding: 0 var(--s4); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-sm); font-weight: 500; line-height: 1; cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; white-space: nowrap; width: 100%; }
+    .btn--primary { background: var(--primary); color: #fff; }
+    .btn--primary:hover { background: var(--primary-hover); }
+    .btn--neutral { background: var(--bg); color: var(--text); border-color: var(--border-strong); }
+    .btn--neutral:hover { background: var(--canvas); }
+    .btn-stack { display: flex; flex-direction: column; gap: var(--s2); }
+
+    .rail-foot { font-size: var(--text-xs); color: var(--text-muted); text-align: center; line-height: 1.5; padding: 0 var(--s2); }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">6</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Product masters</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+      </nav>
+      <div class="sidebar-user" role="button">
+        <span class="avatar">KP</span>
+        <div class="who"><span class="name">Kavya Patel</span><div class="role-row"><span class="role">QC Executive</span><span class="dept-badge dept-badge--qc">QC</span></div></div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb">Batches</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb mono">GCN/010526</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current">Create SPEC</span>
+      </nav>
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">4</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">KP</span><span>K. Patel</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+      <div class="main-inner">
+
+        <!-- ===== Wizard header ===== -->
+        <div class="wizard-head">
+          <div class="wh-title-row">
+            <h1 class="wh-title">Create SPEC — Batch <span class="batch">GCN/010526</span></h1>
+          </div>
+
+          <div class="steps">
+            <div class="step-i done">
+              <span class="num"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <span class="txt">Identity</span>
+            </div>
+            <div class="step-sep done"></div>
+            <div class="step-i active">
+              <span class="num">2</span>
+              <span class="txt">Tests</span>
+            </div>
+            <div class="step-sep"></div>
+            <div class="step-i">
+              <span class="num">3</span>
+              <span class="txt">Customer tab</span>
+            </div>
+            <div class="step-sep"></div>
+            <div class="step-i">
+              <span class="num">4</span>
+              <span class="txt">Review</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Wizard body ===== -->
+        <div class="wizard-grid">
+
+          <!-- LEFT: test parameter list -->
+          <div>
+            <div class="list-head">
+              <span class="title">Test parameters</span>
+              <span class="meta">Auto-filled from Master · <span class="mono">Glycine IP · FG00132 · Revision 00</span></span>
+            </div>
+
+            <div class="test-list">
+
+              <!-- 1. Description -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">01</span><span class="tc-name">Description</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--qual">Qualitative</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">A white, crystalline powder; odourless</span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Solubility -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">02</span><span class="tc-name">Solubility</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--qual">Qualitative</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">Freely soluble in water; practically insoluble in ethanol</span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Identification (sub-tests A/B) -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">03</span><span class="tc-name">Identification</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--passfail">Pass / Fail</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">Complies</span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+                <div class="subtests">
+                  <span class="subtests-label">Sub-tests</span>
+                  <div class="subtest">
+                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">A — By infrared absorption</span><span class="pharma">IP</span></div>
+                    <span class="st-criteria">Corresponds to reference spectrum</span>
+                  </div>
+                  <div class="subtest">
+                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">B — By chemical reaction</span><span class="pharma">IP</span></div>
+                    <span class="st-criteria">Complies</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Appearance of solution -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">04</span><span class="tc-name">Appearance of solution</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--passfail">Pass / Fail</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">Clear and colourless</span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. pH (range, Reset Right Side Limit disabled because locked) -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">05</span><span class="tc-name">pH</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · range</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">5.9 – 6.3</span>
+                    <div class="tc-controls">
+                      <button class="reset-btn" disabled title="Mandatory criteria are locked"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
+                      <span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6. Chlorides (pharmacopoeia variants IP/BP/USP) -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">06</span><span class="tc-name">Chlorides</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · NMT</span><span class="pharma">IP</span><span class="pharma">BP</span><span class="pharma">USP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">NMT 100 <span class="unit">ppm</span></span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+                <div class="subtests">
+                  <span class="subtests-label">Pharmacopoeia variants</span>
+                  <div class="subtest">
+                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">Chlorides</span><span class="pharma">IP</span></div>
+                    <span class="st-criteria">NMT 100 ppm</span>
+                  </div>
+                  <div class="subtest">
+                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">Chlorides</span><span class="pharma">BP</span></div>
+                    <span class="st-criteria">NMT 100 ppm</span>
+                  </div>
+                  <div class="subtest">
+                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">Chlorides</span><span class="pharma">USP</span></div>
+                    <span class="st-criteria">NMT 0.007 %</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7. Heavy metals -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">07</span><span class="tc-name">Heavy metals</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · NMT</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">NMT 10 <span class="unit">ppm</span></span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 8. Sulphated ash -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">08</span><span class="tc-name">Sulphated ash</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · NMT</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">NMT 0.1 <span class="unit">%</span></span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 9. Loss on drying -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">09</span><span class="tc-name">Loss on drying</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · NMT</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">NMT 0.5 <span class="unit">%</span></span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 10. Assay (BETWEEN, Reset Right Side Limit disabled) -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">10</span><span class="tc-name">Assay on dried basis</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · between</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">98.5 – 101.5 <span class="unit">%</span></span>
+                    <div class="tc-controls">
+                      <button class="reset-btn" disabled title="Mandatory criteria are locked"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
+                      <span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 11. Foreign matter -->
+              <div class="test-card locked">
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">11</span><span class="tc-name">Foreign matter</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--qual">Qualitative</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">No foreign matter detected</span>
+                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ===== Customer-optional tests (toggle) ===== -->
+              <div class="list-head" style="margin-top: var(--s4);">
+                <span class="title" style="font-size: var(--text-sm); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;">Customer-optional tests</span>
+                <span class="meta">Activate per customer requirement</span>
+              </div>
+
+              <!-- 12. Sieve analysis -->
+              <div class="test-card optional off" data-optional>
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">12</span><span class="tc-name">Sieve analysis</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · NLT</span><span class="pharma">IP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">NLT 95 <span class="unit">% through #40</span></span>
+                    <div class="tc-controls">
+                      <span class="opt-label">Optional</span>
+                      <button class="switch" role="switch" aria-checked="false" aria-label="Activate Sieve analysis"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 13. Bulk density (Reset Right Side Limit active when on) -->
+              <div class="test-card optional off" data-optional>
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">13</span><span class="tc-name">Bulk density</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · range</span><span class="pharma">USP</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">0.45 – 0.65 <span class="unit">g/mL</span></span>
+                    <div class="tc-controls">
+                      <button class="reset-btn" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
+                      <span class="opt-label">Optional</span>
+                      <button class="switch" role="switch" aria-checked="false" aria-label="Activate Bulk density"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 14. Elemental impurities -->
+              <div class="test-card optional off" data-optional>
+                <div class="test-head">
+                  <div class="tc-left">
+                    <div class="tc-name-row"><span class="tc-sortno">14</span><span class="tc-name">Elemental impurities by AAS</span></div>
+                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative · NMT</span><span class="pharma">ICH Q3D</span></div>
+                  </div>
+                  <div class="tc-right">
+                    <span class="tc-criteria">10 elements · within Q3D limits</span>
+                    <div class="tc-controls">
+                      <span class="opt-label">Optional</span>
+                      <button class="switch" role="switch" aria-checked="false" aria-label="Activate Elemental impurities"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- RIGHT: sticky rail -->
+          <aside class="rail">
+            <div class="info-note">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+              <span class="txt">Mandatory test criteria are <b>locked</b>. To change them, revise the Product Master.</span>
+            </div>
+
+            <div class="summary-card">
+              <div class="sum-stat"><span class="n" id="activeCount">11</span><span class="l">tests active</span></div>
+              <div class="sum-divider"></div>
+              <div class="sum-issues">
+                <svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                <span><b id="issueCount" style="font-weight:600;color:var(--text);">0</b> issues</span>
+              </div>
+              <div class="sum-detail"><b>11</b> mandatory · <b id="optCount">0</b> optional active · 3 outside-lab pending</div>
+              <div class="btn-stack">
+                <button class="btn btn--primary" id="continueBtn">Continue to Customer tab →</button>
+                <button class="btn btn--neutral">Save draft</button>
+              </div>
+            </div>
+
+            <p class="rail-foot">Submission and signature happen on the Review step. SPEC will be numbered <span style="font-family:var(--font-mono);">SPEC/FG00132/01</span> on submit.</p>
+          </aside>
+
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    (function () {
+      var BASE_MANDATORY = 11;
+      var activeEl = document.getElementById('activeCount');
+      var optEl = document.getElementById('optCount');
+
+      function recount() {
+        var on = document.querySelectorAll('.test-card.optional.on').length;
+        activeEl.textContent = BASE_MANDATORY + on;
+        optEl.textContent = on;
+      }
+
+      document.querySelectorAll('.test-card.optional .switch').forEach(function (sw) {
+        sw.addEventListener('click', function () {
+          var card = sw.closest('.test-card');
+          var on = card.classList.toggle('on');
+          card.classList.toggle('off', !on);
+          sw.classList.toggle('on', on);
+          sw.setAttribute('aria-checked', on ? 'true' : 'false');
+          // Enable the Reset right-limit button only when an optional test is active
+          var reset = card.querySelector('.reset-btn');
+          if (reset) reset.disabled = !on;
+          recount();
+        });
+      });
+
+      // Reset Right Side Limit — clears the upper bound (US-4-7 / US-8-6)
+      document.querySelectorAll('.reset-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.disabled) return;
+          var crit = btn.closest('.test-head').querySelector('.tc-criteria');
+          if (!crit) return;
+          var txt = crit.textContent.trim();
+          // "0.45 – 0.65 g/mL"  ->  "NLT 0.45 g/mL"
+          var m = txt.match(/^([\d.]+)\s*[–-]\s*[\d.]+\s*(.*)$/);
+          if (m) crit.innerHTML = 'NLT ' + m[1] + (m[2] ? ' <span class="unit">' + m[2] + '</span>' : '');
+        });
+      });
+
+      recount();
+
+      // Prototype routing (connection 4a): the Continue button advances the wizard
+      // to the Review step. For this prototype it routes straight to Review, which
+      // then handles Submit SPEC → Sign Modal (connection 4b).
+      var continueBtn = document.getElementById('continueBtn');
+      if (continueBtn) continueBtn.addEventListener('click', function () {
+        var doc = typeof getDocFromUrl === 'function' ? getDocFromUrl() : null;
+        location.href = doc ? docUrl('Create SPEC - Review Step.html', doc.docNo) : 'Create SPEC - Review Step.html';
+      });
+    })();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var param = new URLSearchParams(location.search).get('docNo');
+      var doc = getDocFromUrl();
+      if (param && !doc) {
+        showParamNotFound('SPEC document not found. Check the document number in the URL.');
+        return;
+      }
+      populateCreateSpec(doc);
+      if (!doc) return;
+      var batch = getBatch(doc.batchNo);
+      if (!batch) return;
+      var ah = document.querySelector('.ah-product, .page-context');
+      if (ah) ah.textContent = batch.product + ' · ' + batch.batchNo;
+    });
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

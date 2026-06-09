@@ -1,0 +1,146 @@
+/* Sample data for the AC-QMS prototype — realistic pharma QMS records.
+   Plain JS — loaded before the React app so screens can read window.QMS_DATA. */
+
+window.QMS_DATA = {
+  user: {
+    name: 'Rohan Patel',
+    initials: 'RP',
+    role: 'QA Reviewer',
+    department: 'QA',
+  },
+
+  kpis: [
+    { label: 'Awaiting my review', value: 6,   delta: '+2 since yesterday' },
+    { label: 'Open deviations',    value: 14,  delta: '4 high priority' },
+    { label: 'OOS investigations', value: 3,   delta: '1 over SLA', oos: true },
+    { label: 'Batches in process', value: 28,  delta: '12 awaiting release' },
+  ],
+
+  documents: [
+    {
+      id: 'SPEC-API-0142',
+      rev: 'r3',
+      title: 'Acetaminophen API — release specification',
+      type: 'Specification',
+      dept: 'QC',
+      status: 'approved',
+      owner: 'S. Kulkarni',
+      modified: '24-May-2026 14:02 IST',
+    },
+    {
+      id: 'BR-2026-04781',
+      rev: 'r1',
+      title: 'Batch record · Lot A4781 — Paracetamol 500 mg',
+      type: 'Batch record',
+      dept: 'QA',
+      status: 'signed',
+      owner: 'R. Patel',
+      modified: '24-May-2026 11:48 IST',
+    },
+    {
+      id: 'OOS-2026-0089',
+      rev: 'r0',
+      title: 'Dissolution outside specification — Lot A4781',
+      type: 'OOS investigation',
+      dept: 'QC',
+      status: 'oos',
+      owner: 'S. Kulkarni',
+      modified: '25-May-2026 09:14 IST',
+    },
+    {
+      id: 'SOP-LAB-0034',
+      rev: 'r7',
+      title: 'HPLC method validation — Paracetamol assay',
+      type: 'SOP',
+      dept: 'QC',
+      status: 'submitted',
+      owner: 'A. Nair',
+      modified: '23-May-2026 16:21 IST',
+    },
+    {
+      id: 'CC-2026-0212',
+      rev: 'r0',
+      title: 'Change control — supplier qualification, Excipient E-12',
+      type: 'Change control',
+      dept: 'QA',
+      status: 'draft',
+      owner: 'R. Patel',
+      modified: '25-May-2026 08:02 IST',
+    },
+    {
+      id: 'DEV-2026-0156',
+      rev: 'r2',
+      title: 'Deviation — pH meter calibration overdue',
+      type: 'Deviation',
+      dept: 'QA',
+      status: 'submitted',
+      owner: 'M. Joshi',
+      modified: '22-May-2026 17:39 IST',
+    },
+    {
+      id: 'SPEC-EXC-0078',
+      rev: 'r5',
+      title: 'Excipient E-12 — incoming material spec',
+      type: 'Specification',
+      dept: 'QC',
+      status: 'issued',
+      owner: 'S. Kulkarni',
+      modified: '20-May-2026 10:11 IST',
+    },
+    {
+      id: 'BR-2026-04780',
+      rev: 'r1',
+      title: 'Batch record · Lot A4780 — Paracetamol 500 mg',
+      type: 'Batch record',
+      dept: 'QA',
+      status: 'issued',
+      owner: 'R. Patel',
+      modified: '19-May-2026 15:30 IST',
+    },
+  ],
+
+  // Detail of SPEC-API-0142
+  spec: {
+    id: 'SPEC-API-0142',
+    rev: 'r3',
+    title: 'Acetaminophen API — release specification',
+    purpose: 'Release specification and acceptance criteria for Acetaminophen Active Pharmaceutical Ingredient (API), in accordance with USP <711> and in-house method ACI-API-021.',
+    parameters: [
+      { id: 'AP-01', parameter: 'Description',          method: 'Visual',     spec: 'White crystalline powder', result: 'White crystalline powder', evaluation: 'in_spec' },
+      { id: 'AP-02', parameter: 'Identification (IR)',  method: 'USP <197M>', spec: 'Conforms to RS',           result: 'Conforms',                evaluation: 'in_spec' },
+      { id: 'AP-03', parameter: 'Assay',                method: 'HPLC',       spec: 'NLT 98.0 %',               result: '99.74 %',                 evaluation: 'in_spec' },
+      { id: 'AP-04', parameter: 'Related substances',   method: 'HPLC',       spec: 'NMT 0.10 %',               result: '0.04 %',                  evaluation: 'in_spec' },
+      { id: 'AP-05', parameter: 'Loss on drying',       method: 'USP <731>',  spec: 'NMT 0.5 %',                result: '0.21 %',                  evaluation: 'in_spec' },
+      { id: 'AP-06', parameter: 'Residual solvents',    method: 'GC',         spec: 'Meets USP <467>',          result: 'Meets',                   evaluation: 'in_spec' },
+    ],
+    signatures: [
+      { role: 'Prepared by', name: 'S. Kulkarni', dept: 'QC', time: '22-May-2026 10:14 IST' },
+      { role: 'Reviewed by', name: 'A. Nair',     dept: 'QC', time: '23-May-2026 11:02 IST' },
+      { role: 'Approved by', name: 'R. Patel',    dept: 'QA', time: '24-May-2026 14:02 IST' },
+    ],
+    audit: [
+      { time: '24-May-2026 14:02 IST', who: 'R. Patel (QA)',    what: 'Approved revision r3. E-signature bound.' },
+      { time: '24-May-2026 13:50 IST', who: 'R. Patel (QA)',    what: 'Opened r3 for review.' },
+      { time: '23-May-2026 11:02 IST', who: 'A. Nair (QC)',     what: 'Marked Reviewed.' },
+      { time: '22-May-2026 10:14 IST', who: 'S. Kulkarni (QC)', what: 'Submitted r3 — updated related-substances limit.' },
+      { time: '20-May-2026 09:00 IST', who: 'S. Kulkarni (QC)', what: 'Created revision r3 from r2.' },
+    ],
+  },
+
+  // Detail of OOS-2026-0089
+  oos: {
+    id: 'OOS-2026-0089',
+    title: 'Dissolution outside specification — Lot A4781',
+    affectedBatch: 'BR-2026-04781',
+    product: 'Paracetamol 500 mg tablets',
+    parameter: 'Dissolution (Q30 min)',
+    spec: 'NLT 80 %',
+    result: '72 %',
+    discovered: '25-May-2026 09:14 IST',
+    cfr: '21 CFR 211.192',
+    investigators: [
+      { role: 'Lead investigator', name: 'S. Kulkarni', dept: 'QC' },
+      { role: 'QA oversight',      name: 'R. Patel',    dept: 'QA' },
+    ],
+  },
+};

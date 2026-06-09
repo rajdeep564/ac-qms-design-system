@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Components · Buttons" subtitle="One colored button per view. Everything else is neutral." viewport="700x180" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items:stretch; gap: var(--s3); }
+  .row { display:flex; gap: var(--s3); align-items: center; flex-wrap: wrap; }
+  .lbl { font-size: 11px; color: var(--text-secondary); width: 80px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+</style></head><body>
+<div class="row"><span class="lbl">Primary</span>
+  <button class="btn btn--primary">Submit for QA review</button>
+  <button class="btn btn--primary" disabled>Submit</button>
+</div>
+<div class="row"><span class="lbl">Neutral</span>
+  <button class="btn btn--neutral">Cancel</button>
+  <button class="btn btn--neutral">Save draft</button>
+  <button class="btn btn--ghost">View history</button>
+</div>
+<div class="row"><span class="lbl">Danger</span>
+  <button class="btn btn--danger">Reject batch</button>
+  <span class="secondary" style="font-size:11px">Red border + red text on hover only — neutral at rest. Confirms via modal.</span>
+</div>
+</body></html>

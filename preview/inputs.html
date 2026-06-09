@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Components · Inputs" subtitle="Text inputs, default + error states" viewport="700x170" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items:stretch; gap: var(--s3); }
+  .row { display:flex; gap: var(--s4); align-items:flex-end; }
+  .field { flex: 1; min-width: 0; }
+  .help { font-size: 11px; color: var(--text-muted); }
+  .help--error { color: var(--oos); }
+  .input--error { border-color: var(--oos); }
+</style></head><body>
+<div class="row">
+  <div class="field">
+    <span class="field-label">Specification</span>
+    <input class="input" value="SPEC-API-0142 r3" />
+    <span class="help">Document ID, monospace in tables.</span>
+  </div>
+  <div class="field">
+    <span class="field-label">Assay result (%)</span>
+    <input class="input" value="99.74" />
+    <span class="help">NLT 98.0 %</span>
+  </div>
+  <div class="field">
+    <span class="field-label">Lot number</span>
+    <input class="input input--error" value="" placeholder="Required" />
+    <span class="help help--error">Lot number is required.</span>
+  </div>
+</div>
+</body></html>

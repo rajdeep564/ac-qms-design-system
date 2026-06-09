@@ -1,0 +1,680 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="Batch Detail" subtitle="GCN/010326 hub · 4-doc tracker, doc cards, metadata + audit timeline" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Batch GCN/010526</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    :root { --accent: #1A8FA3; --accent-hover: #156F80; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      font-size: var(--text-base);
+      color: var(--text);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; min-height: 100vh; }
+
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item.active .count { color: var(--primary); }
+
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role-row { display: flex; align-items: center; gap: 6px; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 14px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+    .dept-badge--qa { color: var(--qa); background: var(--qa-soft); }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); min-width: 0; }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .crumb.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: auto; background: var(--canvas); display: flex; justify-content: center; }
+    .main-inner { width: 100%; max-width: 1280px; padding: var(--s6) var(--s8) var(--s8); display: flex; flex-direction: column; gap: var(--s5); }
+
+    /* ============================== PAGE HEADER BLOCK ============================== */
+    .batch-header {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: var(--s6) var(--s6) var(--s5);
+      display: flex; flex-direction: column; gap: var(--s5);
+    }
+    .bh-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s5); flex-wrap: wrap; }
+    .bh-left { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .bh-batch {
+      font-family: var(--font-mono);
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .bh-sub { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+    .bh-arn { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .bh-arn .k { text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px; margin-right: 5px; }
+    .bh-divider { width: 1px; height: 14px; background: var(--border-strong); }
+    .bh-product { font-size: var(--text-md); font-weight: 500; color: var(--text); }
+
+    .bh-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--s3); }
+    .bh-dates { display: flex; gap: var(--s5); }
+    .bh-date { display: flex; flex-direction: column; gap: 2px; text-align: right; }
+    .bh-date .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 500; }
+    .bh-date .v { font-size: var(--text-sm); color: var(--text-secondary); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+    /* ---------- Status pills ---------- */
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 16px; white-space: nowrap; }
+    .pill .pico { width: 12px; height: 12px; }
+    .pill--inprogress { color: var(--primary);   background: var(--primary-soft); }
+    .pill--signed     { color: var(--signed);     background: var(--signed-soft); }
+    .pill--approved   { color: var(--approved);   background: var(--approved-soft); }
+    .pill--submitted  { color: var(--submitted);  background: var(--submitted-soft); }
+    .pill--draft      { color: var(--draft);      background: var(--draft-soft); }
+    .pill--locked     { color: var(--text-muted); background: var(--draft-soft); }
+
+    .pill-sm { font-size: 10px; padding: 1px 7px; line-height: 15px; }
+
+    /* ============================== 4-DOC TRACKER (centerpiece) ============================== */
+    .tracker {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      align-items: stretch;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      padding-top: var(--s5);
+    }
+    .tstep { display: flex; flex-direction: column; gap: var(--s4); padding: 0 var(--s3); }
+    .tstep.locked { opacity: 0.55; }
+    .tconn { display: flex; align-items: center; justify-content: center; padding-top: 30px; color: var(--border-strong); }
+    .tconn .ico { width: 20px; height: 20px; }
+
+    .tstep-head { display: flex; flex-direction: column; gap: 4px; }
+    .tstep-title { display: flex; align-items: center; gap: var(--s2); justify-content: space-between; }
+    .tstep-name { font-size: var(--text-sm); font-weight: 600; color: var(--text); letter-spacing: 0.04em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+    .tstep-name .lockico { width: 13px; height: 13px; color: var(--text-muted); }
+    .tstep-doc { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+    /* 3-stage approval indicator */
+    .stages { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); }
+    .stages::before { content: ""; position: absolute; top: 9px; left: 16.66%; right: 16.66%; height: 1.5px; background: var(--border); z-index: 0; }
+    .stage { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-width: 0; }
+    .node {
+      width: 20px; height: 20px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--bg);
+      box-shadow: 0 0 0 3px var(--bg);
+      box-sizing: border-box;
+    }
+    .node .chk { width: 11px; height: 11px; color: #fff; }
+    .node .lk  { width: 10px; height: 10px; color: var(--text-muted); }
+    .node.done-create { background: var(--draft); }
+    .node.done-qc     { background: var(--approved); }
+    .node.done-qa     { background: var(--signed); }
+    .node.await       { background: var(--bg); border: 1.5px solid var(--approved); }
+    .node.await-qa    { background: var(--bg); border: 1.5px solid var(--signed); }
+    .node.pending     { background: var(--bg); border: 1px solid var(--border-strong); }
+    .node.locked      { background: var(--bg); border: 1px solid var(--border-strong); }
+    .stage .slabel { width: 100%; font-size: 9px; font-weight: 500; letter-spacing: 0.03em; color: var(--text-muted); line-height: 1.3; overflow-wrap: break-word; }
+    .stage.is-done .slabel  { color: var(--text-secondary); }
+    .stage.is-await .slabel { color: var(--approved); font-weight: 600; }
+
+    /* ============================== BODY LAYOUT ============================== */
+    .body-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: var(--s5); align-items: start; }
+    .col { display: flex; flex-direction: column; gap: var(--s5); min-width: 0; }
+
+    @media (max-width: 1080px) {
+      .body-grid { grid-template-columns: 1fr; }
+      .tracker { grid-template-columns: 1fr; gap: var(--s5); }
+      .tconn { display: none; }
+    }
+
+    /* ---------- Document cards ---------- */
+    .doc-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: var(--s4) var(--s5);
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--s4);
+      transition: border-color 120ms ease;
+    }
+    .doc-card:not(.locked):hover { border-color: var(--primary); }
+    .doc-card.locked { background: var(--canvas); }
+    .doc-icon {
+      width: 40px; height: 40px; border-radius: var(--radius);
+      background: var(--canvas); border: 1px solid var(--border);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); flex-shrink: 0;
+    }
+    .doc-card.locked .doc-icon { color: var(--text-muted); }
+    .doc-icon .ico { width: 19px; height: 19px; }
+    .doc-main { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .doc-row1 { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+    .doc-no { font-family: var(--font-mono); font-size: var(--text-base); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+    .doc-card.locked .doc-no { color: var(--text-muted); }
+    .doc-action { font-size: var(--text-xs); color: var(--text-secondary); }
+    .doc-action .who { font-weight: 500; color: var(--text-secondary); }
+    .doc-action.muted { color: var(--text-muted); }
+    .doc-link { display: flex; align-items: center; justify-content: flex-end; gap: var(--s4); flex-shrink: 0; }
+    .open-link { font-size: var(--text-sm); font-weight: 500; color: var(--accent); cursor: pointer; white-space: nowrap; transition: color 120ms ease; }
+    .open-link:hover { color: var(--accent-hover); text-decoration: underline; }
+    .timeline-link { font-size: var(--text-sm); font-weight: 500; color: var(--accent); cursor: pointer; white-space: nowrap; transition: color 120ms ease; }
+    .timeline-link:hover { color: var(--accent-hover); text-decoration: underline; }
+    .locked-tag { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+    .locked-tag .ico { width: 13px; height: 13px; }
+
+    /* ---------- Card shell (right column) ---------- */
+    .card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; padding: var(--s4) var(--s5); border-bottom: 1px solid var(--border); }
+    .card-header .title { font-size: var(--text-md); font-weight: 600; color: var(--text); }
+    .card-header .link { font-size: var(--text-xs); color: var(--accent); font-weight: 500; cursor: pointer; }
+    .card-header .link:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* Metadata list */
+    .meta { padding: var(--s2) var(--s5) var(--s4); }
+    .meta-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); padding: var(--s3) 0; border-bottom: 1px solid var(--border); }
+    .meta-row:last-child { border-bottom: none; }
+    .meta-k { font-size: var(--text-sm); color: var(--text-secondary); white-space: nowrap; }
+    .meta-v { font-size: var(--text-sm); color: var(--text); font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+    .meta-v.mono { font-family: var(--font-mono); }
+    .meta-block { padding: var(--s3) 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 5px; }
+    .meta-block .meta-k { margin-bottom: 2px; }
+    .meta-block .longval { font-size: var(--text-sm); color: var(--text); line-height: 1.5; text-wrap: pretty; }
+    .meta-analyst { display: flex; align-items: center; gap: var(--s3); padding-top: var(--s3); }
+    .meta-analyst .avatar { width: 32px; height: 32px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .meta-analyst .who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .meta-analyst .nm { font-size: var(--text-sm); font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .meta-analyst .rl { font-size: var(--text-xs); color: var(--text-secondary); }
+
+    /* Timeline */
+    .timeline { padding: var(--s4) var(--s5); display: flex; flex-direction: column; }
+    .tl-row { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: var(--s3); padding-bottom: var(--s4); }
+    .tl-row:last-child { padding-bottom: 0; }
+    .tl-rail { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--text); margin-top: 5px; flex-shrink: 0; }
+    .tl-line { width: 1px; flex: 1; background: var(--border); margin-top: 3px; }
+    .tl-row:last-child .tl-line { display: none; }
+    .tl-row.a-signed .tl-dot    { background: var(--signed); }
+    .tl-row.a-approved .tl-dot  { background: var(--approved); }
+    .tl-row.a-submitted .tl-dot { background: var(--submitted); }
+    .tl-row.a-issued .tl-dot    { background: var(--issued); }
+    .tl-row.a-neutral .tl-dot   { background: var(--draft); }
+    .tl-content { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-bottom: 2px; }
+    .tl-head { font-size: var(--text-sm); color: var(--text); line-height: 1.4; }
+    .tl-head .who { font-weight: 500; }
+    .tl-head .act { color: var(--text-secondary); }
+    .tl-head .doc { font-family: var(--font-mono); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+    .tl-time { font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark">
+          <span class="name">AC<span class="sep">·</span>QMS</span>
+          <span class="tagline">Quality Management</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">89</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Product masters</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
+          <span class="label">Audit log</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-user" role="button">
+        <span class="avatar">PM</span>
+        <div class="who">
+          <span class="name">Priya Mehta</span>
+          <div class="role-row"><span class="role">QC Manager</span><span class="dept-badge dept-badge--qc">QC</span></div>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb">Batches</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current mono">GCN/010526</span>
+      </nav>
+
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">6</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">PM</span><span>P. Mehta</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+      <div class="main-inner">
+
+        <!-- ===== Batch header block ===== -->
+        <section class="batch-header">
+          <div class="bh-top">
+            <div class="bh-left">
+              <span class="bh-batch">GCN/010526</span>
+              <div class="bh-sub">
+                <span class="bh-arn"><span class="k">ARN</span>2026FG03</span>
+                <span class="bh-divider"></span>
+                <span class="bh-product">Glycine IP</span>
+              </div>
+            </div>
+            <div class="bh-right">
+              <span class="pill pill--inprogress">
+                <svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                AWS in progress
+              </span>
+              <div class="bh-dates">
+                <div class="bh-date"><span class="k">Mfg date</span><span class="v">May 2026</span></div>
+                <div class="bh-date"><span class="k">Expiry</span><span class="v">Apr 2031</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== 4-doc tracker (centerpiece) ===== -->
+          <div class="tracker">
+
+            <!-- SPEC -->
+            <div class="tstep">
+              <div class="tstep-head">
+                <div class="tstep-title">
+                  <span class="tstep-name">SPEC</span>
+                  <span class="pill pill--signed pill-sm">Signed</span>
+                </div>
+                <span class="tstep-doc">SPEC/FG00132/01</span>
+              </div>
+              <div class="stages">
+                <div class="stage is-done">
+                  <span class="node done-create"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">Created</span>
+                </div>
+                <div class="stage is-done">
+                  <span class="node done-qc"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">QC approved</span>
+                </div>
+                <div class="stage is-done">
+                  <span class="node done-qa"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">QA signed</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tconn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <!-- MOA -->
+            <div class="tstep">
+              <div class="tstep-head">
+                <div class="tstep-title">
+                  <span class="tstep-name">MOA</span>
+                  <span class="pill pill--signed pill-sm">Signed</span>
+                </div>
+                <span class="tstep-doc">MOA/FG00132/01</span>
+              </div>
+              <div class="stages">
+                <div class="stage is-done">
+                  <span class="node done-create"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">Created</span>
+                </div>
+                <div class="stage is-done">
+                  <span class="node done-qc"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">QC approved</span>
+                </div>
+                <div class="stage is-done">
+                  <span class="node done-qa"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">QA signed</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tconn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <!-- AWS (current) -->
+            <div class="tstep">
+              <div class="tstep-head">
+                <div class="tstep-title">
+                  <span class="tstep-name">AWS</span>
+                  <span class="pill pill--submitted pill-sm">Submitted</span>
+                </div>
+                <span class="tstep-doc">AWS/FG00132/01</span>
+              </div>
+              <div class="stages">
+                <div class="stage is-done">
+                  <span class="node done-create"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                  <span class="slabel">Created</span>
+                </div>
+                <div class="stage is-await">
+                  <span class="node await"></span>
+                  <span class="slabel">QC approval</span>
+                </div>
+                <div class="stage">
+                  <span class="node pending"></span>
+                  <span class="slabel">QA signature</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tconn"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <!-- COA (locked) -->
+            <div class="tstep locked">
+              <div class="tstep-head">
+                <div class="tstep-title">
+                  <span class="tstep-name">COA <svg class="lockico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span>
+                  <span class="pill pill--locked pill-sm">Locked</span>
+                </div>
+                <span class="tstep-doc">COA/GCN/010526</span>
+              </div>
+              <div class="stages">
+                <div class="stage">
+                  <span class="node locked"><svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span>
+                  <span class="slabel">Auto-generate</span>
+                </div>
+                <div class="stage">
+                  <span class="node locked"></span>
+                  <span class="slabel">Checked</span>
+                </div>
+                <div class="stage">
+                  <span class="node locked"></span>
+                  <span class="slabel">Sign &amp; issue</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== Body: documents (left) + metadata/timeline (right) ===== -->
+        <section class="body-grid">
+
+          <!-- LEFT: document cards -->
+          <div class="col">
+
+            <!-- SPEC -->
+            <div class="doc-card">
+              <span class="doc-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /><path d="M9 13h6M9 17h4" /></svg></span>
+              <div class="doc-main">
+                <div class="doc-row1">
+                  <span class="doc-no">SPEC/FG00132/01</span>
+                  <span class="pill pill--signed pill-sm">QA signed</span>
+                </div>
+                <span class="doc-action"><span class="who">Signed by Sanjay Reddy</span> · 28-May-2026, 11:04 IST</span>
+              </div>
+              <div class="doc-link"><a class="timeline-link" href="Document Timeline.html">View Timeline</a><a class="open-link" href="Create SPEC.html">Open SPEC →</a></div>
+            </div>
+
+            <!-- MOA -->
+            <div class="doc-card">
+              <span class="doc-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /><path d="M9 13h6M9 17h4" /></svg></span>
+              <div class="doc-main">
+                <div class="doc-row1">
+                  <span class="doc-no">MOA/FG00132/01</span>
+                  <span class="pill pill--signed pill-sm">QA signed</span>
+                </div>
+                <span class="doc-action"><span class="who">Signed by Sanjay Reddy</span> · 29-May-2026, 09:32 IST</span>
+              </div>
+              <div class="doc-link"><a class="timeline-link" href="Document Timeline.html">View Timeline</a><a class="open-link" href="#">Open MOA →</a></div>
+            </div>
+
+            <!-- AWS (current) -->
+            <div class="doc-card">
+              <span class="doc-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /><path d="M9 13h6M9 17h4" /></svg></span>
+              <div class="doc-main">
+                <div class="doc-row1">
+                  <span class="doc-no">AWS/FG00132/01</span>
+                  <span class="pill pill--submitted pill-sm">Submitted</span>
+                </div>
+                <span class="doc-action"><span class="who">Submitted by Kavya Patel</span> · 2 h ago · awaiting your approval</span>
+              </div>
+              <div class="doc-link"><a class="timeline-link" href="Document Timeline.html">View Timeline</a><a class="open-link" href="AWS Data Entry.html">Open AWS →</a></div>
+            </div>
+
+            <!-- COA (locked) -->
+            <div class="doc-card locked">
+              <span class="doc-icon"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span>
+              <div class="doc-main">
+                <div class="doc-row1">
+                  <span class="doc-no">COA/GCN/010526</span>
+                  <span class="pill pill--locked pill-sm">Locked</span>
+                </div>
+                <span class="doc-action muted">Auto-generates once AWS reaches QA-signed status</span>
+              </div>
+              <div class="doc-link">
+                <a class="timeline-link" href="Document Timeline.html">View Timeline</a>
+                <span class="locked-tag">
+                  <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                  Locked
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT: metadata + timeline -->
+          <div class="col">
+
+            <!-- Batch metadata -->
+            <div class="card">
+              <div class="card-header"><span class="title">Batch details</span></div>
+              <div class="meta">
+                <div class="meta-row"><span class="meta-k">Batch size</span><span class="meta-v">3 000 kg</span></div>
+                <div class="meta-row"><span class="meta-k">Quantity sampled</span><span class="meta-v">2.5 kg</span></div>
+                <div class="meta-row"><span class="meta-k">Customer</span><span class="meta-v">In-house (captive)</span></div>
+                <div class="meta-row"><span class="meta-k">Test request sheet</span><span class="meta-v mono">TRS-2026-0142</span></div>
+                <div class="meta-row"><span class="meta-k">Received date</span><span class="meta-v">02-Mar-2026</span></div>
+                <div class="meta-row"><span class="meta-k">Testing date</span><span class="meta-v">03-Mar-2026</span></div>
+                <div class="meta-block">
+                  <span class="meta-k">Special instructions</span>
+                  <span class="longval">Standard release testing per IP monograph. Report Assay on the dried basis. Retain three reserve samples.</span>
+                </div>
+                <div class="meta-analyst">
+                  <span class="avatar">KP</span>
+                  <div class="who">
+                    <span class="nm">Kavya Patel <span class="dept-badge dept-badge--qc">QC</span></span>
+                    <span class="rl">Assigned analyst · QC Executive</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audit timeline -->
+            <div class="card">
+              <div class="card-header"><span class="title">Audit timeline</span><a class="link" href="Document Timeline.html">Full log →</a></div>
+              <div class="timeline">
+
+                <div class="tl-row a-submitted">
+                  <div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">K. Patel</span><span class="act"> submitted </span><span class="doc">AWS/FG00132/01</span></div>
+                    <span class="tl-time">2 h ago · 06:50 IST</span>
+                  </div>
+                </div>
+
+                <div class="tl-row a-neutral">
+                  <div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">K. Patel</span><span class="act"> completed all AWS sections (11 of 11)</span></div>
+                    <span class="tl-time">3 h ago · 06:34 IST</span>
+                  </div>
+                </div>
+
+                <div class="tl-row a-issued">
+                  <div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">S. Reddy</span><span class="act"> issued blank </span><span class="doc">AWS/FG00132/01</span><span class="act"> to QC</span></div>
+                    <span class="tl-time">Yesterday · 09:20 IST</span>
+                  </div>
+                </div>
+
+                <div class="tl-row a-signed">
+                  <div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">S. Reddy</span><span class="act"> signed </span><span class="doc">MOA/FG00132/01</span></div>
+                    <span class="tl-time">29-May · 09:32 IST</span>
+                  </div>
+                </div>
+
+                <div class="tl-row a-approved">
+                  <div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">P. Mehta</span><span class="act"> approved </span><span class="doc">MOA/FG00132/01</span></div>
+                    <span class="tl-time">28-May · 16:10 IST</span>
+                  </div>
+                </div>
+
+                <div class="tl-row a-signed">
+                  <div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">S. Reddy</span><span class="act"> signed </span><span class="doc">SPEC/FG00132/01</span></div>
+                    <span class="tl-time">28-May · 11:04 IST</span>
+                  </div>
+                </div>
+
+                <div class="tl-row a-approved">
+                  <div class="tl-rail"><span class="tl-dot"></span></div>
+                  <div class="tl-content">
+                    <div class="tl-head"><span class="who">P. Mehta</span><span class="act"> approved </span><span class="doc">SPEC/FG00132/01</span></div>
+                    <span class="tl-time">27-May · 15:48 IST</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var param = new URLSearchParams(location.search).get('batchNo');
+      var batch = param ? getBatch(param) : getBatchFromUrl();
+      if (param && !batch) {
+        showParamNotFound('Batch not found. Check the batch number in the URL.');
+        return;
+      }
+      populateBatchDetail(batch);
+      var crumb = document.querySelector('.breadcrumb a.crumb.mono, .breadcrumb .crumb.current.mono');
+      if (crumb) {
+        crumb.textContent = batch.batchNo;
+        if (crumb.tagName === 'A') crumb.href = batchUrl(batch.batchNo);
+      }
+      var pill = document.querySelector('.batch-header .pill');
+      if (pill && batch.phaseLabel) {
+        var pico = pill.querySelector('svg');
+        pill.textContent = '';
+        if (pico) pill.appendChild(pico);
+        pill.appendChild(document.createTextNode(' ' + batch.phaseLabel));
+      }
+    });
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

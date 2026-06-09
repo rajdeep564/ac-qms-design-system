@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Components · Status pills" subtitle="Document lifecycle and result evaluation" viewport="700x170" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items:stretch; gap: var(--s3); }
+  .row { display:flex; gap: var(--s2); flex-wrap: wrap; align-items: center; }
+  .lbl { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; font-weight:500; }
+  .note { font-size: 11px; color: var(--text-muted); }
+</style></head><body>
+<span class="lbl">Document lifecycle</span>
+<div class="row">
+  <span class="pill pill--draft">Draft</span>
+  <span class="secondary mono" style="font-size:11px">→</span>
+  <span class="pill pill--submitted">Submitted</span>
+  <span class="secondary mono" style="font-size:11px">→</span>
+  <span class="pill pill--approved">Approved</span>
+  <span class="secondary mono" style="font-size:11px">→</span>
+  <span class="pill pill--signed">Signed</span>
+  <span class="secondary mono" style="font-size:11px">→</span>
+  <span class="pill pill--issued">Issued</span>
+</div>
+<span class="lbl">Result evaluation</span>
+<div class="row">
+  <span class="pill pill--approved">In spec</span>
+  <span class="pill pill--oos">OOS</span>
+  <span class="note">— OOS is the only colored pill that means action required.</span>
+</div>
+</body></html>

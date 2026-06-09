@@ -1,0 +1,495 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Reagent Master</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    :root { --accent: #1A8FA3; --accent-hover: #156F80; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); font-size: var(--text-base); color: var(--text); background: var(--canvas); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item.active .count { color: var(--primary); }
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role-row { display: flex; align-items: center; gap: 6px; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 14px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+    .dept-badge--qa { color: var(--qa); background: var(--qa-soft); }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); min-width: 0; }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: hidden; background: var(--canvas); display: flex; flex-direction: column; min-height: 0; }
+    .content { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: var(--s6) var(--s6) 0; }
+
+    /* Page header */
+    .page-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); flex-shrink: 0; margin-bottom: var(--s5); }
+    .page-title { font-size: var(--text-2xl); font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+    .page-sub { font-size: var(--text-sm); color: var(--text-secondary); margin-top: 3px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 40px; padding: 0 var(--s5); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-sm); font-weight: 500; line-height: 1; cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; white-space: nowrap; }
+    .btn--primary { background: var(--primary); color: #fff; }
+    .btn--primary:hover { background: var(--primary-hover); }
+    .btn--neutral { background: var(--bg); color: var(--text); border-color: var(--border-strong); }
+    .btn--neutral:hover { background: var(--canvas); }
+    .btn .ico { width: 16px; height: 16px; }
+
+    /* ---------- Master sub-tabs (Instruments / Reagents) ---------- */
+    .master-tabs { display: flex; gap: var(--s5); border-bottom: 1px solid var(--border); flex-shrink: 0; margin-bottom: var(--s5); }
+    .master-tab { display: inline-flex; align-items: center; gap: 7px; padding: 0 2px 12px; font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 120ms ease, border-color 120ms ease; }
+    .master-tab:hover { color: var(--text); }
+    .master-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .master-tab .mt-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .master-tab.active .mt-count { color: var(--primary); }
+
+    /* ---------- Stats row ---------- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s4); flex-shrink: 0; margin-bottom: var(--s5); }
+    .stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s4) var(--s5); display: flex; flex-direction: column; gap: 6px; }
+    .stat .s-label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .stat .s-label .ico { width: 13px; height: 13px; }
+    .stat .s-value { font-size: var(--text-2xl); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.01em; }
+    .stat .s-value.oos { color: var(--oos); }
+    .stat .s-foot { font-size: 11px; color: var(--text-muted); }
+
+    /* ---------- Filter bar ---------- */
+    .filterbar { display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; margin-bottom: var(--s4); }
+    .search { position: relative; flex: 1; max-width: 360px; }
+    .search .ico { position: absolute; left: var(--s3); top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+    .search input { height: 38px; width: 100%; padding: 0 var(--s3) 0 34px; font-family: var(--font); font-size: var(--text-sm); color: var(--text); background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); outline: none; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .search input::placeholder { color: var(--text-muted); }
+    .search input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 85, 96, 0.18); }
+    .filter { position: relative; }
+    .filter-label { position: absolute; left: var(--s3); top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-muted); pointer-events: none; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+    select.filter-select { appearance: none; -webkit-appearance: none; height: 38px; padding: 0 34px 0 64px; font-family: var(--font); font-size: var(--text-sm); color: var(--text); background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); outline: none; cursor: pointer; transition: border-color 120ms ease; }
+    select.filter-select.dept { padding-left: 86px; }
+    select.filter-select:hover { border-color: var(--text-muted); }
+    select.filter-select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 85, 96, 0.18); }
+    .filter .chev { position: absolute; right: var(--s3); top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+    .filterbar .spacer { flex: 1; }
+    .result-count { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    /* ============================== TABLE ============================== */
+    .table-card { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table-scroll { flex: 1; min-height: 0; overflow: auto; }
+    table.grid { width: 100%; border-collapse: separate; border-spacing: 0; }
+    table.grid thead th { position: sticky; top: 0; z-index: 2; background: var(--canvas); border-bottom: 1px solid var(--border); padding: 11px var(--s3); text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); white-space: nowrap; user-select: none; }
+    table.grid thead th.sortable { cursor: pointer; }
+    table.grid thead th.num { text-align: right; }
+    table.grid thead th .th-in { display: inline-flex; align-items: center; gap: 5px; }
+    table.grid thead th.num .th-in { flex-direction: row-reverse; }
+    table.grid thead th .caret { width: 12px; height: 12px; color: var(--text-muted); opacity: 0; transition: opacity 120ms ease, transform 120ms ease; }
+    table.grid thead th.sortable:hover .caret { opacity: 0.7; }
+    table.grid thead th.sorted .caret { opacity: 1; color: var(--text); }
+    table.grid thead th.sorted-desc .caret { transform: rotate(180deg); }
+    table.grid thead th:first-child { padding-left: var(--s5); }
+    table.grid thead th:last-child { padding-right: var(--s5); }
+
+    table.grid tbody td { padding: 12px var(--s3); border-bottom: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); vertical-align: middle; white-space: nowrap; }
+    table.grid tbody td:first-child { padding-left: var(--s5); }
+    table.grid tbody td:last-child { padding-right: var(--s5); }
+    table.grid tbody tr:last-child td { border-bottom: none; }
+    table.grid tbody tr { transition: background-color 110ms ease; position: relative; }
+    table.grid tbody tr:hover { background: var(--primary-soft); }
+
+    .c-code { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text); font-weight: 500; letter-spacing: 0.01em; }
+    .c-name { font-weight: 500; color: var(--text); }
+    .c-name .sub { font-weight: 400; color: var(--text-muted); font-size: 11px; margin-top: 1px; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .c-date { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .c-muted { color: var(--text-muted); }
+
+    /* Status pill */
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; line-height: 16px; white-space: nowrap; }
+    .pill .pd { width: 6px; height: 6px; border-radius: 999px; background: currentColor; opacity: 0.9; }
+    .pill--active { color: var(--approved); background: var(--approved-soft); }
+    .pill--expired { color: var(--oos); background: var(--oos-soft); }
+    .pill--maint { color: var(--submitted); background: var(--submitted-soft); }
+    .pill--retired { color: var(--draft); background: var(--draft-soft); }
+
+    /* Expiry warning text */
+    .expiry-warn { color: var(--submitted); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .expiry-exp { color: var(--oos); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+    /* Reference-standard badge — the only elevated element on the screen */
+    .ref-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 15px; color: var(--primary); background: var(--primary-soft); border: 1px solid rgba(15,85,96,0.22); white-space: nowrap; }
+    .ref-badge svg { width: 11px; height: 11px; }
+    .ref-none { color: var(--text-muted); font-size: 13px; }
+
+    /* REF-only toggle */
+    .toggle-pill { display: inline-flex; align-items: center; gap: var(--s3); height: 38px; padding: 0 var(--s4); background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; user-select: none; transition: border-color 120ms ease; white-space: nowrap; }
+    .toggle-pill:hover { border-color: var(--text-muted); }
+    .toggle-pill .tg-txt { font-size: var(--text-sm); color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; }
+    .toggle-pill .tg-txt svg { width: 13px; height: 13px; color: var(--primary); }
+    .toggle-pill .switch { width: 34px; height: 20px; border-radius: 999px; background: var(--border-strong); position: relative; transition: background-color 130ms ease; flex-shrink: 0; }
+    .toggle-pill .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 999px; background: #fff; transition: left 130ms ease; box-shadow: var(--shadow-sm); }
+    .toggle-pill.on { border-color: var(--primary); }
+    .toggle-pill.on .switch { background: var(--primary); }
+    .toggle-pill.on .switch::after { left: 16px; }
+    .toggle-pill.on .tg-txt { color: var(--text); }
+
+    /* Expired row left indicator + tooltip */
+    tr.row-expired td:first-child { box-shadow: inset 4px 0 0 var(--oos); }
+    .tip-cell { position: relative; }
+    .row-tip { position: absolute; left: var(--s5); top: calc(100% - 6px); z-index: 20; background: var(--text); color: #fff; font-size: 11px; font-weight: 500; padding: 5px 9px; border-radius: var(--radius-sm); white-space: nowrap; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transform: translateY(-3px); transition: opacity 120ms ease, transform 120ms ease; font-variant-numeric: tabular-nums; }
+    .row-tip::before { content: ""; position: absolute; left: 14px; top: -4px; width: 8px; height: 8px; background: var(--text); transform: rotate(45deg); }
+    tr.row-expired:hover .row-tip { opacity: 1; transform: translateY(0); }
+
+    /* Action icons */
+    .actions { display: flex; align-items: center; gap: 2px; justify-content: flex-end; }
+    .act-btn { width: 30px; height: 30px; border-radius: var(--radius-sm); border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background-color 120ms ease, color 120ms ease; }
+    .act-btn:hover { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .act-btn:hover.danger { color: var(--oos); }
+    .act-btn svg { width: 15px; height: 15px; }
+
+    /* ---------- Pagination ---------- */
+    .pager { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s4) 0; }
+    .pager .showing { font-size: var(--text-sm); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .pager .showing b { color: var(--text); font-weight: 600; }
+    .pager-nav { display: flex; align-items: center; gap: 2px; }
+    .pg { min-width: 34px; height: 34px; padding: 0 var(--s2); border-radius: var(--radius-sm); border: 1px solid transparent; background: transparent; color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease; }
+    .pg:hover { background: var(--canvas); color: var(--text); }
+    .pg.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .pg.arrow { color: var(--text-secondary); }
+    .pg:disabled { color: var(--text-muted); cursor: not-allowed; background: transparent; }
+    .pg svg { width: 15px; height: 15px; }
+    .pg-ellipsis { width: 24px; text-align: center; color: var(--text-muted); font-size: var(--text-sm); }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item" href="Dashboard.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item" href="Create SPEC.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">6</span>
+        </a>
+        <a class="nav-item" href="Product Master Editor.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Product masters</span>
+        </a>
+        <a class="nav-item active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+      </nav>
+      <div class="sidebar-user" role="button">
+        <span class="avatar">KP</span>
+        <div class="who"><span class="name">Kavya Patel</span><div class="role-row"><span class="role">QC Executive</span><span class="dept-badge dept-badge--qc">QC</span></div></div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb">Masters</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current">Reagents</span>
+      </nav>
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">4</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">KP</span><span>K. Patel</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+      <div class="content">
+
+        <!-- Page header -->
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Reagent Master</h1>
+            <p class="page-sub">Chemical inventory referenced by AWS data entry. Expiry and lot status are enforced at result entry.</p>
+          </div>
+          <button class="btn btn--primary">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+            Add reagent
+          </button>
+        </div>
+
+        <!-- Master sub-tabs -->
+        <div class="master-tabs">
+          <a class="master-tab" href="Instrument Master.html">Instruments <span class="mt-count">47</span></a>
+          <a class="master-tab active">Reagents <span class="mt-count">62</span></a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+          <div class="stat">
+            <span class="s-label">Total reagents</span>
+            <span class="s-value">62</span>
+            <span class="s-foot">prepared &amp; procured</span>
+          </div>
+          <div class="stat">
+            <span class="s-label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="var(--approved)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>Active</span>
+            <span class="s-value">48</span>
+            <span class="s-foot">within expiry</span>
+          </div>
+          <div class="stat">
+            <span class="s-label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="var(--oos)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6M9 9l6 6" /></svg>Expired</span>
+            <span class="s-value oos">5</span>
+            <span class="s-foot">blocked from data entry</span>
+          </div>
+          <div class="stat">
+            <span class="s-label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z" /></svg>Reference standards</span>
+            <span class="s-value">9</span>
+            <span class="s-foot">traceable &amp; certified</span>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filterbar">
+          <div class="search">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+            <input type="text" placeholder="Search by name or lot number…" />
+          </div>
+          <div class="filter">
+            <span class="filter-label">Status</span>
+            <select class="filter-select">
+              <option>All</option>
+              <option>Active</option>
+              <option>Expired</option>
+              <option>Consumed</option>
+            </select>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+          </div>
+          <div class="toggle-pill" id="refToggle" role="switch" aria-checked="false">
+            <span class="tg-txt"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z" /></svg>Reference standards only</span>
+            <span class="switch"></span>
+          </div>
+          <div class="spacer"></div>
+          <span class="result-count">62 reagents · 5 need attention</span>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="sortable sorted"><span class="th-in">Name<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable"><span class="th-in">Lot number<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th><span class="th-in">Conc. / strength</span></th>
+                  <th class="sortable num"><span class="th-in">Prepared<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable num"><span class="th-in">Expiry<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable"><span class="th-in">Supplier<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th class="sortable"><span class="th-in">Status<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6" /></svg></span></th>
+                  <th><span class="th-in">Ref std</span></th>
+                  <th class="num">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <!-- Rows injected by script for consistency -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pager">
+          <span class="showing">Showing <b>1–25</b> of <b>62</b></span>
+          <div class="pager-nav">
+            <button class="pg arrow" disabled aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
+            <button class="pg active">1</button>
+            <button class="pg">2</button>
+            <span class="pg-ellipsis">…</span>
+            <button class="pg arrow" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    // ============================== DATA ==============================
+    // Today = 05-Jun-2026 (IST). Dates DD/MM/YYYY. Expiry: <14d => warn, past => expired.
+    var REAGENTS = [
+      { name:'Acetonitrile, HPLC grade', conc:'≥ 99.9 %', lot:'AC-26-0412', prep:'02/03/2026', exp:'02/03/2027', expState:'ok', supplier:'Merck', status:'active', ref:false },
+      { name:'Buffer Solution pH 4.01', conc:'—', lot:'BF-26-0188', prep:'11/05/2026', exp:'11/11/2026', expState:'ok', supplier:'Merck', status:'active', ref:false },
+      { name:'Buffer Solution pH 7.00', conc:'—', lot:'BF-26-0190', prep:'11/05/2026', exp:'11/11/2026', expState:'ok', supplier:'Merck', status:'active', ref:false },
+      { name:'Crystal Violet TS', conc:'0.5 % w/v', lot:'IND-26-0067', prep:'28/05/2026', exp:'27/06/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
+      { name:'Dilute Hydrochloric Acid', conc:'10 % v/v', lot:'IH-26-0231', prep:'18/05/2026', exp:'18/08/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
+      { name:'Disodium EDTA, 0.05 M VS', conc:'0.05 M', lot:'VS-26-0144', prep:'21/04/2026', exp:'21/07/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
+      { name:'Ferric Chloride TS', conc:'10.5 % w/v', lot:'IND-26-0051', prep:'14/03/2026', exp:'14/06/2026', expState:'warn', expDays:9, supplier:'In-house', status:'active', ref:false },
+      { name:'Glycine Reference Standard', conc:'99.8 % assigned', lot:'RS-GLY-0231', prep:'12/01/2026', exp:'12/01/2027', expState:'ok', supplier:'IPRS', status:'active', ref:true },
+      { name:'Heavy Metals Standard Soln', conc:'10 ppm Pb', lot:'RS-HM-0098', prep:'05/02/2026', exp:'05/08/2026', expState:'ok', supplier:'Sigma-Aldrich', status:'active', ref:true },
+      { name:'Hydrochloric Acid, conc.', conc:'35–38 % w/w', lot:'AC-26-0301', prep:'09/02/2026', exp:'09/02/2028', expState:'ok', supplier:'Rankem', status:'active', ref:false },
+      { name:'Methanol, HPLC grade', conc:'≥ 99.9 %', lot:'AC-26-0410', prep:'02/03/2026', exp:'02/03/2027', expState:'ok', supplier:'Merck', status:'active', ref:false },
+      { name:'Mobile Phase Buffer pH 2.5', conc:'Phosphate, 0.02 M', lot:'MP-26-0233', prep:'03/06/2026', exp:'10/06/2026', expState:'warn', expDays:5, supplier:'In-house', status:'active', ref:false },
+      { name:'Mobile Phase Buffer pH 7.2', conc:'Phosphate, 0.05 M', lot:'MP-26-0207', prep:'04/05/2026', exp:'04/06/2026', expState:'expired', expText:'Expired 04/06/2026', expOn:'04/06/2026', supplier:'In-house', status:'expired', ref:false },
+      { name:'Perchloric Acid, 0.1 M VS', conc:'0.1 M', lot:'VS-26-0151', prep:'19/05/2026', exp:'19/08/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
+      { name:'Phenolphthalein Indicator', conc:'1 % w/v in ethanol', lot:'IND-26-0040', prep:'02/02/2026', exp:'02/05/2026', expState:'expired', expText:'Expired 02/05/2026', expOn:'02/05/2026', supplier:'In-house', status:'expired', ref:false },
+      { name:'Potassium Dichromate RS', conc:'99.95 % assigned', lot:'RS-KD-0112', prep:'20/01/2026', exp:'20/01/2027', expState:'ok', supplier:'NIST', status:'active', ref:true },
+      { name:'Potassium Hydrogen Phthalate RS', conc:'99.99 % assigned', lot:'RS-KHP-0077', prep:'15/01/2026', exp:'15/01/2027', expState:'ok', supplier:'NIST', status:'active', ref:true },
+      { name:'Silver Nitrate, 0.1 M VS', conc:'0.1 M', lot:'VS-26-0139', prep:'04/03/2026', exp:'04/06/2026', expState:'expired', expText:'Expired 04/06/2026', expOn:'04/06/2026', supplier:'In-house', status:'expired', ref:false },
+      { name:'Sodium Hydroxide, 0.1 M VS', conc:'0.1 M', lot:'VS-26-0120', prep:'26/02/2026', exp:'26/05/2026', expState:'consumed', supplier:'In-house', status:'consumed', ref:false },
+      { name:'Sodium Hydroxide, 1 M VS', conc:'1.0 M', lot:'VS-26-0160', prep:'22/05/2026', exp:'22/08/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
+      { name:'Starch TS', conc:'1 % w/v', lot:'IND-26-0072', prep:'30/05/2026', exp:'13/06/2026', expState:'warn', expDays:8, supplier:'In-house', status:'active', ref:false },
+      { name:'Sulphuric Acid, conc.', conc:'98 % w/w', lot:'AC-26-0288', prep:'10/02/2026', exp:'10/02/2028', expState:'ok', supplier:'Rankem', status:'active', ref:false },
+      { name:'Toluene, AR grade', conc:'≥ 99.8 %', lot:'AC-26-0395', prep:'01/03/2026', exp:'01/03/2027', expState:'ok', supplier:'Rankem', status:'active', ref:false },
+      { name:'Water, Milli-Q (Type I)', conc:'18.2 MΩ·cm', lot:'WQ-26-0605', prep:'05/06/2026', exp:'06/06/2026', expState:'warn', expDays:1, supplier:'In-house', status:'active', ref:false },
+      { name:'Zinc Sulphate, 0.1 M VS', conc:'0.1 M', lot:'VS-26-0133', prep:'28/02/2026', exp:'28/05/2026', expState:'consumed', supplier:'In-house', status:'consumed', ref:false }
+    ];
+
+    var STATUS = {
+      active:   { cls:'pill--active',  label:'Active' },
+      expired:  { cls:'pill--expired', label:'Expired' },
+      consumed: { cls:'pill--retired', label:'Consumed' }
+    };
+
+    function escapeHtml(s){ return (s||'').replace(/[<>&]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c]; }); }
+
+    function expiryCell(r){
+      if (r.expState === 'expired')  return '<span class="expiry-exp">' + escapeHtml(r.expText) + '</span>';
+      if (r.expState === 'warn')     return '<span class="expiry-warn">' + escapeHtml(r.exp) + ' · ' + r.expDays + 'd</span>';
+      if (r.expState === 'consumed') return '<span class="c-muted">' + escapeHtml(r.exp) + '</span>';
+      return '<span class="c-date">' + escapeHtml(r.exp) + '</span>';
+    }
+
+    function refCell(r){
+      if (!r.ref) return '<span class="ref-none">—</span>';
+      return '<span class="ref-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z" /></svg>Ref</span>';
+    }
+
+    function rowHtml(r){
+      var st = STATUS[r.status];
+      var isExp = r.status === 'expired';
+      var tip = isExp ? '<span class="row-tip">Expired on ' + escapeHtml(r.expOn) + '</span>' : '';
+      var conc = r.conc === '—' ? '<span class="c-muted">—</span>' : '<span class="c-date">' + escapeHtml(r.conc) + '</span>';
+      return '<tr class="' + (isExp ? 'row-expired' : '') + '">' +
+        '<td class="tip-cell"><div class="c-name">' + escapeHtml(r.name) + '</div>' + tip + '</td>' +
+        '<td><span class="c-code">' + escapeHtml(r.lot) + '</span></td>' +
+        '<td>' + conc + '</td>' +
+        '<td class="num c-date">' + escapeHtml(r.prep) + '</td>' +
+        '<td class="num">' + expiryCell(r) + '</td>' +
+        '<td>' + escapeHtml(r.supplier) + '</td>' +
+        '<td><span class="pill ' + st.cls + '"><span class="pd"></span>' + st.label + '</span></td>' +
+        '<td>' + refCell(r) + '</td>' +
+        '<td class="num"><div class="actions">' +
+          '<button class="act-btn" title="Edit" aria-label="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg></button>' +
+          '<button class="act-btn" title="View history" aria-label="View history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5" /><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" /><path d="M12 7v5l4 2" /></svg></button>' +
+          '<button class="act-btn danger" title="Mark consumed" aria-label="Mark consumed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 8Z" /><path d="M3 8h18l-1-3a1 1 0 0 0-1-.7H5a1 1 0 0 0-1 .7L3 8Z" /><path d="M10 12v6M14 12v6" /></svg></button>' +
+        '</div></td>' +
+      '</tr>';
+    }
+
+    document.getElementById('tbody').innerHTML = REAGENTS.map(rowHtml).join('');
+
+    // ---- Sortable header visual toggle (Name sorted asc by default) ----
+    document.querySelectorAll('thead th.sortable').forEach(function (th) {
+      th.addEventListener('click', function () {
+        var already = th.classList.contains('sorted');
+        document.querySelectorAll('thead th').forEach(function (o) { o.classList.remove('sorted','sorted-desc'); });
+        th.classList.add('sorted');
+        if (already) th.classList.toggle('sorted-desc');
+      });
+    });
+
+    var addReagent = document.querySelector('.page-head .btn--primary, .ph-actions .btn--primary');
+    if (addReagent) addReagent.addEventListener('click', function () { location.href = 'Audit Log Viewer.html'; });
+    document.querySelectorAll('.act-btn[title="View history"]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        location.href = 'Audit Log Viewer.html';
+      });
+    });
+
+    // ---- Reference-standards-only toggle ----
+    (function () {
+      var tg = document.getElementById('refToggle');
+      var rows = Array.prototype.slice.call(document.querySelectorAll('#tbody tr'));
+      tg.addEventListener('click', function () {
+        var on = tg.classList.toggle('on');
+        tg.setAttribute('aria-checked', on ? 'true' : 'false');
+        rows.forEach(function (tr, i) {
+          var isRef = REAGENTS[i] && REAGENTS[i].ref;
+          tr.style.display = (on && !isRef) ? 'none' : '';
+        });
+      });
+    })();
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

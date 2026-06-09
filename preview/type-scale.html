@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- @dsCard group="Type" name="Type · Scale" subtitle="Base 14 px — hierarchy via weight, not size jumps" viewport="700x280" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items:stretch; gap: 6px; }
+  .row { display:grid; grid-template-columns: 80px 1fr 110px; align-items: baseline; gap: var(--s4); }
+  .var { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+  .spec { font-size: var(--text-base); color: var(--text); font-weight: 500; }
+  .px { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-align: right; }
+</style></head><body>
+<div class="row"><span class="var">--text-2xl</span><span class="spec" style="font-size:28px;font-weight:600;letter-spacing:-0.01em;line-height:1.2">Page title</span><span class="px">28 / 600</span></div>
+<div class="row"><span class="var">--text-xl</span><span class="spec" style="font-size:22px;font-weight:600;line-height:1.2">Section title</span><span class="px">22 / 600</span></div>
+<div class="row"><span class="var">--text-lg</span><span class="spec" style="font-size:18px;font-weight:500">Subsection</span><span class="px">18 / 500</span></div>
+<div class="row"><span class="var">--text-md</span><span class="spec" style="font-size:16px;font-weight:600">Card title</span><span class="px">16 / 600</span></div>
+<div class="row"><span class="var">--text-base</span><span class="spec" style="font-size:14px">Body — base 14 px, compact</span><span class="px">14 / 400</span></div>
+<div class="row"><span class="var">--text-sm</span><span class="spec" style="font-size:13px;color:var(--text-secondary)">Secondary / dense table cells</span><span class="px">13 / 400</span></div>
+<div class="row"><span class="var">--text-xs</span><span class="spec" style="font-size:12px;color:var(--text-muted)">Meta, labels, timestamps</span><span class="px">12 / 400</span></div>
+</body></html>

@@ -1,0 +1,757 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="Test Parameter Editor" subtitle="Master-detail · Assay selected · 7 collapsible panels + live preview" viewport="1320x940" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Test Parameters · Glycine IP · Revision 03</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    :root { --accent: #1A8FA3; --accent-hover: #156F80; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); font-size: var(--text-base); color: var(--text); background: var(--canvas); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item.active .count { color: var(--primary); }
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role-row { display: flex; align-items: center; gap: 6px; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 14px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+    .dept-badge--qa { color: var(--qa); background: var(--qa-soft); }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); min-width: 0; }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .crumb.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: hidden; background: var(--canvas); display: flex; flex-direction: column; min-height: 0; }
+    .page-head { flex-shrink: 0; padding: var(--s5) var(--s6) var(--s4); border-bottom: 1px solid var(--border); background: var(--canvas); }
+    .ph-title-row { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+    .ph-title { font-size: var(--text-xl); font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+    .ph-title .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 16px; }
+    .pill--draft { color: var(--draft); background: var(--draft-soft); }
+    .ph-info { font-size: var(--text-sm); color: var(--text-secondary); margin-top: 6px; display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+    .ph-info .dotsep { width: 3px; height: 3px; border-radius: 999px; background: var(--border-strong); }
+    .ph-info .strong { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* ============================== MASTER-DETAIL ============================== */
+    .md { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
+    .list-pane { border-right: 1px solid var(--border); background: var(--bg); display: flex; flex-direction: column; min-height: 0; }
+    .lp-tools { flex-shrink: 0; padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3); border-bottom: 1px solid var(--border); }
+    .search { position: relative; }
+    .search .ico { position: absolute; left: var(--s3); top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+    .search input { height: 38px; width: 100%; padding: 0 var(--s3) 0 34px; font-family: var(--font); font-size: var(--text-sm); color: var(--text); background: var(--canvas); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); outline: none; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .search input::placeholder { color: var(--text-muted); }
+    .search input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 85, 96, 0.18); background: var(--bg); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 38px; padding: 0 var(--s4); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-sm); font-weight: 500; line-height: 1; cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; white-space: nowrap; }
+    .btn--primary { background: var(--primary); color: #fff; }
+    .btn--primary:hover { background: var(--primary-hover); }
+    .btn--primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn--neutral { background: var(--bg); color: var(--text); border-color: var(--border-strong); }
+    .btn--neutral:hover { background: var(--canvas); }
+    .btn .ico { width: 15px; height: 15px; }
+    .btn--block { width: 100%; }
+
+    .lp-list { flex: 1; overflow-y: auto; padding: var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .test-row { display: flex; align-items: center; gap: var(--s2); padding: 10px var(--s2) 10px var(--s1); border-radius: var(--radius-sm); cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease; }
+    .test-row:hover { background: var(--canvas); }
+    .test-row.selected { background: var(--primary-soft); border-color: rgba(15,85,96,0.18); }
+    .grip { width: 18px; flex-shrink: 0; color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: grab; opacity: 0.55; }
+    .grip svg { width: 14px; height: 14px; }
+    .test-row:hover .grip { opacity: 1; }
+    .tr-no { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; width: 20px; flex-shrink: 0; text-align: right; }
+    .test-row.selected .tr-no { color: var(--primary); }
+    .tr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .tr-name { font-size: var(--text-sm); font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tr-meta { display: flex; align-items: center; gap: 6px; }
+    .tbadge { font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 1px 6px; border-radius: 3px; line-height: 14px; white-space: nowrap; }
+    .tbadge--quant { color: var(--primary); background: var(--primary-soft); }
+    .tbadge--qual { color: var(--submitted); background: var(--submitted-soft); }
+    .tbadge--passfail { color: var(--signed); background: var(--signed-soft); }
+    .test-row.selected .tbadge--quant { background: #fff; }
+    .tr-lock { width: 12px; height: 12px; color: var(--text-muted); flex-shrink: 0; }
+    .tr-chev { width: 15px; height: 15px; color: var(--primary); flex-shrink: 0; opacity: 0; }
+    .test-row.selected .tr-chev { opacity: 1; }
+    .lp-foot { flex-shrink: 0; padding: var(--s3) var(--s4); border-top: 1px solid var(--border); font-size: var(--text-xs); color: var(--text-muted); display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+    .lp-foot .ico { width: 13px; height: 13px; }
+
+    /* ---------- Detail pane ---------- */
+    .detail-pane { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
+    .detail-scroll { flex: 1; padding: var(--s5) var(--s6); }
+    .detail { display: grid; grid-template-columns: minmax(0, 1fr) 288px; gap: var(--s5); align-items: start; }
+    @media (max-width: 1240px) { .detail { grid-template-columns: 1fr; } .preview-col { grid-column: 1 !important; grid-row: auto !important; position: static !important; } }
+
+    .detail-title-row { grid-column: 1; display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s1); }
+    .detail-title { font-size: var(--text-lg); font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .detail-title .no { font-family: var(--font-mono); color: var(--text-muted); font-weight: 500; }
+    .detail-sub { grid-column: 1; font-size: var(--text-xs); color: var(--text-muted); margin: -2px 0 var(--s2); }
+
+    .panels { grid-column: 1; display: flex; flex-direction: column; gap: var(--s4); min-width: 0; }
+
+    /* Collapsible panel */
+    .panel { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .panel > summary { list-style: none; cursor: pointer; padding: var(--s4) var(--s5); display: flex; align-items: center; gap: var(--s3); user-select: none; transition: background-color 120ms ease; }
+    .panel > summary::-webkit-details-marker { display: none; }
+    .panel > summary:hover { background: var(--canvas); }
+    .panel .p-caret { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; transition: transform 120ms ease; }
+    .panel[open] > summary .p-caret { transform: rotate(90deg); }
+    .panel .p-num { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+    .panel .p-title { font-size: var(--text-sm); font-weight: 600; color: var(--text); flex: 1; }
+    .panel .p-hint { font-size: var(--text-xs); color: var(--text-muted); }
+    .panel .p-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-secondary); background: var(--canvas); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; }
+    .panel-inner { padding: var(--s3) var(--s5) var(--s5); border-top: 1px solid var(--border); }
+
+    /* Form bits */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4) var(--s5); }
+    .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    .flabel { font-size: var(--text-xs); font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 5px; }
+    .flabel .req { color: var(--oos); font-weight: 600; }
+    .input { height: 40px; width: 100%; padding: 0 var(--s3); font-family: var(--font); font-size: var(--text-sm); color: var(--text); background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); outline: none; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .input::placeholder { color: var(--text-muted); }
+    .input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 85, 96, 0.18); }
+    .input.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .input:disabled { background: var(--canvas); color: var(--text-secondary); cursor: not-allowed; border-color: var(--border); }
+    .select-wrap { position: relative; }
+    .select-wrap .chev { position: absolute; right: var(--s3); top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+    select.input { appearance: none; -webkit-appearance: none; padding-right: var(--s8); cursor: pointer; }
+    .fhelp { font-size: var(--text-xs); color: var(--text-muted); line-height: 1.45; }
+
+    /* Radio segment */
+    .seg { display: inline-flex; padding: 3px; background: var(--canvas); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); gap: 2px; }
+    .seg label { flex: 1; }
+    .seg input { position: absolute; opacity: 0; pointer-events: none; }
+    .seg .opt { display: inline-flex; align-items: center; justify-content: center; padding: 6px 14px; border-radius: 3px; font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; white-space: nowrap; }
+    .seg input:checked + .opt { background: var(--bg); color: var(--text); box-shadow: var(--shadow-sm); }
+
+    /* Toggle switch */
+    .toggle-field { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: 9px var(--s3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--canvas); }
+    .toggle-field .tf-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .toggle-field .tf-label { font-size: var(--text-sm); color: var(--text); font-weight: 500; }
+    .toggle-field .tf-sub { font-size: 11px; color: var(--text-muted); }
+    .switch { width: 36px; height: 20px; border-radius: 999px; background: var(--border-strong); position: relative; cursor: pointer; transition: background-color 120ms ease; flex-shrink: 0; border: none; padding: 0; }
+    .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 999px; background: #fff; transition: left 120ms ease; box-shadow: var(--shadow-sm); }
+    .switch.on { background: var(--primary); }
+    .switch.on::after { left: 18px; }
+
+    /* Dept option with badge */
+    .dept-opt { display: flex; align-items: center; gap: var(--s2); }
+
+    /* Acceptance criteria row */
+    .crit-row { display: grid; grid-template-columns: 170px 1fr 1fr 130px; gap: var(--s4); align-items: end; }
+    @media (max-width: 720px) { .crit-row { grid-template-columns: 1fr 1fr; } }
+    .reset-limit { font-size: var(--text-xs); color: var(--accent); background: none; border: none; cursor: pointer; padding: 0; display: inline-flex; align-items: center; gap: 4px; transition: color 120ms ease; white-space: nowrap; font-weight: 500; }
+    .reset-limit:hover { color: var(--accent-hover); text-decoration: underline; }
+    .reset-limit .ico { width: 12px; height: 12px; }
+    .max-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+    .crit-preview { margin-top: var(--s4); padding: var(--s3) var(--s4); background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; align-items: center; gap: var(--s2); font-size: var(--text-sm); color: var(--text-secondary); }
+    .crit-preview .lbl { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 500; }
+    .crit-preview .val { font-family: var(--font-mono); color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; margin-left: auto; }
+
+    /* Compact table (sub-tests, variables, overrides) */
+    .ctable { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .ctable .thead { display: grid; background: var(--canvas); border-bottom: 1px solid var(--border); }
+    .ctable .thead .th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); font-weight: 600; padding: 9px var(--s3); }
+    .ctable .trow { display: grid; border-bottom: 1px solid var(--border); transition: background-color 120ms ease; }
+    .ctable .trow:last-child { border-bottom: none; }
+    .ctable .trow:hover { background: var(--canvas); }
+    .ctable .td { padding: 10px var(--s3); font-size: var(--text-sm); color: var(--text); display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .ctable .td.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+    .ctable .td .nm { font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pharma { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-secondary); background: var(--bg); border: 1px solid var(--border-strong); border-radius: 3px; padding: 1px 6px; line-height: 14px; white-space: nowrap; }
+    .row-x { width: 24px; height: 24px; border-radius: var(--radius-sm); border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background-color 120ms ease, color 120ms ease; flex-shrink: 0; margin-left: auto; }
+    .row-x:hover { background: var(--oos-soft); color: var(--oos); }
+    .row-x svg { width: 13px; height: 13px; }
+    .add-link { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-sm); font-weight: 500; color: var(--accent); cursor: pointer; padding: var(--s3) 0 0; transition: color 120ms ease; }
+    .add-link:hover { color: var(--accent-hover); }
+    .add-link svg { width: 14px; height: 14px; }
+
+    /* Formula editor */
+    .formula-box { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); background: var(--canvas); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: var(--s3) var(--s4); line-height: 1.7; width: 100%; resize: vertical; outline: none; min-height: 64px; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .formula-box:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 85, 96, 0.18); background: var(--bg); }
+    .formula-caption { font-size: var(--text-xs); color: var(--text-muted); margin: var(--s2) 0 var(--s4); display: flex; align-items: center; gap: 6px; }
+    .formula-caption .ico { width: 13px; height: 13px; }
+    .vars-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin-bottom: var(--s2); }
+
+    /* Chips multiselect */
+    .chips-field { border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg); padding: var(--s2); display: flex; flex-wrap: wrap; gap: 6px; min-height: 42px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 9px; background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); }
+    .chip .cx { width: 15px; height: 15px; border-radius: 3px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+    .chip .cx:hover { color: var(--oos); }
+    .chip .cx svg { width: 11px; height: 11px; }
+    .chip .cmono { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+    .chip-add { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; background: none; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text-secondary); cursor: pointer; transition: border-color 120ms ease, color 120ms ease; }
+    .chip-add:hover { color: var(--primary); border-color: var(--primary); }
+    .chip-add svg { width: 13px; height: 13px; }
+
+    /* ---------- Live preview column ---------- */
+    .preview-col { grid-column: 2; grid-row: 1 / -1; position: sticky; top: 0; display: flex; flex-direction: column; gap: var(--s3); }
+    .preview-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .pv-head { padding: var(--s3) var(--s4); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: var(--s2); background: var(--canvas); }
+    .pv-head .ico { width: 14px; height: 14px; color: var(--text-secondary); }
+    .pv-head .t { font-size: var(--text-xs); font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; }
+    .pv-head .badge { margin-left: auto; font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+    .pv-body { padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
+    .pv-screenlabel { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
+    .pv-test { font-size: var(--text-sm); font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .pv-input-row { display: flex; flex-direction: column; gap: 5px; }
+    .pv-input-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+    .pv-input { height: 38px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); display: flex; align-items: center; padding: 0 var(--s3); justify-content: space-between; gap: var(--s2); background: var(--bg); }
+    .pv-input .val { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .pv-input .unit { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); }
+    .pv-crit { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); font-size: 11px; padding: 7px var(--s3); background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+    .pv-crit .k { color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; font-size: 10px; }
+    .pv-crit .v { font-family: var(--font-mono); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .pv-conclusion { display: flex; align-items: center; gap: var(--s2); padding: 8px var(--s3); border-radius: var(--radius-sm); background: var(--approved-soft); }
+    .pv-conclusion .ico { width: 15px; height: 15px; color: var(--approved); flex-shrink: 0; }
+    .pv-conclusion .ctext { font-size: var(--text-sm); font-weight: 600; color: var(--approved); }
+    .pv-conclusion .csub { font-size: 11px; color: var(--text-secondary); margin-left: auto; font-variant-numeric: tabular-nums; }
+    .pv-foot { font-size: 11px; color: var(--text-muted); line-height: 1.45; padding: 0 var(--s4) var(--s4); }
+
+    /* ---------- Bottom action bar ---------- */
+    .action-bar { flex-shrink: 0; border-top: 1px solid var(--border); background: var(--bg); padding: var(--s4) var(--s6); display: flex; align-items: center; gap: var(--s3); }
+    .ab-spacer { flex: 1; }
+    .ab-link { background: none; border: none; font-family: inherit; font-size: var(--text-sm); font-weight: 500; color: var(--text-secondary); cursor: pointer; padding: 0 var(--s2); transition: color 120ms ease; }
+    .ab-link:hover { color: var(--primary); text-decoration: underline; }
+    .btn--lg { height: 40px; padding: 0 var(--s5); }
+  </style>
+</head>
+<body>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item" href="Dashboard.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item" href="Create SPEC.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">6</span>
+        </a>
+        <a class="nav-item active" href="Product Master Editor.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Product masters</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+      </nav>
+      <div class="sidebar-user" role="button">
+        <span class="avatar">KP</span>
+        <div class="who"><span class="name">Kavya Patel</span><div class="role-row"><span class="role">QC Executive</span><span class="dept-badge dept-badge--qc">QC</span></div></div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb">Masters</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <a class="crumb" href="Product Master Editor.html">Glycine IP</a>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <a class="crumb" href="Product Master Editor.html">Revision 03</a>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current">Test parameters</span>
+      </nav>
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">4</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">KP</span><span>K. Patel</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+
+      <!-- Page header -->
+      <div class="page-head">
+        <div class="ph-title-row">
+          <h1 class="ph-title">Test parameters — Glycine IP · <span>Revision 03</span></h1>
+          <span class="pill pill--draft">Draft</span>
+        </div>
+        <div class="ph-info">
+          <span><span class="strong">11</span> active tests</span>
+          <span class="dotsep"></span>
+          <span>drag to reorder</span>
+          <span class="dotsep"></span>
+          <span>changes require a new master revision after QA signing</span>
+        </div>
+      </div>
+
+      <!-- Master-detail -->
+      <div class="md">
+
+        <!-- ===== LEFT: test list ===== -->
+        <div class="list-pane">
+          <div class="lp-tools">
+            <div class="search">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+              <input type="text" placeholder="Search test parameters…" />
+            </div>
+            <button class="btn btn--neutral btn--block">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+              Add test
+            </button>
+          </div>
+
+          <div class="lp-list">
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">01</span><div class="tr-body"><span class="tr-name">Description</span><span class="tr-meta"><span class="tbadge tbadge--qual">Qual</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">02</span><div class="tr-body"><span class="tr-name">Solubility</span><span class="tr-meta"><span class="tbadge tbadge--qual">Qual</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">03</span><div class="tr-body"><span class="tr-name">Identification</span><span class="tr-meta"><span class="tbadge tbadge--passfail">Pass / Fail</span><span class="pharma">A · B</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">04</span><div class="tr-body"><span class="tr-name">Appearance of solution</span><span class="tr-meta"><span class="tbadge tbadge--passfail">Pass / Fail</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">05</span><div class="tr-body"><span class="tr-name">pH</span><span class="tr-meta"><span class="tbadge tbadge--quant">Quant</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">06</span><div class="tr-body"><span class="tr-name">Chlorides</span><span class="tr-meta"><span class="tbadge tbadge--quant">Quant</span><span class="pharma">IP · BP · USP</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">07</span><div class="tr-body"><span class="tr-name">Heavy metals</span><span class="tr-meta"><span class="tbadge tbadge--quant">Quant</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">08</span><div class="tr-body"><span class="tr-name">Sulphated ash</span><span class="tr-meta"><span class="tbadge tbadge--quant">Quant</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">09</span><div class="tr-body"><span class="tr-name">Loss on drying</span><span class="tr-meta"><span class="tbadge tbadge--quant">Quant</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row selected"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">10</span><div class="tr-body"><span class="tr-name">Assay on dried basis</span><span class="tr-meta"><span class="tbadge tbadge--quant">Quant</span><span class="pharma">IP · BP · EP</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+
+            <div class="test-row"><span class="grip"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></span><span class="tr-no">11</span><div class="tr-body"><span class="tr-name">Foreign matter</span><span class="tr-meta"><span class="tbadge tbadge--qual">Qual</span></span></div><svg class="tr-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><svg class="tr-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></div>
+          </div>
+
+          <div class="lp-foot">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13" /><path d="M8 12h13" /><path d="M8 18h13" /><path d="M3 6h.01" /><path d="M3 12h.01" /><path d="M3 18h.01" /></svg>
+            11 tests · drag to reorder
+          </div>
+        </div>
+
+        <!-- ===== RIGHT: detail editor ===== -->
+        <div class="detail-pane">
+          <div class="detail-scroll">
+            <div class="detail">
+
+              <div class="detail-title-row">
+                <h2 class="detail-title"><span class="no">10 ·</span> Assay on dried basis</h2>
+                <span class="tbadge tbadge--quant">Quantitative</span>
+                <span class="dept-badge dept-badge--qc">QC</span>
+              </div>
+              <p class="detail-sub">Editing within draft Revision 03. Saving updates the master; changes take effect after QA signs the revision.</p>
+
+              <!-- ===================== PANELS ===================== -->
+              <div class="panels">
+
+                <!-- Panel 1 — Basic info -->
+                <details class="panel" open>
+                  <summary>
+                    <svg class="p-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    <span class="p-num">1</span><span class="p-title">Basic info</span>
+                  </summary>
+                  <div class="panel-inner">
+                    <div class="grid2">
+                      <div class="field">
+                        <label class="flabel">Test name <span class="req">*</span></label>
+                        <input class="input" type="text" value="Assay on dried basis" />
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Sort order <span class="req">*</span></label>
+                        <input class="input mono" type="text" value="10" style="max-width: 90px;" />
+                      </div>
+
+                      <div class="field">
+                        <label class="flabel">Result type <span class="req">*</span></label>
+                        <div class="seg">
+                          <label><input type="radio" name="rtype" /><span class="opt">Qualitative</span></label>
+                          <label><input type="radio" name="rtype" checked /><span class="opt">Quantitative</span></label>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Pharmacopoeia tag <span class="req">*</span></label>
+                        <div class="select-wrap">
+                          <select class="input">
+                            <option selected>IP — primary</option>
+                            <option>BP</option>
+                            <option>USP</option>
+                            <option>EP</option>
+                          </select>
+                          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <label class="flabel">Mandatory</label>
+                        <div class="toggle-field">
+                          <div class="tf-text"><span class="tf-label">Mandatory test</span><span class="tf-sub">Locks criteria; cannot be deactivated per batch</span></div>
+                          <button class="switch on" role="switch" aria-checked="true" aria-label="Mandatory"></button>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Outside-lab</label>
+                        <div class="toggle-field">
+                          <div class="tf-text"><span class="tf-label">Performed at outside lab</span><span class="tf-sub">Result entered from external CoA</span></div>
+                          <button class="switch" role="switch" aria-checked="false" aria-label="Outside-lab"></button>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <label class="flabel">Department <span class="req">*</span></label>
+                        <div class="select-wrap">
+                          <select class="input">
+                            <option selected>QC — Quality Control</option>
+                            <option>QA — Quality Assurance</option>
+                          </select>
+                          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </div>
+                        <span class="fhelp">Owning department for execution and first-level review. <span class="dept-badge dept-badge--qc">QC</span> assigned.</span>
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Method reference</label>
+                        <input class="input mono" type="text" value="SOP-QC-AS-014" />
+                      </div>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- Panel 2 — Acceptance criteria -->
+                <details class="panel" open>
+                  <summary>
+                    <svg class="p-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    <span class="p-num">2</span><span class="p-title">Acceptance criteria</span>
+                    <span class="p-tag">Quantitative</span>
+                  </summary>
+                  <div class="panel-inner">
+                    <div class="crit-row">
+                      <div class="field">
+                        <label class="flabel">Operator <span class="req">*</span></label>
+                        <div class="select-wrap">
+                          <select class="input mono" id="operatorSel">
+                            <option>NMT</option>
+                            <option>NLT</option>
+                            <option selected>BETWEEN</option>
+                            <option>RANGE</option>
+                          </select>
+                          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Min value</label>
+                        <input class="input mono" id="minVal" type="text" value="98.5" />
+                      </div>
+                      <div class="field">
+                        <div class="max-head">
+                          <label class="flabel">Max value</label>
+                          <button class="reset-limit" id="resetLimit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
+                        </div>
+                        <input class="input mono" id="maxVal" type="text" value="101.5" />
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Unit</label>
+                        <input class="input mono" id="unitVal" type="text" value="%" />
+                      </div>
+                    </div>
+                    <div class="crit-preview">
+                      <span class="lbl">Resolved criteria</span>
+                      <span class="val" id="critResolved">98.5 – 101.5 %</span>
+                    </div>
+                    <span class="fhelp" style="display:block; margin-top: var(--s3);">“Reset right limit” clears the upper bound and switches the operator to <b style="color:var(--text-secondary);">NLT</b> — used when a customer accepts a one-sided lower limit only.</span>
+                  </div>
+                </details>
+
+                <!-- Panel 3 — Sub-tests -->
+                <details class="panel" open>
+                  <summary>
+                    <svg class="p-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    <span class="p-num">3</span><span class="p-title">Sub-tests</span>
+                    <span class="p-hint">3 pharmacopoeia variants</span>
+                  </summary>
+                  <div class="panel-inner">
+                    <div class="ctable">
+                      <div class="thead" style="grid-template-columns: 1fr 90px 1fr 40px;">
+                        <span class="th">Variant</span><span class="th">Pharmacopoeia</span><span class="th">Acceptance criteria</span><span class="th"></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 90px 1fr 40px;">
+                        <span class="td"><span class="nm">Assay (IP)</span></span><span class="td"><span class="pharma">IP</span></span><span class="td mono">98.5 – 101.5 %</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 90px 1fr 40px;">
+                        <span class="td"><span class="nm">Assay (BP)</span></span><span class="td"><span class="pharma">BP</span></span><span class="td mono">99.0 – 101.0 %</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 90px 1fr 40px;">
+                        <span class="td"><span class="nm">Assay (EP)</span></span><span class="td"><span class="pharma">EP</span></span><span class="td mono">98.5 – 101.5 %</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                    </div>
+                    <a class="add-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>Add sub-test</a>
+                  </div>
+                </details>
+
+                <!-- Panel 4 — Calculation formula -->
+                <details class="panel" open>
+                  <summary>
+                    <svg class="p-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    <span class="p-num">4</span><span class="p-title">Calculation formula</span>
+                    <span class="p-tag">Quantitative</span>
+                  </summary>
+                  <div class="panel-inner">
+                    <label class="flabel" style="margin-bottom: 7px; display:block;">Formula expression</label>
+                    <textarea class="formula-box" rows="2" spellcheck="false">assay_pct = (titre_vol * molarity * eq_factor * 100) / (sample_wt * (100 - lod_pct) / 100)</textarea>
+                    <div class="formula-caption">
+                      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+                      Result auto-computes in AWS data entry from the variables below. Operators: + − * / ( ).
+                    </div>
+                    <div class="vars-label">Variables</div>
+                    <div class="ctable">
+                      <div class="thead" style="grid-template-columns: 1fr 1.4fr 100px 90px 40px;">
+                        <span class="th">Name</span><span class="th">Label</span><span class="th">Type</span><span class="th">UOM</span><span class="th"></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 1.4fr 100px 90px 40px;">
+                        <span class="td mono">titre_vol</span><span class="td"><span class="nm">Titrant volume</span></span><span class="td">Number</span><span class="td mono">mL</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 1.4fr 100px 90px 40px;">
+                        <span class="td mono">molarity</span><span class="td"><span class="nm">Titrant molarity</span></span><span class="td">Number</span><span class="td mono">M</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 1.4fr 100px 90px 40px;">
+                        <span class="td mono">eq_factor</span><span class="td"><span class="nm">Equivalence factor</span></span><span class="td">Number</span><span class="td mono">mg/mL</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 1.4fr 100px 90px 40px;">
+                        <span class="td mono">sample_wt</span><span class="td"><span class="nm">Sample weight</span></span><span class="td">Number</span><span class="td mono">mg</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1fr 1.4fr 100px 90px 40px;">
+                        <span class="td mono">lod_pct</span><span class="td"><span class="nm">Loss on drying</span></span><span class="td">Number</span><span class="td mono">%</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                    </div>
+                    <a class="add-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>Add variable</a>
+                  </div>
+                </details>
+
+                <!-- Panel 5 — Customer tab overrides -->
+                <details class="panel" open>
+                  <summary>
+                    <svg class="p-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    <span class="p-num">5</span><span class="p-title">Customer tab overrides</span>
+                    <span class="p-hint">1 active</span>
+                  </summary>
+                  <div class="panel-inner">
+                    <div class="ctable">
+                      <div class="thead" style="grid-template-columns: 1.3fr 1fr 1fr 40px;">
+                        <span class="th">Customer</span><span class="th">Overridden limit</span><span class="th">Master standard</span><span class="th"></span>
+                      </div>
+                      <div class="trow" style="grid-template-columns: 1.3fr 1fr 1fr 40px;">
+                        <span class="td"><span class="nm">Meridian Pharma</span><span class="pharma">CU-0241</span></span><span class="td mono" style="color:var(--text);font-weight:500;">99.0 – 101.0 %</span><span class="td mono">98.5 – 101.5 %</span><span class="td"><button class="row-x" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                      </div>
+                    </div>
+                    <span class="fhelp" style="display:block; margin-top: var(--s3);">Overrides apply only when this customer is selected in the SPEC's Customer tab. The master standard remains the default for all other customers.</span>
+                  </div>
+                </details>
+
+                <!-- Panel 6 — Instruments & reagents -->
+                <details class="panel" open>
+                  <summary>
+                    <svg class="p-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    <span class="p-num">6</span><span class="p-title">Instruments &amp; reagents required</span>
+                  </summary>
+                  <div class="panel-inner">
+                    <div class="grid2">
+                      <div class="field">
+                        <label class="flabel">Instruments</label>
+                        <div class="chips-field">
+                          <span class="chip">Potentiometric titrator <span class="cmono">INS-114</span><button class="cx" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                          <span class="chip">Analytical balance <span class="cmono">INS-007</span><button class="cx" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                          <span class="chip">Drying oven <span class="cmono">INS-031</span><button class="cx" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                          <button class="chip-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>Add</button>
+                        </div>
+                        <span class="fhelp">From Instrument Master. Calibration status verified at result entry.</span>
+                      </div>
+                      <div class="field">
+                        <label class="flabel">Reagents</label>
+                        <div class="chips-field">
+                          <span class="chip">Perchloric acid 0.1 M <span class="cmono">RG-202</span><button class="cx" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                          <span class="chip">Glacial acetic acid <span class="cmono">RG-088</span><button class="cx" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                          <span class="chip">Crystal violet TS <span class="cmono">RG-145</span><button class="cx" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+                          <button class="chip-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>Add</button>
+                        </div>
+                        <span class="fhelp">From Reagent Master. Expiry checked against batch test date.</span>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+
+              </div>
+
+              <!-- ===================== LIVE PREVIEW ===================== -->
+              <aside class="preview-col">
+                <div class="preview-card">
+                  <div class="pv-head">
+                    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                    <span class="t">Live preview</span>
+                    <span class="badge">7</span>
+                  </div>
+                  <div class="pv-body">
+                    <span class="pv-screenlabel">As shown in AWS data entry</span>
+                    <span class="pv-test">Assay on dried basis <span class="dept-badge dept-badge--qc">QC</span></span>
+                    <div class="pv-input-row">
+                      <span class="pv-input-label">Computed result</span>
+                      <div class="pv-input"><span class="val">99.74</span><span class="unit">%</span></div>
+                    </div>
+                    <div class="pv-crit">
+                      <span class="k">Criteria</span>
+                      <span class="v">98.5 – 101.5 %</span>
+                    </div>
+                    <div class="pv-conclusion">
+                      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                      <span class="ctext">Within spec</span>
+                      <span class="csub">Pass</span>
+                    </div>
+                  </div>
+                  <p class="pv-foot">Single source of truth — this is exactly how the parameter renders to the analyst, computed from the formula and checked against the resolved criteria.</p>
+                </div>
+              </aside>
+
+            </div>
+          </div>
+
+          <!-- Bottom action bar -->
+          <div class="action-bar">
+            <button class="btn btn--neutral btn--lg" id="discardBtn">Discard changes</button>
+            <div class="ab-spacer"></div>
+            <button class="ab-link" id="saveNextBtn">Save &amp; add next</button>
+            <button class="btn btn--primary btn--lg" id="saveBtn">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
+              Save test
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    (function () {
+      // ---- Test row selection (swaps the .selected highlight) ----
+      var rows = document.querySelectorAll('.test-row');
+      rows.forEach(function (r) {
+        r.addEventListener('click', function () {
+          rows.forEach(function (x) { x.classList.remove('selected'); });
+          r.classList.add('selected');
+        });
+      });
+
+      // ---- Toggle switches ----
+      document.querySelectorAll('.switch').forEach(function (sw) {
+        sw.addEventListener('click', function () {
+          var on = sw.classList.toggle('on');
+          sw.setAttribute('aria-checked', on ? 'true' : 'false');
+        });
+      });
+
+      // ---- Acceptance criteria: live resolved string ----
+      var opSel = document.getElementById('operatorSel');
+      var minV = document.getElementById('minVal');
+      var maxV = document.getElementById('maxVal');
+      var unitV = document.getElementById('unitVal');
+      var resolved = document.getElementById('critResolved');
+
+      function fmt() {
+        var op = opSel.value, mn = minV.value.trim(), mx = maxV.value.trim(), u = unitV.value.trim();
+        var uu = u ? ' ' + u : '';
+        var out;
+        if (op === 'BETWEEN' || op === 'RANGE') out = (mn || '—') + ' – ' + (mx || '—') + uu;
+        else if (op === 'NMT') out = 'NMT ' + (mx || mn || '—') + uu;
+        else if (op === 'NLT') out = 'NLT ' + (mn || '—') + uu;
+        else out = (mn || '—') + uu;
+        resolved.textContent = out;
+      }
+      [opSel, minV, maxV, unitV].forEach(function (el) {
+        el.addEventListener('input', fmt); el.addEventListener('change', fmt);
+      });
+
+      // ---- Reset right limit: clear max, switch operator to NLT (US-4-7) ----
+      document.getElementById('resetLimit').addEventListener('click', function () {
+        maxV.value = '';
+        opSel.value = 'NLT';
+        fmt();
+      });
+
+      // ---- Bottom actions ----
+      document.getElementById('saveBtn').addEventListener('click', function () { location.href = 'Product Master Editor.html'; });
+      document.getElementById('saveNextBtn').addEventListener('click', function () { location.href = 'Product Master Editor.html'; });
+      document.getElementById('discardBtn').addEventListener('click', function () { location.href = 'Product Master Editor.html'; });
+    })();
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+﻿<!doctype html>
+<!-- @dsCard group="Brand" name="QC Manager Dashboard" subtitle="Priya Mehta · approval queue, create batch, calibration, rejections" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — QC Manager dashboard</title>
+  <script src="js/session.js"></script>
+  <script src="js/shell-init.js"></script>
+  <script src="js/demo-data.js"></script>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    :root { --accent: #1A8FA3; --accent-hover: #156F80; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); font-size: var(--text-base); color: var(--text); background: var(--canvas); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ============================== SHELL ============================== */
+    .shell { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 56px 1fr; min-height: 100vh; }
+    .sidebar { grid-row: 1 / -1; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+    .sidebar-lockup { height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-bottom: 1px solid var(--border); }
+    .sidebar-lockup img { height: 22px; display: block; flex-shrink: 0; }
+    .sidebar-lockup .wordmark { display: flex; flex-direction: column; line-height: 1; gap: 3px; }
+    .sidebar-lockup .name { font-size: var(--text-md); font-weight: 600; color: var(--primary); letter-spacing: 0.02em; }
+    .sidebar-lockup .name .sep { color: var(--text-muted); font-weight: 400; margin: 0 3px; }
+    .sidebar-lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--s4) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+    .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 500; padding: var(--s4) var(--s3) var(--s2); }
+    .sidebar-nav .nav-group-label:first-child { padding-top: 0; }
+    .nav-item { display: flex; align-items: center; gap: var(--s3); padding: 8px var(--s3); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--text); cursor: pointer; font-weight: 400; transition: background-color 120ms ease, color 120ms ease; }
+    .nav-item:hover { background: var(--canvas); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
+    .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; color: currentColor; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .nav-item.active .count { color: var(--primary); }
+    .nav-item .count.alert { color: var(--oos); font-weight: 600; }
+    .sidebar-user { border-top: 1px solid var(--border); padding: var(--s3); display: flex; align-items: center; gap: var(--s3); flex-shrink: 0; cursor: pointer; transition: background-color 120ms ease; }
+    .sidebar-user:hover { background: var(--canvas); }
+    .sidebar-user .avatar { width: 36px; height: 36px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+    .sidebar-user .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-user .name { font-size: var(--text-sm); font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .role-row { display: flex; align-items: center; gap: 6px; }
+    .sidebar-user .role { font-size: 11px; color: var(--text-secondary); line-height: 1.2; }
+    .sidebar-user .chev { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+    .dept-badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 14px; }
+    .dept-badge--qc { color: var(--qc); background: var(--qc-soft); }
+
+    /* ---------- Top bar ---------- */
+    .topbar { grid-column: 2 / -1; grid-row: 1; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--s5); gap: var(--s4); min-width: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); }
+    .breadcrumb .crumb { color: var(--text-secondary); white-space: nowrap; cursor: pointer; transition: color 120ms ease; }
+    .breadcrumb .crumb:hover { color: var(--text); }
+    .breadcrumb .crumb.current { color: var(--text); font-weight: 500; cursor: default; }
+    .breadcrumb .sep { color: var(--text-muted); width: 12px; height: 12px; flex-shrink: 0; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; }
+    .env-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .env-tag .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--qc); }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 var(--s2); }
+    .icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: background-color 120ms ease, color 120ms ease; position: relative; }
+    .icon-btn:hover { background: var(--canvas); color: var(--text); }
+    .icon-btn .ico { width: 18px; height: 18px; }
+    .icon-btn .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--oos); color: #fff; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; line-height: 1; border: 1.5px solid var(--bg); }
+    .user-chip { display: inline-flex; align-items: center; gap: var(--s2); padding: 3px 10px 3px 3px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--text-sm); color: var(--text); background: var(--bg); cursor: pointer; white-space: nowrap; margin-left: var(--s2); transition: background-color 120ms ease; }
+    .user-chip:hover { background: var(--canvas); }
+    .user-chip .avatar { width: 26px; height: 26px; border-radius: 999px; background: var(--canvas); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text); }
+    .user-chip .chev { width: 14px; height: 14px; color: var(--text-muted); }
+
+    /* ============================== MAIN ============================== */
+    .main { grid-column: 2 / -1; grid-row: 2; overflow: auto; background: var(--canvas); display: flex; justify-content: center; }
+    .main-inner { width: 100%; max-width: 1320px; padding: var(--s6) var(--s8) var(--s8); display: flex; flex-direction: column; gap: var(--s5); }
+
+    /* ---------- Page header ---------- */
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); }
+    .page-header .title-block { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .page-header h1 { font-size: var(--text-2xl); font-weight: 600; letter-spacing: -0.01em; color: var(--text); line-height: 1.2; }
+    .page-header .greeting { display: flex; align-items: center; gap: var(--s2); font-size: var(--text-sm); color: var(--text-secondary); }
+    .page-header .greeting .day { font-family: var(--font-mono); color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; padding-left: var(--s2); margin-left: var(--s2); border-left: 1px solid var(--border); letter-spacing: 0.02em; }
+
+    /* ============================== STATS ROW ============================== */
+    .stats { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+    .stat { padding: var(--s5); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+    .stat:last-child { border-right: none; }
+    .stat .label { font-size: var(--text-xs); font-weight: 500; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+    .stat .value { font-size: var(--text-2xl); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; line-height: 1.1; }
+    .stat.primary .value { color: var(--primary); }
+    .stat.primary { background: color-mix(in srgb, var(--primary-soft) 40%, var(--bg)); }
+    .stat .sub { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .stat .sub b { color: var(--text-secondary); font-weight: 500; }
+    .stat .sub.amber b { color: var(--submitted); }
+
+    @media (max-width: 1080px) { .stats { grid-template-columns: 1fr 1fr; } .stat { border-right: none; } .stat:not(:last-child) { border-bottom: 1px solid var(--border); } }
+
+    /* ============================== WIDGET GRID ============================== */
+    .widget-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--s5); align-items: start; }
+    .col { display: flex; flex-direction: column; gap: var(--s5); min-width: 0; }
+    @media (max-width: 1080px) { .widget-grid { grid-template-columns: 1fr; } }
+
+    /* ---------- Card ---------- */
+    .card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; min-width: 0; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; padding: var(--s4) var(--s5); border-bottom: 1px solid var(--border); gap: var(--s3); }
+    .card-header .title { font-size: var(--text-md); font-weight: 600; color: var(--text); }
+    .card-header .count-meta { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .card-footer { padding: var(--s3) var(--s5); border-top: 1px solid var(--border); font-size: var(--text-xs); color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
+    .card-footer .link { color: var(--accent); font-weight: 500; cursor: pointer; }
+    .card-footer .link:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* ---------- Type pills ---------- */
+    .pill { display: inline-flex; align-items: center; justify-content: center; min-width: 46px; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 16px; white-space: nowrap; }
+    .pill--spec { color: var(--draft);     background: var(--draft-soft); }
+    .pill--moa  { color: var(--submitted); background: var(--submitted-soft); }
+    .pill--aws  { color: var(--primary);   background: var(--primary-soft); }
+
+    /* ============================== APPROVAL QUEUE TABLE ============================== */
+    .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+    .table-scroll::-webkit-scrollbar-track { background: transparent; }
+    .qtable { width: 100%; border-collapse: collapse; }
+    .qtable thead th { background: var(--canvas); text-align: left; font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: 10px var(--s5); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .qtable thead th.right { text-align: right; }
+    .qtable tbody tr { border-bottom: 1px solid var(--border); transition: background-color 120ms ease; }
+    .qtable tbody tr:last-child { border-bottom: none; }
+    .qtable tbody tr:hover { background: var(--primary-soft); }
+    .qtable tbody td { padding: 11px var(--s5); font-size: var(--text-sm); color: var(--text); vertical-align: middle; white-space: nowrap; }
+    .qtable td.doc-no { font-family: var(--font-mono); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+    .qtable td.batch-no { font-family: var(--font-mono); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .qtable td.submitter { color: var(--text); }
+    .qtable td.submitter .role { color: var(--text-muted); font-size: var(--text-xs); }
+    .qtable td.submitted-at { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .qtable td.action { text-align: right; }
+    .review-link { font-size: var(--text-sm); font-weight: 600; color: var(--accent); cursor: pointer; transition: color 120ms ease; }
+    .review-link:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* Empty state */
+    .empty-state { display: none; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s8) var(--s5); text-align: center; }
+    .empty-state .ico { width: 36px; height: 36px; color: var(--approved); }
+    .empty-state .msg { font-size: var(--text-md); font-weight: 500; color: var(--text); }
+    .empty-state .sub { font-size: var(--text-sm); color: var(--text-muted); }
+
+    /* ============================== CREATE BATCH CTA ============================== */
+    .create-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--s5); display: flex; flex-direction: column; gap: var(--s3); }
+    .create-card .cc-title { font-size: var(--text-md); font-weight: 600; color: var(--text); display: flex; align-items: center; gap: var(--s2); }
+    .create-card .cc-title .role-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border: 1px solid var(--border-strong); border-radius: 3px; padding: 1px 6px; }
+    .create-card .cc-sub { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.5; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 40px; padding: 0 var(--s4); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-sm); font-weight: 600; line-height: 1; cursor: pointer; border: 1px solid transparent; transition: background-color 120ms ease; white-space: nowrap; }
+    .btn--primary { background: var(--primary); color: #fff; width: 100%; }
+    .btn--primary:hover { background: var(--primary-hover); }
+    .btn .ico { width: 17px; height: 17px; }
+
+    /* ============================== CALIBRATION LIST ============================== */
+    .cal-list { display: flex; flex-direction: column; }
+    .cal-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--s3); padding: var(--s3) var(--s5); border-bottom: 1px solid var(--border); }
+    .cal-row:last-child { border-bottom: none; }
+    .cal-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .cal-top { display: flex; align-items: baseline; gap: var(--s2); min-width: 0; }
+    .cal-code { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .cal-name { font-size: var(--text-xs); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cal-due { font-size: var(--text-xs); font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 500; }
+    .cal-due.muted { color: var(--text-muted); }
+    .cal-due.amber { color: var(--submitted); }
+    .cal-due .date { color: var(--text-muted); font-weight: 400; font-family: var(--font-mono); }
+
+    /* ============================== RECENT REJECTIONS ============================== */
+    .rej-list { display: flex; flex-direction: column; padding: var(--s3); gap: var(--s2); }
+    .rej-row { background: color-mix(in srgb, var(--oos-soft) 55%, var(--bg)); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--s3) var(--s4); display: flex; flex-direction: column; gap: 6px; }
+    .rej-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+    .rej-doc { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+    .rej-reason { font-size: var(--text-sm); color: var(--text); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rej-meta { display: flex; align-items: center; gap: var(--s2); font-size: var(--text-xs); color: var(--text-secondary); }
+    .rej-meta .batch { font-family: var(--font-mono); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .rej-meta .dot { width: 3px; height: 3px; border-radius: 999px; background: var(--text-muted); }
+    .status-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 1px 7px; border-radius: 3px; line-height: 15px; white-space: nowrap; }
+    .status-tag--draft { color: var(--draft); background: var(--draft-soft); }
+    .status-tag--resub { color: var(--submitted); background: var(--submitted-soft); }
+  </style>
+</head>
+<body data-dashboard-role="QC_MGR">
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F5560"/><text x="50" y="58" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#fff" text-anchor="middle">AC</text></svg></template>
+
+  <div class="shell">
+
+    <!-- ============================== SIDEBAR ============================== -->
+    <aside class="sidebar">
+      <div class="sidebar-lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <span class="nav-group-label">Workflow</span>
+        <a class="nav-item active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="label">Dashboard</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8 12 13 3 8" /><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8" /><path d="m3.3 7 7.7 4.4 7.7-4.4" /><path d="M12 22V12" /></svg>
+          <span class="label">Batches</span>
+          <span class="count">89</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
+          <span class="label">Product masters</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14 10V2" /><path d="M8.5 2h7" /><path d="M7 16h10" /></svg>
+          <span class="label">Instruments &amp; reagents</span>
+          <span class="count alert">5</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-5" /></svg>
+          <span class="label">Reports</span>
+        </a>
+        <a class="nav-item">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
+          <span class="label">Audit log</span>
+        </a>
+      </nav>
+      <div class="sidebar-user" role="button">
+        <span class="avatar">PM</span>
+        <div class="who"><span class="name">Priya Mehta</span><div class="role-row"><span class="role">QC Manager</span><span class="dept-badge dept-badge--qc">QC</span></div></div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </div>
+    </aside>
+
+    <!-- ============================== TOP BAR ============================== -->
+    <header class="topbar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span class="crumb">Home</span>
+        <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+        <span class="crumb current">Dashboard</span>
+      </nav>
+      <div class="topbar-right">
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <div class="topbar-divider"></div>
+        <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+          <span class="badge">6</span>
+        </button>
+        <button class="user-chip" aria-label="Account">
+          <span class="avatar">PM</span><span>P. Mehta</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================== MAIN ============================== -->
+    <main class="main">
+      <div class="main-inner">
+
+        <!-- ----- Page header ----- -->
+        <header class="page-header">
+          <div class="title-block">
+            <h1>Dashboard</h1>
+            <div class="greeting">
+              <span>Good morning, Priya Mehta</span>
+              <span class="dept-badge dept-badge--qc">QC</span>
+              <span class="day">Tuesday · 02-Jun-2026 · 08:42 IST</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- ----- Stats row ----- -->
+        <section class="stats" aria-label="Key counts">
+          <div class="stat primary">
+            <span class="label">Pending approvals</span>
+            <span class="value">7</span>
+            <span class="sub"><b>3</b> SPEC · <b>2</b> MOA · <b>2</b> AWS</span>
+          </div>
+          <div class="stat">
+            <span class="label">Active batches</span>
+            <span class="value">21</span>
+            <span class="sub"><b>4</b> awaiting release</span>
+          </div>
+          <div class="stat">
+            <span class="label">Calibrations due · 30 d</span>
+            <span class="value">5</span>
+            <span class="sub amber"><b>2</b> due within 14 days</span>
+          </div>
+          <div class="stat">
+            <span class="label">OOS this month</span>
+            <span class="value">3</span>
+            <span class="sub"><b>1</b> open · 2 closed</span>
+          </div>
+        </section>
+
+        <!-- ----- Widget grid ----- -->
+        <section class="widget-grid">
+
+          <!-- LEFT: Approval queue (centerpiece) + Recent rejections -->
+          <div class="col">
+
+            <!-- Approval queue -->
+            <div class="card">
+              <div class="card-header">
+                <span class="title">Approval queue</span>
+                <span class="count-meta">7 submitted · awaiting your review</span>
+              </div>
+              <div class="table-scroll">
+              <table class="qtable">
+                <thead>
+                  <tr>
+                    <th>Doc number</th>
+                    <th>Type</th>
+                    <th>Batch no.</th>
+                    <th>Submitted by</th>
+                    <th>Submitted at</th>
+                    <th class="right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="doc-no">AWS/FG00132/01</td>
+                    <td><span class="pill pill--aws">AWS</span></td>
+                    <td class="batch-no">GCN/010526</td>
+                    <td class="submitter">Kavya Patel <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Today · 06:50</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                  <tr>
+                    <td class="doc-no">SPEC/FG00112/03</td>
+                    <td><span class="pill pill--spec">SPEC</span></td>
+                    <td class="batch-no">CAM/140426</td>
+                    <td class="submitter">Kavya Patel <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Today · 07:52</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                  <tr>
+                    <td class="doc-no">MOA/FG00079/01</td>
+                    <td><span class="pill pill--moa">MOA</span></td>
+                    <td class="batch-no">SCT/190526</td>
+                    <td class="submitter">Sneha Verma <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Today · 08:05</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                  <tr>
+                    <td class="doc-no">SPEC/FG00045/02</td>
+                    <td><span class="pill pill--spec">SPEC</span></td>
+                    <td class="batch-no">CCB/250526</td>
+                    <td class="submitter">Meera Iyer <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Yesterday · 17:31</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                  <tr>
+                    <td class="doc-no">AWS/LAC/03</td>
+                    <td><span class="pill pill--aws">AWS</span></td>
+                    <td class="batch-no">LAC/020526</td>
+                    <td class="submitter">Meera Iyer <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Yesterday · 16:18</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                  <tr>
+                    <td class="doc-no">MOA/FG00026/01</td>
+                    <td><span class="pill pill--moa">MOA</span></td>
+                    <td class="batch-no">SBC/080526</td>
+                    <td class="submitter">Rohit Nair <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Yesterday · 14:40</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                  <tr>
+                    <td class="doc-no">SPEC/FG00045/01</td>
+                    <td><span class="pill pill--spec">SPEC</span></td>
+                    <td class="batch-no">SBC/210526</td>
+                    <td class="submitter">Rohit Nair <span class="role">· QC Exec</span></td>
+                    <td class="submitted-at">Yesterday · 11:09</td>
+                    <td class="action"><span class="review-link">Review →</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+
+              <!-- Empty state (hidden by default) -->
+              <div class="empty-state">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
+                <span class="msg">All caught up — no pending approvals.</span>
+                <span class="sub">New submissions from QC will appear here.</span>
+              </div>
+
+              <div class="card-footer">
+                <span>Most recent submissions first</span>
+                <span class="link">Open full queue</span>
+              </div>
+            </div>
+
+            <!-- Recent rejections -->
+            <div class="card">
+              <div class="card-header">
+                <span class="title">Recent rejections</span>
+                <span class="count-meta">Returned by you</span>
+              </div>
+              <div class="rej-list">
+                <div class="rej-row">
+                  <div class="rej-top">
+                    <span class="rej-doc">SPEC/FG00091/01</span>
+                    <span class="status-tag status-tag--draft">Back in draft</span>
+                  </div>
+                  <span class="rej-reason">Sulphated ash entered as NMT 0.25 %; Master specifies NMT 0.10 %. Mandatory criteria cannot be edited at SPEC.</span>
+                  <div class="rej-meta"><span class="batch">MGS/220426</span><span class="dot"></span><span>Kavya Patel</span><span class="dot"></span><span>31-May · 16:40 IST</span></div>
+                </div>
+                <div class="rej-row">
+                  <div class="rej-top">
+                    <span class="rej-doc">AWS/MNT/04</span>
+                    <span class="status-tag status-tag--resub">Resubmitted</span>
+                  </div>
+                  <span class="rej-reason">pH observation 6.41 outside specification 5.9–6.3 not acknowledged. Add OOS comment before resubmission.</span>
+                  <div class="rej-meta"><span class="batch">MNT/050526</span><span class="dot"></span><span>Kavya Patel</span><span class="dot"></span><span>30-May · 11:18 IST</span></div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <span>Documents you sent back for rework</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT: Create batch + Calibration & expiry -->
+          <div class="col">
+
+            <!-- Create batch CTA -->
+            <div class="create-card">
+              <span class="cc-title">Create batch <span class="role-tag">QC Manager</span></span>
+              <span class="cc-sub">Initiate a new batch from an approved Product Master.</span>
+              <button class="btn btn--primary">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14" /></svg>
+                New batch
+              </button>
+            </div>
+
+            <!-- Calibration & expiry -->
+            <div class="card">
+              <div class="card-header">
+                <span class="title">Calibration &amp; expiry</span>
+                <span class="count-meta">next 30 days</span>
+              </div>
+              <div class="cal-list">
+                <div class="cal-row">
+                  <div class="cal-info">
+                    <div class="cal-top"><span class="cal-code">PH-001</span></div>
+                    <span class="cal-name">Mettler pH meter</span>
+                  </div>
+                  <span class="cal-due amber">due in 6 days <span class="date">· 08-Jun</span></span>
+                </div>
+                <div class="cal-row">
+                  <div class="cal-info">
+                    <div class="cal-top"><span class="cal-code">HPLC-002</span></div>
+                    <span class="cal-name">Shimadzu LC-2050</span>
+                  </div>
+                  <span class="cal-due amber">due in 11 days <span class="date">· 13-Jun</span></span>
+                </div>
+                <div class="cal-row">
+                  <div class="cal-info">
+                    <div class="cal-top"><span class="cal-code">BAL-002</span></div>
+                    <span class="cal-name">Analytical balance</span>
+                  </div>
+                  <span class="cal-due muted">due in 19 days <span class="date">· 21-Jun</span></span>
+                </div>
+                <div class="cal-row">
+                  <div class="cal-info">
+                    <div class="cal-top"><span class="cal-code">FTIR-001</span></div>
+                    <span class="cal-name">FTIR spectrophotometer</span>
+                  </div>
+                  <span class="cal-due muted">due in 24 days <span class="date">· 26-Jun</span></span>
+                </div>
+                <div class="cal-row">
+                  <div class="cal-info">
+                    <div class="cal-top"><span class="cal-code">KF-001</span></div>
+                    <span class="cal-name">Karl Fischer titrator</span>
+                  </div>
+                  <span class="cal-due muted">due in 30 days <span class="date">· 02-Jul</span></span>
+                </div>
+              </div>
+              <div class="card-footer">
+                <span>Sorted by due date</span>
+                <span class="link">All instruments</span>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var user = getCurrentUser();
+      if (!user) return;
+      var queue = getApprovalQueue(user);
+      var pendingVal = document.querySelector('.stat.primary .value');
+      if (pendingVal) pendingVal.textContent = String(queue.length);
+      var rejections = getRejectionsByApprover(user.username);
+      renderManagerRejectionList(document.querySelector('.rej-list'), rejections);
+      var tbody = document.querySelector('.widget-grid .qtable tbody');
+      var card = tbody && tbody.closest('.card');
+      renderApprovalQueueRows(tbody, queue);
+      if (card) {
+        var countMeta = card.querySelector('.count-meta');
+        if (countMeta) countMeta.textContent = queue.length + ' submitted · awaiting your review';
+        var empty = card.querySelector('.empty-state');
+        var tableScroll = card.querySelector('.table-scroll');
+        if (empty && tableScroll) {
+          empty.style.display = queue.length ? 'none' : '';
+          tableScroll.style.display = queue.length ? '' : 'none';
+        }
+      }
+      var newBatchBtn = document.querySelector('.create-card .btn--primary');
+      if (newBatchBtn) {
+        newBatchBtn.addEventListener('click', function () {
+          location.href = 'Batch Pipeline.html';
+        });
+      }
+    });
+  </script>
+
+  <script src="notifications-overlay.js"></script>
+</body>
+</html>

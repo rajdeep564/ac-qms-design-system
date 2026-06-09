@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- @dsCard group="Type" name="Type · Numerics & IDs" subtitle="Tabular numerals and monospace document IDs" viewport="700x170" -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: var(--s5); flex-direction:column; align-items: stretch; gap: var(--s3); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); }
+  .col { display:flex; flex-direction:column; gap: 2px; }
+  .lbl { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .num { font-family: var(--font); font-variant-numeric: tabular-nums; font-size: var(--text-md); color: var(--text); line-height: 1.5; }
+  .id { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); }
+  .note { font-size: 11px; color: var(--text-muted); }
+</style></head><body>
+<div class="grid">
+  <div class="col">
+    <span class="lbl">Tabular numerals (specs / results)</span>
+    <span class="num">99.74 %</span>
+    <span class="num">102.10 %</span>
+    <span class="num">  0.08 %</span>
+    <span class="note">font-variant-numeric: tabular-nums</span>
+  </div>
+  <div class="col">
+    <span class="lbl">Monospace IDs &amp; hashes</span>
+    <span class="id">SPEC-API-0142 r3</span>
+    <span class="id">BR-2026-04781</span>
+    <span class="id">OOS-2026-0089</span>
+    <span class="note">JetBrains Mono, --text-sm</span>
+  </div>
+</div></body></html>
