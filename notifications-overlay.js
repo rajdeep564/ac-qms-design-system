@@ -139,7 +139,9 @@
     var unreadN = items.filter(function (r) { return r.unread; }).length;
     var actionN = items.filter(function (r) { return r.cat === 'action'; }).length;
     var infoN = items.filter(function (r) { return r.cat === 'info'; }).length;
-    var listHtml = rows.map(rowHtml).join('');
+    var listHtml = items.length
+      ? rows.map(rowHtml).join('')
+      : '<div class="list-empty" style="margin:var(--s4);color:var(--text-muted,#8a9499);border:1px solid var(--border,#e6e6e6);padding:var(--s6) var(--s5);text-align:center;font-size:var(--text-sm,13px);">No notifications.</div>';
     panel.innerHTML =
       '<div class="nfo-head"><div class="nfo-title">Notifications<span class="ct">' + unreadN + ' unread</span></div><button class="nfo-mark">Mark all as read</button></div>' +
       '<div class="nfo-tabs"><button class="nfo-tab active">All <span class="bc">' + items.length + '</span></button><button class="nfo-tab">Pending action <span class="bc">' + actionN + '</span></button><button class="nfo-tab">Informational <span class="bc">' + infoN + '</span></button></div>' +

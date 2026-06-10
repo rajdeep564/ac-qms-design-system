@@ -1,13 +1,13 @@
-﻿<!doctype html>
+<!doctype html>
 <!-- @dsCard group="Brand" name="AC-QMS Sign Modal" viewport="1280x760" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS — Sign document</title>
-  <script src="js/session.js"></script>
+  <title>AC-QMS ? Sign document</title>
+  <script src="js/session.js?v=20260611"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js"></script>
+  <script src="js/demo-data.js?v=20260609"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -94,7 +94,7 @@
       gap: var(--s4);
     }
 
-    /* Summary block — the facts of what's being signed */
+    /* Summary block ? the facts of what's being signed */
     .summary {
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -168,7 +168,7 @@
     .input--error { border-color: var(--oos); }
     .input--error:focus { box-shadow: 0 0 0 2px rgba(180, 35, 24, 0.18); }
 
-    /* Inline error — OOS, text only, no fill */
+    /* Inline error ? OOS, text only, no fill */
     .field-error {
       display: none;
       align-items: center; gap: 6px;
@@ -207,7 +207,7 @@
       font-variant-numeric: tabular-nums;
       font-size: 11px;
     }
-    /* spinner — 1px ring, no flashy color */
+    /* spinner ? 1px ring, no flashy color */
     .geo-row .spin {
       width: 13px; height: 13px;
       border: 1.5px solid var(--border-strong);
@@ -306,7 +306,7 @@
 
   <!-- Overlay + modal -->
   <div class="overlay">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Sign document">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Confirm signature">
 
       <!-- Header -->
       <header class="m-header">
@@ -317,8 +317,8 @@
           </svg>
         </span>
         <div class="head-text">
-          <div class="title">Sign document — <span class="doc">SPEC/FG00132/01</span></div>
-          <div class="subtitle">Bound electronic signature · 21 CFR Part 11</div>
+          <div class="title" id="signContextTitle">Confirm signature</div>
+          <div class="subtitle">Bound electronic signature ? 21 CFR Part 11</div>
         </div>
       </header>
 
@@ -327,34 +327,21 @@
 
         <!-- What is being signed -->
         <p class="action-line">
-          You are about to apply your signature as <b>QA approval</b>. Once signed,
-          the record is locked and this action is recorded to the audit trail.
+          Once signed, the record is locked and this action is recorded to the audit trail.
         </p>
 
-        <div class="summary">
-          <div class="summary-row">
-            <span class="k">Document</span>
-            <span class="v mono">SPEC/FG00132/01</span>
-          </div>
-          <div class="summary-row">
-            <span class="k">Batch</span>
-            <span class="v mono">BR-2026-04781 · Lot A4781</span>
-          </div>
-          <div class="summary-row">
-            <span class="k">Action</span>
-            <span class="v">Sign &amp; approve <span class="pill pill--signed">QA Signed</span></span>
-          </div>
+        <div class="summary" id="signSummary">
           <div class="summary-row">
             <span class="k">Signatory</span>
-            <span class="v">R. Patel · QA Reviewer</span>
+            <span class="v" id="signSignatory">?</span>
           </div>
         </div>
 
         <!-- Password (mandatory every time) -->
         <div class="field">
-          <label class="field-label" for="pwd">Re-enter your password to confirm <span class="req">· required</span></label>
+          <label class="field-label" for="pwd">Re-enter your password to confirm <span class="req">? required</span></label>
           <div class="input-wrap">
-            <input class="input" id="pwd" type="password" autocomplete="current-password" placeholder="••••••••" value="••••••••••" />
+            <input class="input" id="pwd" type="password" autocomplete="current-password" placeholder="????????" value="??????????" />
           </div>
           <div class="field-error">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -373,11 +360,11 @@
           </svg>
           <div class="status">
             <!-- capturing -->
-            <span class="line1 geo--capturing">Capturing location…</span>
-            <span class="line2 geo--capturing">Required for audit · do not close</span>
+            <span class="line1 geo--capturing">Capturing location?</span>
+            <span class="line2 geo--capturing">Required for audit ? do not close</span>
             <!-- captured -->
             <span class="line1 geo--captured">Location captured</span>
-            <span class="line2 geo--captured">Plant 2 · Lab A · 18.5204° N, 73.8567° E</span>
+            <span class="line2 geo--captured">Plant 2 ? Lab A ? 18.5204? N, 73.8567? E</span>
           </div>
           <div class="spin geo--capturing"></div>
           <svg class="check geo--captured" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
@@ -443,6 +430,14 @@
     // in the ?next= query param (set by whichever screen opened this modal).
     // Default closes the loop on the QA Manager Dashboard.
     (function () {
+      var params = new URLSearchParams(location.search);
+      var contextLabel = params.get('context') || 'Confirm signature';
+      var titleEl = document.getElementById('signContextTitle');
+      if (titleEl) titleEl.textContent = contextLabel;
+      document.title = 'AC-QMS \u2014 ' + contextLabel;
+      var modal = document.querySelector('.modal[role="dialog"]');
+      if (modal) modal.setAttribute('aria-label', contextLabel);
+
       var user = getCurrentUser();
       if (user) {
         var signAs = user.fullName + ' \u00b7 ' + user.signLabel;
@@ -452,14 +447,11 @@
         if (actionLine) {
           actionLine.innerHTML = 'Sign as <b>' + signAs + '</b>. Once signed, the record is locked and this action is recorded to the audit trail.';
         }
-        document.querySelectorAll('.summary-row').forEach(function (row) {
-          var k = row.querySelector('.k');
-          var v = row.querySelector('.v');
-          if (k && v && k.textContent.trim() === 'Signatory') v.textContent = signAs;
-        });
+        var signatoryEl = document.getElementById('signSignatory');
+        if (signatoryEl) signatoryEl.textContent = signAs;
       }
 
-      var next = new URLSearchParams(location.search).get('next') || 'QA Manager Dashboard.html';
+      var next = params.get('next') || 'QA Manager Dashboard.html';
       var confirmBtn = document.querySelector('.m-footer .btn--primary');
       var pwdInput = document.getElementById('pwd');
       if (confirmBtn) confirmBtn.addEventListener('click', function () {

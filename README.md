@@ -370,6 +370,7 @@ The click-through prototype is static HTML — no build step required.
 | Item | Detail |
 | --- | --- |
 | Entry point | `index.html` (sign-in). `Login.html` redirects here. |
+| Walkthroughs | `Flows.html` — step-by-step flows, demo URLs, screen registry |
 | Demo users | `admin`, `qc.exec`, `qc.mgr`, `qa.exec`, `qa.mgr` |
 | Local preview | `python -m http.server 8765` then open `http://localhost:8765/` |
 

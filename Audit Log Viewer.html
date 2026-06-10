@@ -1,13 +1,13 @@
-ï»¿<!doctype html>
-<!-- @dsCard group="Brand" name="Audit Log Viewer" subtitle="System-wide append-only audit trail Â· dense table, filters, detail drawer, CSV export" viewport="1440x900" -->
+<!doctype html>
+<!-- @dsCard group="Brand" name="Audit Log Viewer" subtitle="System-wide append-only audit trail · dense table, filters, detail drawer, CSV export" viewport="1440x900" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS â€” Audit log</title>
-  <script src="js/session.js"></script>
+  <title>AC-QMS — Audit log</title>
+  <script src="js/session.js?v=20260609"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js"></script>
+  <script src="js/demo-data.js?v=20260609"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -220,7 +220,7 @@
     <aside class="sidebar">
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
-        <div class="wordmark"><span class="name">AC<span class="sep">Â·</span>QMS</span><span class="tagline">Quality Management</span></div>
+        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-group-label">Workflow</span>
@@ -233,7 +233,7 @@
           <span class="label">Batches</span>
           <span class="count">89</span>
         </a>
-        <a class="nav-item" href="Product Master Editor.html">
+        <a class="nav-item" href="Product Masters.html">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /></svg>
           <span class="label">Masters</span>
         </a>
@@ -265,7 +265,7 @@
         <span class="crumb current">Audit Log</span>
       </nav>
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod Â· IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
@@ -286,7 +286,7 @@
         <div class="page-head">
           <div class="ph-left">
             <h1 class="ph-title">Audit Log</h1>
-            <p class="ph-sub">All system activity<span class="sep">Â·</span>append-only<span class="sep">Â·</span>retained indefinitely</p>
+            <p class="ph-sub">All system activity<span class="sep">·</span>append-only<span class="sep">·</span>retained indefinitely</p>
           </div>
           <button class="btn btn--outline" id="exportBtn">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
@@ -385,7 +385,7 @@
               <span class="flabel">Search</span>
               <div class="search">
                 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-                <input class="ctrl" type="text" id="fText" placeholder="Search action, comment, fieldâ€¦" />
+                <input class="ctrl" type="text" id="fText" placeholder="Search action, comment, field…" />
               </div>
             </div>
             <div class="filter-actions">
@@ -399,8 +399,8 @@
 
           <div class="stat-line">
             <span class="count" id="eventCount">Showing 247 events</span>
-            <span class="sep">Â·</span>
-            <span class="applied" id="appliedFilters">Filters: <b>last 7 days</b> Â· <b>all users</b> Â· <b>all actions</b></span>
+            <span class="sep">·</span>
+            <span class="applied" id="appliedFilters">Filters: <b>last 7 days</b> · <b>all users</b> · <b>all actions</b></span>
           </div>
         </div>
 
@@ -416,7 +416,7 @@
                   <th>Action</th>
                   <th>Entity</th>
                   <th>Field</th>
-                  <th>Old â†’ New</th>
+                  <th>Old ? New</th>
                   <th>Comment</th>
                   <th>IP</th>
                   <th>Geo</th>
@@ -430,13 +430,13 @@
 
           <!-- Pagination -->
           <div class="pagination">
-            <span class="pg-info">Showing <span class="mono">1â€“50</span> of <span class="mono">1,247</span></span>
+            <span class="pg-info">Showing <span class="mono">1–50</span> of <span class="mono">1,247</span></span>
             <div class="pg-controls">
               <button class="pg-btn" disabled aria-label="Previous"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
               <button class="pg-btn cur">1</button>
               <button class="pg-btn">2</button>
               <button class="pg-btn">3</button>
-              <span style="color: var(--text-muted); font-size: var(--text-xs);">â€¦</span>
+              <span style="color: var(--text-muted); font-size: var(--text-xs);">…</span>
               <button class="pg-btn">25</button>
               <button class="pg-btn" aria-label="Next"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
               <span class="pg-jump">Jump to <input type="text" inputmode="numeric" value="1" aria-label="Jump to page" /></span>
@@ -490,16 +490,16 @@
       function deptCell(d) {
         if (d === 'QC') return '<span class="dept-badge dept-badge--qc">QC</span>';
         if (d === 'QA') return '<span class="dept-badge dept-badge--qa">QA</span>';
-        return '<span class="dept-none">â€”</span>';
+        return '<span class="dept-none">—</span>';
       }
       function etypePrefix(t) {
         var m = { Document:'DOC', Batch:'BATCH', Master:'MSTR', User:'USER', Instrument:'INST', Reagent:'REA', Session:'SESS' };
         return m[t] || t.toUpperCase();
       }
       function changeCell(e) {
-        if (!e.old && !e.neu) return '<span class="none">â€”</span>';
-        var oldp = e.old ? '<span class="old">' + e.old + '</span>' : '<span class="old">â€”</span>';
-        return oldp + '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6"/></svg><span class="new">' + (e.neu || 'â€”') + '</span>';
+        if (!e.old && !e.neu) return '<span class="none">—</span>';
+        var oldp = e.old ? '<span class="old">' + e.old + '</span>' : '<span class="old">—</span>';
+        return oldp + '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6"/></svg><span class="new">' + (e.neu || '—') + '</span>';
       }
       function geoCell(g) {
         var denied = g === 'Permission Denied';
@@ -511,16 +511,20 @@
 
       var body = document.getElementById('auditBody');
       function render(list) {
+        if (!list.length) {
+          body.innerHTML = '<tr><td colspan="10">' + (typeof emptyListHtml === 'function' ? emptyListHtml('No audit events match your filters.') : '<div class="list-empty">No audit events match your filters.</div>') + '</td></tr>';
+          return;
+        }
         body.innerHTML = list.map(function (e, i) {
           return '<tr data-i="' + EVENTS.indexOf(e) + '">' +
             '<td><span class="c-ts"><span class="d">' + e.ts + '</span><span class="t">' + e.tt + ' IST</span></span></td>' +
             '<td><span class="c-user"><span class="nm">' + e.user + '</span><span class="rl">' + e.role + '</span></span></td>' +
             '<td>' + deptCell(e.dept) + '</td>' +
             '<td>' + actionPill(e.action) + '</td>' +
-            '<td><span class="c-entity">' + (e.entity === 'â€”' ? '<span class="etype">â€”</span>' : '<span class="etype">' + etypePrefix(e.etype) + ' Â· </span>' + e.entity) + '</span></td>' +
+            '<td><span class="c-entity">' + (e.entity === '—' ? '<span class="etype">—</span>' : '<span class="etype">' + etypePrefix(e.etype) + ' · </span>' + e.entity) + '</span></td>' +
             '<td><span class="c-field">' + e.field + '</span></td>' +
             '<td><span class="c-change">' + changeCell(e) + '</span></td>' +
-            '<td><span class="c-comment" title="' + e.comment.replace(/"/g,'&quot;') + '">' + (e.comment || 'â€”') + '</span></td>' +
+            '<td><span class="c-comment" title="' + e.comment.replace(/"/g,'&quot;') + '">' + (e.comment || '—') + '</span></td>' +
             '<td><span class="c-ip">' + e.ip + '</span></td>' +
             '<td>' + geoCell(e.geo) + '</td>' +
           '</tr>';
@@ -551,7 +555,7 @@
         });
         render(filtered);
         eventCount.textContent = 'Showing ' + filtered.length + ' event' + (filtered.length === 1 ? '' : 's');
-        appliedFilters.innerHTML = 'Filters: <b>last 7 days</b> Â· <b>' + (u === 'all' ? 'all users' : u) + '</b> Â· <b>' + (ac === 'all' ? 'all actions' : ac) + '</b>';
+        appliedFilters.innerHTML = 'Filters: <b>last 7 days</b> · <b>' + (u === 'all' ? 'all users' : u) + '</b> · <b>' + (ac === 'all' ? 'all actions' : ac) + '</b>';
       }
       document.getElementById('applyBtn').addEventListener('click', apply);
       document.getElementById('fText').addEventListener('keydown', function (e) { if (e.key === 'Enter') apply(); });
@@ -561,7 +565,7 @@
         fDoc.value = ''; fText.value = '';
         render(EVENTS);
         eventCount.textContent = 'Showing ' + EVENTS.length + ' events';
-        appliedFilters.innerHTML = 'Filters: <b>last 7 days</b> Â· <b>all users</b> Â· <b>all actions</b>';
+        appliedFilters.innerHTML = 'Filters: <b>last 7 days</b> · <b>all users</b> · <b>all actions</b>';
       });
 
       // ---------- Detail drawer ----------
@@ -572,16 +576,16 @@
         document.getElementById('dActionPill').innerHTML = actionPill(e.action);
         document.getElementById('dEvtId').textContent = e.evt;
         var rows = [
-          ['Timestamp', '<span class="mono">' + e.ts + ' Â· ' + e.tt + ' IST</span>'],
+          ['Timestamp', '<span class="mono">' + e.ts + ' · ' + e.tt + ' IST</span>'],
           ['User', e.user],
           ['Role', e.role],
-          ['Department', e.dept ? e.dept : 'â€”'],
+          ['Department', e.dept ? e.dept : '—'],
           ['Action', e.action],
           ['Entity type', e.etype],
-          ['Entity ID', '<span class="copy-id"><span class="mono">' + (e.entity === 'â€”' ? 'â€”' : etypePrefix(e.etype) + ' Â· ' + e.entity) + '</span>' + (e.entity === 'â€”' ? '' : '<button class="copy-btn" id="copyId" aria-label="Copy entity ID"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>') + '</span>'],
+          ['Entity ID', '<span class="copy-id"><span class="mono">' + (e.entity === '—' ? '—' : etypePrefix(e.etype) + ' · ' + e.entity) + '</span>' + (e.entity === '—' ? '' : '<button class="copy-btn" id="copyId" aria-label="Copy entity ID"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>') + '</span>'],
           ['Field', e.field],
-          ['Change', (e.old || e.neu) ? '<span class="change-pair"><span class="old">' + (e.old || 'â€”') + '</span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6"/></svg><span class="new">' + (e.neu || 'â€”') + '</span></span>' : 'â€”'],
-          ['Comment', e.comment || 'â€”'],
+          ['Change', (e.old || e.neu) ? '<span class="change-pair"><span class="old">' + (e.old || '—') + '</span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6"/></svg><span class="new">' + (e.neu || '—') + '</span></span>' : '—'],
+          ['Comment', e.comment || '—'],
           ['IP address', '<span class="mono">' + e.ip + '</span>'],
           ['Geolocation', e.geo]
         ];
@@ -592,7 +596,7 @@
         if (copyId) {
           copyId.addEventListener('click', function (ev) {
             ev.stopPropagation();
-            var txt = etypePrefix(e.etype) + ' Â· ' + e.entity;
+            var txt = etypePrefix(e.etype) + ' · ' + e.entity;
             if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
             copyId.classList.add('copied');
             copyId.innerHTML = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -601,10 +605,10 @@
         }
         var rel = document.getElementById('relatedLink');
         if (rel) {
-          if (e.etype === 'Document' && e.entity && e.entity !== 'â€”' && typeof docUrl === 'function') {
+          if (e.etype === 'Document' && e.entity && e.entity !== '—' && typeof docUrl === 'function') {
             rel.href = docUrl('Document Timeline.html', e.entity);
             rel.style.display = '';
-          } else if (e.etype === 'Batch' && e.entity && e.entity !== 'â€”' && typeof batchUrl === 'function') {
+          } else if (e.etype === 'Batch' && e.entity && e.entity !== '—' && typeof batchUrl === 'function') {
             rel.href = batchUrl(e.entity);
             rel.style.display = '';
           } else {

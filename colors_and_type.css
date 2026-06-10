@@ -154,3 +154,11 @@ html, body {
 .t-numeric {
   font-variant-numeric: tabular-nums;
 }
+
+.list-empty {
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: var(--s6) var(--s5);
+  text-align: center;
+  font-size: var(--text-sm);
+}

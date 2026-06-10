@@ -5,9 +5,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AC-QMS — Product Master · Glycine IP · Revision 03</title>
-  <script src="js/session.js"></script>
+  <script src="js/session.js?v=20260611"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js"></script>
+  <script src="js/demo-data.js?v=20260609"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -90,6 +90,30 @@
     .pill--signed { color: var(--signed); background: var(--signed-soft); }
     .pill--superseded { color: var(--draft); background: var(--draft-soft); }
     .pill--active { color: var(--approved); background: var(--approved-soft); }
+    .pill--submitted { color: var(--submitted); background: var(--submitted-soft); }
+    .pill--approved { color: var(--approved); background: var(--approved-soft); }
+
+    .editor.review-mode { grid-template-columns: 200px minmax(0, 1fr) 340px; }
+    .editor.review-mode .status-rail { display: none; }
+    .decision-pane { display: none; position: sticky; top: var(--s6); }
+    .editor.review-mode .decision-pane { display: flex; flex-direction: column; }
+    .decision-inner { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: var(--s5); display: flex; flex-direction: column; gap: var(--s5); }
+    .dp-title .t { font-size: var(--text-lg); font-weight: 600; }
+    .dp-role { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px; }
+    .four-eye { display: flex; gap: var(--s2); padding: var(--s3); background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.5; }
+    .act-block .ab-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; color: var(--text-muted); }
+    .act-block .ab-explain { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.5; margin: var(--s2) 0 var(--s3); }
+    .btn--approve { background: var(--primary); color: #fff; width: 100%; }
+    .btn--approve:hover { background: var(--primary-hover); }
+    .btn--reject { background: var(--bg); color: var(--oos); border-color: color-mix(in srgb, var(--oos) 40%, var(--border-strong)); width: 100%; }
+    .btn--reject:hover:not(:disabled) { background: var(--oos-soft); }
+    .btn--reject:disabled { opacity: 0.5; cursor: not-allowed; }
+    .zone-divider { display: flex; align-items: center; gap: var(--s3); margin: var(--s4) 0; }
+    .zone-divider .rule { flex: 1; height: 1px; background: var(--border); }
+    .zone-divider .or { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    textarea.reject-ta { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: var(--s3); font-family: var(--font); font-size: var(--text-sm); min-height: 88px; resize: vertical; }
+    .char-row { display: flex; justify-content: space-between; font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px; }
+    .review-readonly .input:not(.locked) { pointer-events: none; background: var(--canvas); }
 
     /* Revision history dropdown */
     .rev-history { position: relative; flex-shrink: 0; }
@@ -448,6 +472,34 @@
             </div>
           </aside>
 
+          <aside class="decision-pane" id="decisionPane">
+            <div class="decision-inner">
+              <div>
+                <div class="dp-title"><span class="t" id="dpTitle">Your review</span></div>
+                <div class="dp-role" id="dpRole"></div>
+              </div>
+              <div class="four-eye">Four-eye principle: you cannot approve a product you submitted.</div>
+              <div class="action-zone">
+                <div class="act-block">
+                  <span class="ab-label" id="abLabel">Approve</span>
+                  <span class="ab-explain" id="abExplain">Confirms the product master is complete and fit for QA signature.</span>
+                  <button class="btn btn--approve" id="approveBtn">
+                    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5" /></svg>
+                    <span id="abBtnText">Approve</span>
+                  </button>
+                </div>
+                <div class="zone-divider"><span class="rule"></span><span class="or">or</span><span class="rule"></span></div>
+                <div class="act-block" id="rejectBlock">
+                  <span class="ab-label">Reject</span>
+                  <span class="ab-explain">Return to preparer with a mandatory comment.</span>
+                  <textarea class="reject-ta" id="rejectComment" placeholder="Explain what must be corrected…"></textarea>
+                  <div class="char-row"><span id="charHint">Minimum 10 characters</span><span class="char-count" id="charCount">0</span></div>
+                  <button class="btn btn--reject" id="rejectBtn" disabled style="margin-top:var(--s3)">Reject &amp; send back</button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
         </div>
 
       </div>
@@ -456,28 +508,107 @@
   </div>
 
   <script>
-    (function () {
-      // Revision history dropdown
+    document.addEventListener('DOMContentLoaded', function () {
+      var params = new URLSearchParams(location.search);
+      var productId = params.get('productId');
+      var reviewMode = params.get('mode') === 'review';
+      var qaRole = params.get('role') === 'qa';
+      var product = productId ? getProductById(productId) : null;
+      if (!product) {
+        showParamNotFound(
+          'Product not found. Check the product ID in the URL.',
+          'Product Masters.html',
+          '← Back to Product Masters'
+        );
+        return;
+      }
+      populateProductMaster(product);
+
+      document.querySelectorAll('.breadcrumb .crumb').forEach(function (c) {
+        if (c.textContent === 'Masters') {
+          c.outerHTML = '<a class="crumb" href="Product Masters.html">Masters</a>';
+        }
+      });
+
       var rh = document.getElementById('revHistory');
       var rt = document.getElementById('revTrigger');
       rt.addEventListener('click', function (e) { e.stopPropagation(); rh.classList.toggle('open'); });
       document.addEventListener('click', function () { rh.classList.remove('open'); });
       rh.querySelector('.rev-menu').addEventListener('click', function (e) { e.stopPropagation(); });
 
-      // Submit for QC approval → bound e-signature modal (disabled until required tabs complete)
-      var submitBtn = document.getElementById('submitBtn');
-      submitBtn.addEventListener('click', function () {
-        if (submitBtn.disabled) return;
-        location.href = 'Sign Modal.html?next=' + encodeURIComponent('QC Manager Dashboard.html');
-      });
-
       function roleDashboard() {
         var u = getCurrentUser();
         return u ? getDashboardForUser(u) : 'index.html';
       }
+
+      if (reviewMode) {
+        var user = getCurrentUser();
+        var allowed = user && (user.role === 'QC_MGR' || user.role === 'QA_MGR' || user.role === 'SUPER_ADMIN');
+        if (!allowed) {
+          location.replace(roleDashboard());
+          return;
+        }
+        if (user.username === product.createdBy && user.role !== 'SUPER_ADMIN') {
+          location.replace(roleDashboard());
+          return;
+        }
+        document.querySelector('.editor').classList.add('review-mode');
+        document.querySelector('.panel-body').classList.add('review-readonly');
+        document.querySelectorAll('.panel-body .input:not(.locked)').forEach(function (el) {
+          el.readOnly = true;
+        });
+        document.querySelector('.pm-rev-label').textContent = 'Reviewing';
+        document.title = 'AC-QMS — Product Master review · ' + product.name;
+
+        var isQa = qaRole || user.role === 'QA_MGR';
+        if (isQa) {
+          document.getElementById('dpTitle').textContent = 'QA signature';
+          document.getElementById('abLabel').textContent = 'Sign';
+          document.getElementById('abBtnText').textContent = 'Sign product master';
+          document.getElementById('abExplain').textContent = 'Applies your QA signature. Product becomes active for batch creation.';
+          document.getElementById('rejectBlock').style.display = 'none';
+          document.querySelector('.four-eye').style.display = 'none';
+        }
+        var disp = getUserDisplay(user.username);
+        document.getElementById('dpRole').textContent = disp.fullName + ' · ' + disp.designation;
+
+        document.getElementById('approveBtn').addEventListener('click', function () {
+          if (isQa) {
+            updateProductStatus(product.id, 'QA_SIGNED', user.username);
+            location.href = signModalUrl('Product Masters.html', 'Sign Master \u2014 ' + product.name);
+          } else {
+            updateProductStatus(product.id, 'QC_APPROVED', user.username);
+            location.href = signModalUrl('QC Manager Dashboard.html', 'Approve Master \u2014 ' + product.name);
+          }
+        });
+
+        var ta = document.getElementById('rejectComment');
+        var rejectBtn = document.getElementById('rejectBtn');
+        var count = document.getElementById('charCount');
+        var hint = document.getElementById('charHint');
+        if (ta && rejectBtn && !isQa) {
+          ta.addEventListener('input', function () {
+            var n = ta.value.trim().length;
+            count.textContent = n;
+            rejectBtn.disabled = n < 10;
+            hint.classList.toggle('met', n >= 10);
+          });
+          rejectBtn.addEventListener('click', function () {
+            updateProductStatus(product.id, 'REJECTED', user.username, ta.value.trim());
+            location.href = roleDashboard();
+          });
+        }
+        return;
+      }
+
+      var submitBtn = document.getElementById('submitBtn');
+      submitBtn.addEventListener('click', function () {
+        if (submitBtn.disabled) return;
+        location.href = signModalUrl('QC Manager Dashboard.html', 'Sign Master Submission \u2014 ' + product.name);
+      });
       document.getElementById('saveDraftBtn').addEventListener('click', function () { location.href = roleDashboard(); });
       document.getElementById('discardBtn').addEventListener('click', function () { location.href = roleDashboard(); });
-    })();
+    });
   </script>
 
   <script src="notifications-overlay.js"></script>

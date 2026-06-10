@@ -147,7 +147,7 @@
     if (key === 'dashboard') return getDashboardForUser(user);
     if (key === 'approvals' || key === 'pending signatures') return getDashboardForUser(user);
     if (key === 'my batches' || key === 'batches') return 'Batch Pipeline.html';
-    if (key === 'product masters') return 'Product Master Editor.html';
+    if (key === 'product masters' || key === 'masters') return 'Product Masters.html';
     if (key.indexOf('instruments') !== -1) return 'Instrument Master.html';
     if (key === 'reports') return 'Reports Hub.html';
     if (key === 'audit log') return 'Audit Log Viewer.html';
@@ -170,6 +170,22 @@
     var allowed = DASHBOARD_ROLE_ALLOW[expected];
     if (!allowed || allowed.indexOf(user.role) !== -1) return;
     location.replace(getDashboardForUser(user));
+  }
+
+  function guardCreateProductMasterAccess() {
+    if (!requireAuth()) return false;
+    var user = getCurrentUser();
+    if (user.role === 'QC_EXEC' || user.role === 'SUPER_ADMIN') return true;
+    location.replace(getDashboardForUser(user));
+    return false;
+  }
+
+  function guardCreateBatchAccess() {
+    if (!requireAuth()) return false;
+    var user = getCurrentUser();
+    if (user.role === 'QC_MGR' || user.role === 'SUPER_ADMIN') return true;
+    location.replace(getDashboardForUser(user));
+    return false;
   }
 
   function applyDashboardGreeting() {
@@ -262,13 +278,16 @@
       }
     }
 
+    var isSuperAdmin = hasRole('SUPER_ADMIN');
     var usersNav = findNavItemByLabel('Users');
+    var permNav = findNavItemByLabel('Permissions matrix');
+    if (usersNav) usersNav.style.display = isSuperAdmin ? '' : 'none';
+    if (permNav) permNav.style.display = isSuperAdmin ? '' : 'none';
     if (usersNav) {
-      usersNav.style.display = hasRole('SUPER_ADMIN') ? '' : 'none';
       var adminLabel = usersNav.previousElementSibling;
       if (adminLabel && adminLabel.classList.contains('nav-group-label') &&
           adminLabel.textContent.trim().toLowerCase() === 'administration') {
-        adminLabel.style.display = hasRole('SUPER_ADMIN') ? '' : 'none';
+        adminLabel.style.display = isSuperAdmin ? '' : 'none';
       }
     }
 
@@ -290,8 +309,17 @@
   window.isDepartment = isDepartment;
   window.getDashboardForUser = getDashboardForUser;
   window.applyAppShell = applyAppShell;
+  window.guardCreateProductMasterAccess = guardCreateProductMasterAccess;
+  window.guardCreateBatchAccess = guardCreateBatchAccess;
   window.wireSidebarNav = wireSidebarNav;
   window.navHrefForLabel = navHrefForLabel;
   window.initials = initials;
   window.shortName = shortName;
+
+  function signModalUrl(next, context) {
+    var url = 'Sign Modal.html?next=' + encodeURIComponent(next);
+    if (context) url += '&context=' + encodeURIComponent(context);
+    return url;
+  }
+  window.signModalUrl = signModalUrl;
 })();

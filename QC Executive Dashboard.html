@@ -1,19 +1,19 @@
-ï»¿<!doctype html>
-<!-- @dsCard group="Brand" name="QC Executive Dashboard" subtitle="Kavya Patel Â· assigned batches, pending submissions, rejected drafts" -->
+<!doctype html>
+<!-- @dsCard group="Brand" name="QC Executive Dashboard" subtitle="Kavya Patel · assigned batches, pending submissions, rejected drafts" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS â€” QC Executive dashboard</title>
-  <script src="js/session.js"></script>
+  <title>AC-QMS — QC Executive dashboard</title>
+  <script src="js/session.js?v=20260609"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js"></script>
+  <script src="js/demo-data.js?v=20260609"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
   <style>
     /* --accent: documented brand "medium teal" (US-21-6), used ONLY for the
-       inline "Open" document links â€” distinct from --primary (deep teal),
+       inline "Open" document links — distinct from --primary (deep teal),
        which stays reserved for primary CTAs + active nav. */
     :root {
       --accent:       #1A8FA3;
@@ -215,7 +215,7 @@
 
     /* ============================== STATS ROW ============================== */
     /* Three quiet tiles. Numbers in --primary, labels in --text-secondary.
-       No colored backgrounds â€” a single white card, hairline-divided. */
+       No colored backgrounds — a single white card, hairline-divided. */
     .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -301,7 +301,7 @@
 
     /* ============================== PHASE PILLS ============================== */
     /* Functional status: which document phase the batch is currently in.
-       Soft tint + solid text, reading as a SPECâ†’MOAâ†’AWSâ†’COA progression. */
+       Soft tint + solid text, reading as a SPEC?MOA?AWS?COA progression. */
     .pill {
       display: inline-flex; align-items: center; justify-content: center;
       min-width: 50px;
@@ -427,7 +427,7 @@
     /* ============================== REJECTED DRAFTS ============================== */
     .reject-list { display: flex; flex-direction: column; padding: var(--s3); gap: var(--s2); }
     .reject-row {
-      /* OOS-soft used very lightly â€” rejection is a mild alert state.
+      /* OOS-soft used very lightly — rejection is a mild alert state.
          Text stays --text; no red text, no red border. */
       background: color-mix(in srgb, var(--oos-soft) 55%, var(--bg));
       border: 1px solid var(--border);
@@ -482,7 +482,7 @@
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
         <div class="wordmark">
-          <span class="name">AC<span class="sep">Â·</span>QMS</span>
+          <span class="name">AC<span class="sep">·</span>QMS</span>
           <span class="tagline">Quality Management</span>
         </div>
       </div>
@@ -558,7 +558,7 @@
       </nav>
 
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod Â· IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -581,14 +581,14 @@
     <main class="main">
       <div class="main-inner">
 
-        <!-- ----- Page header (no New-batch CTA â€” QC Executive cannot create batches) ----- -->
+        <!-- ----- Page header (no New-batch CTA — QC Executive cannot create batches) ----- -->
         <header class="page-header">
           <div class="title-block">
             <h1>Dashboard</h1>
             <div class="greeting">
               <span>Good morning, Kavya Patel</span>
               <span class="dept-badge dept-badge--qc">QC</span>
-              <span class="day">Monday Â· 01-Jun-2026 Â· 08:47 IST</span>
+              <span class="day">Monday · 01-Jun-2026 · 08:47 IST</span>
             </div>
           </div>
         </header>
@@ -598,17 +598,17 @@
           <div class="stat">
             <span class="label">Active batches</span>
             <span class="value">6</span>
-            <span class="sub"><b>2</b> in SPEC Â· <b>2</b> in AWS</span>
+            <span class="sub"><b>2</b> in SPEC · <b>2</b> in AWS</span>
           </div>
           <div class="stat">
             <span class="label">Drafts in progress</span>
             <span class="value">5</span>
-            <span class="sub"><b>3</b> ready to submit Â· <b>2</b> rejected</span>
+            <span class="sub"><b>3</b> ready to submit · <b>2</b> rejected</span>
           </div>
           <div class="stat">
             <span class="label">Submissions this week</span>
             <span class="value">9</span>
-            <span class="sub"><b>7</b> approved Â· <b>2</b> pending review</span>
+            <span class="sub"><b>7</b> approved · <b>2</b> pending review</span>
           </div>
         </section>
 
@@ -638,48 +638,48 @@
                   <td class="arn">2026FG03</td>
                   <td class="product">Glycine IP</td>
                   <td><span class="pill pill--aws">AWS</span></td>
-                  <td class="last-activity">Today Â· 08:10</td>
+                  <td class="last-activity">Today · 08:10</td>
                 </tr>
                 <tr>
                   <td class="batch-no">CAM/140426</td>
                   <td class="arn">AR-2026-012</td>
                   <td class="product">Citric Acid Monohydrate IP</td>
                   <td><span class="pill pill--spec">SPEC</span></td>
-                  <td class="last-activity">Today Â· 07:52</td>
+                  <td class="last-activity">Today · 07:52</td>
                 </tr>
                 <tr>
                   <td class="batch-no">MNT/050526</td>
                   <td class="arn">AR-2026-024</td>
                   <td class="product">Mannitol IP</td>
                   <td><span class="pill pill--aws">AWS</span></td>
-                  <td class="last-activity">Yesterday Â· 17:22</td>
+                  <td class="last-activity">Yesterday · 17:22</td>
                 </tr>
                 <tr>
                   <td class="batch-no">ASC/120526</td>
                   <td class="arn">AR-2026-031</td>
                   <td class="product">Ascorbic Acid IP</td>
                   <td><span class="pill pill--coa">COA</span></td>
-                  <td class="last-activity">28-May Â· 14:05</td>
+                  <td class="last-activity">28-May · 14:05</td>
                 </tr>
                 <tr>
                   <td class="batch-no">MGS/220426</td>
                   <td class="arn">AR-2026-018</td>
                   <td class="product">Magnesium Stearate IP</td>
                   <td><span class="pill pill--spec">SPEC</span></td>
-                  <td class="last-activity">27-May Â· 10:31</td>
+                  <td class="last-activity">27-May · 10:31</td>
                 </tr>
                 <tr>
                   <td class="batch-no">SCT/190526</td>
                   <td class="arn">AR-2026-037</td>
                   <td class="product">Sodium Citrate IP</td>
                   <td><span class="pill pill--moa">MOA</span></td>
-                  <td class="last-activity">27-May Â· 09:14</td>
+                  <td class="last-activity">27-May · 09:14</td>
                 </tr>
               </tbody>
             </table>
             </div>
             <div class="card-footer">
-              <span>Assigned to you Â· sorted by recent activity</span>
+              <span>Assigned to you · sorted by recent activity</span>
               <span class="link">View all batches</span>
             </div>
           </div>
@@ -700,7 +700,7 @@
                       <span class="doc-id">AWS/FG00132/01</span>
                       <span class="doc-type">AWS</span>
                     </div>
-                    <span class="batch-line">Glycine IP Â· <span class="mono">GCN/010526</span></span>
+                    <span class="batch-line">Glycine IP · <span class="mono">GCN/010526</span></span>
                   </div>
                   <a class="open-link" href="#">Open</a>
                 </div>
@@ -711,7 +711,7 @@
                       <span class="doc-id">SPEC/FG00112/03</span>
                       <span class="doc-type">SPEC</span>
                     </div>
-                    <span class="batch-line">Citric Acid Monohydrate IP Â· <span class="mono">CAM/140426</span></span>
+                    <span class="batch-line">Citric Acid Monohydrate IP · <span class="mono">CAM/140426</span></span>
                   </div>
                   <a class="open-link" href="#">Open</a>
                 </div>
@@ -722,7 +722,7 @@
                       <span class="doc-id">SPEC/FG00079/01</span>
                       <span class="doc-type">SPEC</span>
                     </div>
-                    <span class="batch-line">Sodium Citrate IP Â· <span class="mono">SCT/190526</span></span>
+                    <span class="batch-line">Sodium Citrate IP · <span class="mono">SCT/190526</span></span>
                   </div>
                   <a class="open-link" href="#">Open</a>
                 </div>
@@ -746,9 +746,9 @@
                   </div>
                   <span class="reason">Sulphated ash entered as NMT 0.25 %; Master specifies NMT 0.10 %. Mandatory criteria cannot be edited at SPEC.</span>
                   <div class="meta">
-                    <span class="who">Priya Mehta Â· QC Manager</span>
+                    <span class="who">Priya Mehta · QC Manager</span>
                     <span class="dot"></span>
-                    <span class="time">31-May Â· 16:40 IST</span>
+                    <span class="time">31-May · 16:40 IST</span>
                   </div>
                 </div>
 
@@ -757,16 +757,16 @@
                     <span class="doc-id">AWS/MNT/04</span>
                     <span class="batch">MNT/050526</span>
                   </div>
-                  <span class="reason">pH observation 6.41 outside specification 5.9â€“6.3 not acknowledged. Add OOS comment before resubmission.</span>
+                  <span class="reason">pH observation 6.41 outside specification 5.9–6.3 not acknowledged. Add OOS comment before resubmission.</span>
                   <div class="meta">
-                    <span class="who">Priya Mehta Â· QC Manager</span>
+                    <span class="who">Priya Mehta · QC Manager</span>
                     <span class="dot"></span>
-                    <span class="time">30-May Â· 11:18 IST</span>
+                    <span class="time">30-May · 11:18 IST</span>
                   </div>
                 </div>
               </div>
               <div class="card-footer">
-                <span>Returned for rework Â· resubmit after correction</span>
+                <span>Returned for rework · resubmit after correction</span>
               </div>
             </div>
 
@@ -783,16 +783,26 @@
     document.addEventListener('DOMContentLoaded', function () {
       var user = getCurrentUser();
       if (!user) return;
-      var batches = getBatchesForQcExec(user.username);
-      renderQcExecBatchRows(document.querySelector('.wtable tbody'), batches);
-      var countMeta = document.querySelector('.card-header .count-meta');
-      if (countMeta) countMeta.textContent = batches.length + ' active';
+
+      function refreshAssignedBatches() {
+        var batches = getBatchesForQcExec(user.username);
+        renderQcExecBatchRows(document.querySelector('.wtable tbody'), batches);
+        var countMeta = document.querySelector('.widget-grid .card .count-meta');
+        if (countMeta) countMeta.textContent = batches.length + ' active';
+      }
+
+      refreshAssignedBatches();
       renderSubmitList(document.querySelector('.submit-list'), getDraftsForUser(user.username));
       var draftMeta = document.querySelector('.side-col .card .count-meta');
       if (draftMeta) draftMeta.textContent = getDraftsForUser(user.username).length + ' drafts';
       renderRejectList(document.querySelector('.reject-list'), getRejectedForUser(user.username));
       var rejMeta = document.querySelector('.reject-list') && document.querySelector('.reject-list').closest('.card').querySelector('.count-meta');
       if (rejMeta) rejMeta.textContent = getRejectedForUser(user.username).length + ' returned';
+
+      window.addEventListener('ac-qms:data-changed', refreshAssignedBatches);
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'ac-qms-demo-state') refreshAssignedBatches();
+      });
     });
   </script>
 

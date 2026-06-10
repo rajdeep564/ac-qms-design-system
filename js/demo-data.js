@@ -1,16 +1,18 @@
 (function () {
   'use strict';
 
+  var STATE_KEY = 'ac-qms-demo-state';
+  var STATE_VERSION = 2;
   var DEFAULT_BATCH = 'GCN/010526';
   var DEFAULT_DOC = 'SPEC/FG00132/01';
 
-  var DEMO_SUBMITTERS = {
+  var _seed_submitters = {
     'demo.sneha': { fullName: 'Sneha Verma', designation: 'QC Executive', initials: 'SV', roleShort: 'QC Exec' },
     'demo.meera': { fullName: 'Meera Iyer', designation: 'QC Executive', initials: 'MI', roleShort: 'QC Exec' },
     'demo.rohit': { fullName: 'Rohit Nair', designation: 'QC Executive', initials: 'RN', roleShort: 'QC Exec' }
   };
 
-  var DEMO_BATCHES = [
+  var _seed_batches = [
     {
       batchNo: 'GCN/010526', arn: '2026FG03', product: 'Glycine IP', pharmacopoeia: 'IP',
       customer: 'In-house (captive)', currentPhase: 'AWS', assignedQcExec: 'qc.exec',
@@ -62,7 +64,7 @@
     }
   ];
 
-  var DEMO_DOCUMENTS = [
+  var _seed_documents = [
     { docNo: 'SPEC/FG00132/01', type: 'SPEC', batchNo: 'GCN/010526', product: 'Glycine IP', pharmacopoeia: 'IP', masterCode: 'FG00132', status: 'QA_SIGNED', createdBy: 'qc.exec', submittedAt: '26-May · 14:09', approvedBy: 'qc.mgr', approvedAt: '27-May · 15:48', signedBy: 'qa.mgr', signedAt: '28-May · 11:04', rejectReason: null },
     { docNo: 'MOA/FG00132/01', type: 'MOA', batchNo: 'GCN/010526', product: 'Glycine IP', pharmacopoeia: 'IP', masterCode: 'FG00132', status: 'QA_SIGNED', createdBy: 'qc.exec', submittedAt: '27-May · 09:10', approvedBy: 'qc.mgr', approvedAt: '28-May · 08:15', signedBy: 'qa.mgr', signedAt: '29-May · 09:32', rejectReason: null },
     { docNo: 'AWS/FG00132/01', type: 'AWS', batchNo: 'GCN/010526', product: 'Glycine IP', pharmacopoeia: 'IP', masterCode: 'FG00132', status: 'QC_APPROVED', createdBy: 'qc.exec', submittedAt: 'Today · 06:50', approvedBy: 'qc.mgr', approvedAt: 'Today · 09:48', signedBy: null, signedAt: null, rejectReason: null },
@@ -97,7 +99,7 @@
     { docNo: 'COA/DEX/005412', type: 'COA', batchNo: 'DEX/005412', product: 'Dextrose Monohydrate IP', pharmacopoeia: 'IP', masterCode: 'FG00522', status: 'DRAFT', createdBy: null, submittedAt: null, approvedBy: null, approvedAt: null, signedBy: null, signedAt: null, rejectReason: null }
   ];
 
-  var DEMO_NOTIFICATIONS = [
+  var _seed_notifications = [
     { recipientUsername: 'qc.mgr', category: 'action', titlePrefix: 'Approval pending:', docNo: 'AWS/FG00522/01', messageHtml: '<span class="who">Rohit Nair</span> submitted AWS for DEX/005412', timestamp: '2 h ago', dayGroup: 'Today · 28-May-2026', unread: true, route: 'Document Approval Review.html?docNo=AWS/FG00522/01' },
     { recipientUsername: 'qc.mgr', category: 'action', titlePrefix: 'Approval pending:', docNo: 'SPEC/FG00201/01', messageHtml: '<span class="who">Kavya Patel</span> submitted SPEC for Metformin USP', timestamp: 'Yesterday', dayGroup: 'Yesterday · 27-May-2026', unread: false, route: 'Document Approval Review.html?docNo=SPEC/FG00201/01' },
     { recipientUsername: 'qc.mgr', category: 'info', titlePrefix: 'QC approved:', docNo: 'SPEC/FG00112/03', messageHtml: '<span class="who">You</span> approved · awaiting QA signature', timestamp: 'Today · 08:30', dayGroup: 'Today · 28-May-2026', unread: true },
@@ -124,7 +126,7 @@
     { recipientUsername: 'admin', category: 'info', titlePrefix: 'System:', docNo: 'VALIDATION', messageHtml: 'Validated environment health check passed', timestamp: '5 d ago', dayGroup: 'Earlier this week', unread: false }
   ];
 
-  var DEMO_AUDIT_LOG = [
+  var _seed_auditLog = [
     { evt: 'EVT-2026-44821', ts: '08 Jun 2026', tt: '14:32:17', actorUsername: 'admin', action: 'Login', etype: 'Session', entity: '—', field: '—', old: '', neu: '', comment: 'Signed in from corporate network', ip: '10.4.2.18', geo: 'Captured' },
     { evt: 'EVT-2026-44805', ts: '08 Jun 2026', tt: '11:04:17', actorUsername: 'qa.mgr', action: 'Sign', etype: 'Document', entity: 'COA/ASC/120526', field: 'Status', old: 'Pending', neu: 'Issued', comment: 'Batch released — Production and Stores notified', ip: '10.4.2.51', geo: 'Captured' },
     { evt: 'EVT-2026-44790', ts: '08 Jun 2026', tt: '09:48:02', actorUsername: 'qc.mgr', action: 'Approve', etype: 'Document', entity: 'AWS/FG00132/01', field: 'Status', old: 'Submitted', neu: 'Approved', comment: 'All 11 parameters verified against Master', ip: '10.4.2.33', geo: 'Captured' },
@@ -145,7 +147,7 @@
     { evt: 'EVT-2026-44525', ts: '02 Jun 2026', tt: '15:48:02', actorUsername: 'qc.mgr', action: 'Approve', etype: 'Document', entity: 'SPEC/FG00132/01', field: 'Status', old: 'Submitted', neu: 'Approved', comment: 'Forwarded to QA for signature. All mandatory parameters verified.', ip: '10.4.2.33', geo: 'Captured' }
   ];
 
-  var DEMO_TIMELINE_EVENTS = {
+  var _seed_timelineEvents = {
     'SPEC/FG00132/01': [
       { type: 'sign', date: '28-May-2026', time: '11:04:38 IST', actor: 'qa.mgr', action: 'Signed SPEC', rev: 'Revision 00', note: 'Electronic signature applied with password re-authentication. Document locked — no further edits permitted.', coords: true },
       { type: 'approve', date: '27-May-2026', time: '15:48:02 IST', actor: 'qc.mgr', action: 'Approved SPEC', rev: 'Revision 00', note: 'Forwarded to QA for signature. All 11 mandatory parameters verified against Product Master <span class="mono">FG00132 · Revision 02</span>.' },
@@ -157,6 +159,164 @@
       { type: 'neutral', date: '23-May-2026', time: '13:40:00 IST', actor: 'qc.exec', action: 'Created SPEC', rev: 'Revision 00', note: 'Created from registered Product Master <span class="mono">FG00132 · Revision 02</span>.' }
     ]
   };
+
+  var _seed_products = [
+    {
+      id: 'FG00132', name: 'Glycine IP', familyCode: 'FG00132', shortCode: 'GCN',
+      pharmacopoeia: 'IP', molecularFormula: 'C₂H₅NO₂', molecularWeight: '75.07 g/mol',
+      shelfLifeMonths: 60, storageConditions: 'Store below 30 °C in a well-closed container, protected from moisture.',
+      samplingPlan: 'Composite sample from three containers per batch; retain per SOP-QC-012.',
+      retainedSampleQty: '2 × 200 g', currentRevision: 3, status: 'QA_SIGNED',
+      signedAt: '28-May · 11:04', createdBy: 'qc.mgr', approvedBy: 'qc.mgr', signedBy: 'qa.mgr',
+      pharmacopoeiaTag: 'IP 2022 · Monograph 1.2.41',
+      testParameters: [
+        { name: 'Description', type: 'Qualitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'A white, crystalline powder; odourless', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Solubility', type: 'Qualitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'Freely soluble in water; practically insoluble in ethanol', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Identification A — By IR', type: 'Qualitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'Corresponds to reference spectrum', operator: 'RANGE', min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Identification B — By chemical reaction', type: 'Qualitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'Complies', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Appearance of solution', type: 'Qualitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'Clear and colourless', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'pH', type: 'Quantitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: '5.9 – 6.3', operator: 'BETWEEN', min: 5.9, max: 6.3, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Chlorides', type: 'Quantitative', pharmacopoeiaTag: 'IP / BP / USP', acceptanceCriteria: 'NMT 100 ppm', operator: 'NMT', min: null, max: 100, unit: 'ppm', isMandatory: true, isOutsideLab: false },
+        { name: 'Heavy metals', type: 'Quantitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'NMT 10 ppm', operator: 'NMT', min: null, max: 10, unit: 'ppm', isMandatory: true, isOutsideLab: false },
+        { name: 'Sulphated ash', type: 'Quantitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'NMT 0.10 %', operator: 'NMT', min: null, max: 0.10, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Loss on drying', type: 'Quantitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: 'NMT 0.5 %', operator: 'NMT', min: null, max: 0.5, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Assay on dried basis', type: 'Quantitative', pharmacopoeiaTag: 'IP', acceptanceCriteria: '98.5 – 101.5 %', operator: 'BETWEEN', min: 98.5, max: 101.5, unit: '%', isMandatory: true, isOutsideLab: false }
+      ],
+      moaSections: [
+        { testName: 'Description', procedure: 'Examine the sample under diffuse daylight against a white and a black background. Record colour, form and odour.' },
+        { testName: 'Solubility', procedure: 'Transfer ~1 g to test tubes containing water and ethanol respectively. Shake and observe the degree of dissolution at room temperature.' },
+        { testName: 'Identification A — By IR', procedure: 'Record the IR absorption spectrum of the sample (KBr disc) using FTIR-001. Compare with the spectrum of Reference Standard Glycine.' },
+        { testName: 'Identification B — By chemical reaction', procedure: 'Perform the ninhydrin reaction and the specified chemical identity tests. A violet colour confirms the amino-acid group.' },
+        { testName: 'Appearance of solution', procedure: 'Dissolve 10.0 g in 100 mL of CO₂-free water. Compare clarity and colour against the reference suspensions/colours.' },
+        { testName: 'pH', procedure: 'Prepare a 5 % w/v solution in CO₂-free water. Measure pH at 25 °C using PH-001, calibrated with Buffer pH 4.0 and pH 7.0.' },
+        { testName: 'Chlorides', procedure: 'Prepare the test solution and the standard (chloride) solution. Develop opalescence with silver nitrate; the test must not exceed the standard.' },
+        { testName: 'Heavy metals', procedure: 'Prepare per the limit test for heavy metals. Any brown colour produced must not be more intense than the lead standard solution.' },
+        { testName: 'Sulphated ash', procedure: 'Ignite a tared silica crucible to constant weight. Add ~1 g sample, moisten with sulphuric acid, char gently, then ignite at 600 ± 25 °C to constant weight.' },
+        { testName: 'Loss on drying', procedure: 'Weigh accurately about 2.5 g into a tared, flat-bottomed dish. Dry at 105 °C for 2 hours, cool in a desiccator and weigh. Repeat to constant weight.' },
+        { testName: 'Assay on dried basis', procedure: 'Prepare standard and sample solutions per the monograph. Inject per the sequence table. Compute assay against the Reference Standard, corrected to the dried basis using Loss on drying.' }
+      ]
+    },
+    {
+      id: 'FG00112', name: 'Paracetamol BP', familyCode: 'FG00112', shortCode: 'PCM',
+      pharmacopoeia: 'BP', molecularFormula: 'C₈H₉NO₂', molecularWeight: '151.16 g/mol',
+      shelfLifeMonths: 36, storageConditions: 'Store below 25 °C, protected from light and moisture.',
+      samplingPlan: 'Random sample from each container; minimum 1 % of batch quantity.',
+      retainedSampleQty: '2 × 150 g', currentRevision: 2, status: 'QA_SIGNED',
+      signedAt: '15-Apr · 10:22', createdBy: 'qc.mgr', approvedBy: 'qc.mgr', signedBy: 'qa.mgr',
+      pharmacopoeiaTag: 'BP 2024 · Monograph 2.1.18',
+      testParameters: [
+        { name: 'Description', type: 'Qualitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: 'White crystalline powder', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Identification by IR', type: 'Qualitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: 'Spectrum corresponds to reference', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Melting point', type: 'Quantitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: '168 – 172 °C', operator: 'BETWEEN', min: 168, max: 172, unit: '°C', isMandatory: true, isOutsideLab: false },
+        { name: 'Related substances', type: 'Quantitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: 'NMT 0.1 % each', operator: 'NMT', min: null, max: 0.1, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Residue on ignition', type: 'Quantitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: 'NMT 0.1 %', operator: 'NMT', min: null, max: 0.1, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Water', type: 'Quantitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: 'NMT 0.5 %', operator: 'NMT', min: null, max: 0.5, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Assay', type: 'Quantitative', pharmacopoeiaTag: 'BP', acceptanceCriteria: '98.5 – 101.0 %', operator: 'BETWEEN', min: 98.5, max: 101.0, unit: '%', isMandatory: true, isOutsideLab: false }
+      ],
+      moaSections: [
+        { testName: 'Description', procedure: 'Examine the substance visually. Record colour, form and any odour noted at ambient conditions.' },
+        { testName: 'Identification by IR', procedure: 'Prepare a KBr disc of the sample. Record the IR spectrum and compare with the Paracetamol reference spectrum on file.' },
+        { testName: 'Melting point', procedure: 'Determine the melting point using a calibrated melting point apparatus. Report the range observed at heating rate 1 °C/min.' },
+        { testName: 'Related substances', procedure: 'Analyse by HPLC per BP method. Compare impurity peaks against the system suitability and limit solutions.' },
+        { testName: 'Residue on ignition', procedure: 'Ignite a tared crucible, add ~1 g sample, char without flaming, then ignite to constant weight at 600 °C.' },
+        { testName: 'Water', procedure: 'Determine water content by Karl Fischer titration using calibrated KF reagent. Express result as % w/w.' },
+        { testName: 'Assay', procedure: 'Prepare sample and standard solutions per BP monograph. Determine by UV spectrophotometry at 257 nm against reference standard.' }
+      ]
+    },
+    {
+      id: 'FG00201', name: 'Metformin USP', familyCode: 'FG00201', shortCode: 'MET',
+      pharmacopoeia: 'USP', molecularFormula: 'C₄H₁₁N₅·HCl', molecularWeight: '165.63 g/mol',
+      shelfLifeMonths: 48, storageConditions: 'Store at 20–25 °C; excursions permitted to 15–30 °C.',
+      samplingPlan: 'Equal-weight composite from top, middle and bottom of each drum.',
+      retainedSampleQty: '2 × 250 g', currentRevision: 1, status: 'QA_SIGNED',
+      signedAt: '02-Mar · 14:55', createdBy: 'qc.mgr', approvedBy: 'qc.mgr', signedBy: 'qa.mgr',
+      pharmacopoeiaTag: 'USP 43 · Monograph M-4120',
+      testParameters: [
+        { name: 'Description', type: 'Qualitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: 'White to off-white crystalline powder', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Identification', type: 'Qualitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: 'IR spectrum matches reference', operator: null, min: null, max: null, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'pH', type: 'Quantitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: '6.8 – 7.8', operator: 'BETWEEN', min: 6.8, max: 7.8, unit: null, isMandatory: true, isOutsideLab: false },
+        { name: 'Heavy metals', type: 'Quantitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: 'NMT 20 ppm', operator: 'NMT', min: null, max: 20, unit: 'ppm', isMandatory: true, isOutsideLab: false },
+        { name: 'Residue on ignition', type: 'Quantitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: 'NMT 0.1 %', operator: 'NMT', min: null, max: 0.1, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Related compounds', type: 'Quantitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: 'NMT 0.5 % total', operator: 'NMT', min: null, max: 0.5, unit: '%', isMandatory: true, isOutsideLab: false },
+        { name: 'Assay', type: 'Quantitative', pharmacopoeiaTag: 'USP', acceptanceCriteria: '98.0 – 102.0 %', operator: 'BETWEEN', min: 98.0, max: 102.0, unit: '%', isMandatory: true, isOutsideLab: false }
+      ],
+      moaSections: [
+        { testName: 'Description', procedure: 'Inspect the sample under normal laboratory lighting. Note colour, crystalline form and any atypical odour.' },
+        { testName: 'Identification', procedure: 'Record IR spectrum of dried sample. Compare major peaks with USP Metformin Hydrochloride RS.' },
+        { testName: 'pH', procedure: 'Prepare 1 % w/v aqueous solution. Measure pH at 25 °C with calibrated pH meter.' },
+        { testName: 'Heavy metals', procedure: 'Proceed per USP <231> limit test. Compare colour intensity with lead standard solution.' },
+        { testName: 'Residue on ignition', procedure: 'Weigh ~1 g into tared crucible. Ignite gently, then at 600 °C to constant weight. Calculate % residue.' },
+        { testName: 'Related compounds', procedure: 'Analyse by HPLC per USP method. Report individual and total related compounds against specified limits.' },
+        { testName: 'Assay', procedure: 'Titrate with 0.1 M perchloric acid VS using potentiometric endpoint. Calculate % assay on dried basis.' }
+      ]
+    }
+  ];
+
+  var BASELINE = {
+    stateVersion: STATE_VERSION,
+    batches: _seed_batches,
+    documents: _seed_documents,
+    notifications: _seed_notifications,
+    auditLog: _seed_auditLog,
+    timelineEvents: _seed_timelineEvents,
+    submitters: _seed_submitters,
+    products: _seed_products
+  };
+
+  var state;
+
+  function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  function migrateState(loaded) {
+    var migrated = false;
+    if (!loaded.stateVersion || loaded.stateVersion < STATE_VERSION) {
+      if (!loaded.products || !loaded.products.length) {
+        loaded.products = deepClone(BASELINE.products);
+        migrated = true;
+      }
+      loaded.stateVersion = STATE_VERSION;
+      migrated = true;
+    }
+    if (!loaded.batches) { loaded.batches = []; migrated = true; }
+    if (!loaded.documents) { loaded.documents = []; migrated = true; }
+    if (!loaded.notifications) { loaded.notifications = []; migrated = true; }
+    if (!loaded.auditLog) { loaded.auditLog = []; migrated = true; }
+    if (!loaded.timelineEvents) { loaded.timelineEvents = {}; migrated = true; }
+    if (!loaded.submitters) { loaded.submitters = deepClone(BASELINE.submitters); migrated = true; }
+    if (!loaded.products) { loaded.products = []; migrated = true; }
+    return migrated;
+  }
+
+  function initState() {
+    var raw = localStorage.getItem(STATE_KEY);
+    if (raw) {
+      try {
+        state = JSON.parse(raw);
+        if (migrateState(state)) persistState();
+      } catch (e) {
+        state = deepClone(BASELINE);
+        persistState();
+      }
+    } else {
+      state = deepClone(BASELINE);
+      persistState();
+    }
+  }
+
+  function getState() {
+    return state;
+  }
+
+  function persistState() {
+    localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    if (typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('ac-qms:data-changed'));
+    }
+  }
+
+  initState();
 
   function getUserDisplay(username) {
     if (!username) return { fullName: '—', designation: '', initials: '?', roleShort: '' };
@@ -177,7 +337,7 @@
       else if (u.department) rs = u.department + ' ' + rs;
       return { fullName: u.fullName, designation: u.designation, initials: initials(u.fullName), roleShort: rs };
     }
-    var d = DEMO_SUBMITTERS[username];
+    var d = state.submitters[username];
     if (d) return d;
     return { fullName: username, designation: '', initials: '?', roleShort: '' };
   }
@@ -201,26 +361,26 @@
 
   function getBatch(batchNo) {
     if (!batchNo) {
-      for (var i = 0; i < DEMO_BATCHES.length; i++) {
-        if (DEMO_BATCHES[i].batchNo === DEFAULT_BATCH) return DEMO_BATCHES[i];
+      for (var i = 0; i < state.batches.length; i++) {
+        if (state.batches[i].batchNo === DEFAULT_BATCH) return state.batches[i];
       }
-      return DEMO_BATCHES[0];
+      return state.batches[0];
     }
-    for (var b = 0; b < DEMO_BATCHES.length; b++) {
-      if (DEMO_BATCHES[b].batchNo === batchNo) return DEMO_BATCHES[b];
+    for (var b = 0; b < state.batches.length; b++) {
+      if (state.batches[b].batchNo === batchNo) return state.batches[b];
     }
     return null;
   }
 
   function getDocument(docNo) {
     if (!docNo) {
-      for (var j = 0; j < DEMO_DOCUMENTS.length; j++) {
-        if (DEMO_DOCUMENTS[j].docNo === DEFAULT_DOC) return DEMO_DOCUMENTS[j];
+      for (var j = 0; j < state.documents.length; j++) {
+        if (state.documents[j].docNo === DEFAULT_DOC) return state.documents[j];
       }
-      return DEMO_DOCUMENTS[0];
+      return state.documents[0];
     }
-    for (var d = 0; d < DEMO_DOCUMENTS.length; d++) {
-      if (DEMO_DOCUMENTS[d].docNo === docNo) return DEMO_DOCUMENTS[d];
+    for (var d = 0; d < state.documents.length; d++) {
+      if (state.documents[d].docNo === docNo) return state.documents[d];
     }
     return null;
   }
@@ -233,8 +393,8 @@
   function pickBestDocForBatch(batchNo, type) {
     var best = null;
     var bestRank = -1;
-    for (var i = 0; i < DEMO_DOCUMENTS.length; i++) {
-      var doc = DEMO_DOCUMENTS[i];
+    for (var i = 0; i < state.documents.length; i++) {
+      var doc = state.documents[i];
       if (doc.batchNo !== batchNo || doc.type !== type) continue;
       var rank = docStatusRank(doc.status);
       if (rank > bestRank) {
@@ -263,7 +423,7 @@
     return getBatch(param);
   }
 
-  function showParamNotFound(message) {
+  function showParamNotFound(message, backHref, backLabel) {
     if (document.getElementById('acQmsParamError')) return;
     var main = document.querySelector('.main');
     if (!main) return;
@@ -277,45 +437,469 @@
     var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     var dash = user && typeof getDashboardForUser === 'function'
       ? getDashboardForUser(user) : 'index.html';
+    var href = backHref || dash;
+    var label = backLabel || '← Return to your dashboard';
 
     var panel = document.createElement('div');
     panel.id = 'acQmsParamError';
     panel.style.cssText = 'padding:var(--s6);font-size:var(--text-sm);color:var(--text);';
     panel.innerHTML = '<p style="margin:0 0 var(--s4);line-height:1.5;">' + message + '</p>' +
-      '<a href="' + dash + '" style="font-size:var(--text-sm);font-weight:500;color:var(--primary);text-decoration:none;">' +
-      '← Return to your dashboard</a>';
+      '<a href="' + href + '" style="font-size:var(--text-sm);font-weight:500;color:var(--primary);text-decoration:none;">' +
+      label + '</a>';
     main.appendChild(panel);
   }
 
+  function emptyListHtml(message) {
+    return '<div class="list-empty">' + message + '</div>';
+  }
+
+  function getProducts() {
+    return state.products;
+  }
+
+  function getProductById(id) {
+    if (!id) return null;
+    var key = String(id).trim();
+    for (var i = 0; i < state.products.length; i++) {
+      var p = state.products[i];
+      if (p.id === key || p.familyCode === key) return p;
+    }
+    return null;
+  }
+
+  function getProductByFamilyCode(code) {
+    if (!code) return null;
+    var key = String(code).trim().toUpperCase();
+    for (var i = 0; i < state.products.length; i++) {
+      var p = state.products[i];
+      if (p.familyCode === key || p.id === key) return p;
+    }
+    return null;
+  }
+
+  function getProductByShortCode(code) {
+    if (!code) return null;
+    var key = String(code).trim().toUpperCase();
+    for (var i = 0; i < state.products.length; i++) {
+      if (state.products[i].shortCode === key) return state.products[i];
+    }
+    return null;
+  }
+
+  function productUrl(id) {
+    return 'Product Master Editor.html?productId=' + encodeURIComponent(id);
+  }
+
+  function productReviewUrl(id, role) {
+    var url = 'Product Master Editor.html?productId=' + encodeURIComponent(id) + '&mode=review';
+    if (role === 'qa') url += '&role=qa';
+    return url;
+  }
+
+  function productStatusPillHtml(product) {
+    var map = {
+      DRAFT: ['pill--draft', 'Draft'],
+      SUBMITTED: ['pill--submitted', 'Submitted'],
+      QC_APPROVED: ['pill--approved', 'QC approved'],
+      QA_SIGNED: ['pill--signed', 'Signed'],
+      ISSUED: ['pill--signed', 'Active'],
+      REJECTED: ['pill--draft', 'Rejected'],
+      SUPERSEDED: ['pill--superseded', 'Superseded']
+    };
+    var s = map[product.status] || ['pill--draft', product.status];
+    return '<span class="pill ' + s[0] + ' pill-sm">' + s[1] + '</span>';
+  }
+
+  function formatNowStamp() {
+    return 'Today · ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function updateProductStatus(productId, newStatus, actor, comment) {
+    var product = getProductById(productId);
+    if (!product) return false;
+    var prev = product.status;
+    product.status = newStatus;
+    var now = formatNowStamp();
+    if (newStatus === 'SUBMITTED') {
+      product.submittedAt = now;
+      if (actor) product.createdBy = actor;
+    }
+    if (newStatus === 'QC_APPROVED') {
+      product.approvedAt = now;
+      if (actor) product.approvedBy = actor;
+    }
+    if (newStatus === 'QA_SIGNED') {
+      product.signedAt = now;
+      if (actor) product.signedBy = actor;
+    }
+    if (newStatus === 'REJECTED') {
+      product.rejectionComment = comment || '';
+      product.rejectedBy = actor;
+      product.rejectedAt = now;
+    }
+    state.auditLog.unshift({
+      evt: 'EVT-' + Date.now(),
+      ts: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      tt: new Date().toLocaleTimeString('en-GB'),
+      actorUsername: actor || 'system',
+      action: newStatus === 'REJECTED' ? 'Reject' : (newStatus === 'QA_SIGNED' ? 'Sign' : 'Approve'),
+      etype: 'Master',
+      entity: product.familyCode + ' · Rev ' + String(product.currentRevision).padStart(2, '0'),
+      field: 'Status',
+      old: prev,
+      neu: newStatus,
+      comment: comment || '',
+      ip: '10.4.2.27',
+      geo: 'Captured'
+    });
+    persistState();
+    return true;
+  }
+
+  function getProductApprovalQueue(currentUser) {
+    if (!currentUser) return [];
+    return state.products.filter(function (p) {
+      return p.status === 'SUBMITTED' && p.createdBy && p.createdBy !== currentUser.username;
+    });
+  }
+
+  function getPendingProductSignatures() {
+    return state.products.filter(function (p) { return p.status === 'QC_APPROVED'; });
+  }
+
+  function renderProductApprovalQueueRows(tbody, products) {
+    if (!tbody) return;
+    if (!products.length) {
+      tbody.innerHTML = '<tr><td colspan="5">' + emptyListHtml('No product masters awaiting approval.') + '</td></tr>';
+      return;
+    }
+    tbody.innerHTML = products.map(function (p) {
+      var sub = getUserDisplay(p.createdBy);
+      return '<tr data-product="' + p.id + '">' +
+        '<td class="product-name">' + p.name + '</td>' +
+        '<td class="batch-no mono">' + p.familyCode + '</td>' +
+        '<td class="submitter">' + sub.fullName + ' <span class="role">· ' + sub.roleShort + '</span></td>' +
+        '<td class="submitted-at">' + (p.submittedAt || p.createdAt || '—') + '</td>' +
+        '<td class="action"><a class="review-link" href="' + productReviewUrl(p.id) + '">Review →</a></td></tr>';
+    }).join('');
+    tbody.querySelectorAll('tr[data-product]').forEach(function (tr) {
+      tr.style.cursor = 'pointer';
+      tr.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;
+        location.href = productReviewUrl(tr.getAttribute('data-product'));
+      });
+    });
+  }
+
+  function renderPendingProductSignatureRows(tbody, products) {
+    if (!tbody) return;
+    if (!products.length) {
+      tbody.innerHTML = '<tr><td colspan="5">' + emptyListHtml('No product masters awaiting signature.') + '</td></tr>';
+      return;
+    }
+    tbody.innerHTML = products.map(function (p) {
+      var appr = getUserDisplay(p.approvedBy);
+      return '<tr data-product="' + p.id + '">' +
+        '<td class="product-name">' + p.name + '</td>' +
+        '<td class="batch-no mono">' + p.familyCode + '</td>' +
+        '<td class="by">' + appr.fullName + ' <span class="role">· QC Mgr</span></td>' +
+        '<td class="at">' + (p.approvedAt || '—') + '</td>' +
+        '<td class="action"><span class="link-action">Sign →</span></td></tr>';
+    }).join('');
+    tbody.querySelectorAll('tr[data-product]').forEach(function (tr) {
+      tr.style.cursor = 'pointer';
+      tr.addEventListener('click', function () {
+        location.href = productReviewUrl(tr.getAttribute('data-product'), 'qa');
+      });
+    });
+  }
+
+  function testCriteriaSummary(test) {
+    if (test.type === 'Qualitative') return test.acceptanceCriteria || '—';
+    var op = test.operator || '';
+    if (op === 'BETWEEN' || op === 'RANGE') {
+      return (test.min != null ? test.min : '') + ' – ' + (test.max != null ? test.max : '') +
+        (test.unit ? ' ' + test.unit : '');
+    }
+    if (op === 'NMT' || op === 'NLT') {
+      return op + ' ' + (test.max != null ? test.max : test.min) + (test.unit ? ' ' + test.unit : '');
+    }
+    return test.acceptanceCriteria || '—';
+  }
+
+  function addProduct(product) {
+    if (!product || !product.id) return false;
+    for (var i = 0; i < state.products.length; i++) {
+      if (state.products[i].id === product.id) return false;
+    }
+    state.products.push(product);
+    persistState();
+    return true;
+  }
+
+  function addBatch(batch) {
+    if (!batch || !batch.batchNo) return false;
+    for (var i = 0; i < state.batches.length; i++) {
+      if (state.batches[i].batchNo === batch.batchNo) return false;
+    }
+    state.batches.push(batch);
+    persistState();
+    return true;
+  }
+
+  function addDocument(doc) {
+    if (!doc || !doc.docNo) return false;
+    for (var i = 0; i < state.documents.length; i++) {
+      if (state.documents[i].docNo === doc.docNo) return false;
+    }
+    state.documents.push(doc);
+    persistState();
+    return true;
+  }
+
+  var _MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function parseMonthInput(val) {
+    if (!val) return null;
+    var s = String(val).trim();
+    var iso = s.match(/^(\d{4})-(\d{2})$/);
+    if (iso) return { year: parseInt(iso[1], 10), month: parseInt(iso[2], 10) - 1 };
+    var named = s.match(/^([A-Za-z]{3})\s+(\d{4})$/);
+    if (named) {
+      var idx = -1;
+      for (var i = 0; i < _MONTH_SHORT.length; i++) {
+        if (_MONTH_SHORT[i].toLowerCase() === named[1].toLowerCase()) { idx = i; break; }
+      }
+      if (idx >= 0) return { year: parseInt(named[2], 10), month: idx };
+    }
+    return null;
+  }
+
+  function formatMonthYear(date) {
+    return _MONTH_SHORT[date.getMonth()] + ' ' + date.getFullYear();
+  }
+
+  function formatMfgFromMonthInput(val) {
+    var p = parseMonthInput(val);
+    if (!p) return '';
+    return formatMonthYear(new Date(p.year, p.month, 1));
+  }
+
+  function calcExpiryFromMfg(mfgInput, shelfLifeMonths) {
+    var p = parseMonthInput(mfgInput);
+    if (!p || !shelfLifeMonths) return '';
+    var d = new Date(p.year, p.month + parseInt(shelfLifeMonths, 10) - 1, 1);
+    return formatMonthYear(d);
+  }
+
+  function getNextARN() {
+    var year = new Date().getFullYear();
+    var max = 0;
+    state.batches.forEach(function (b) {
+      var m = b.arn && b.arn.match(/^(\d{4})FG(\d{2})$/);
+      if (m && parseInt(m[1], 10) === year) {
+        var n = parseInt(m[2], 10);
+        if (n > max) max = n;
+      }
+    });
+    return year + 'FG' + String(max + 1).padStart(2, '0');
+  }
+
+  function getNextSpecDocNo(masterCode) {
+    var prefix = 'SPEC/' + masterCode + '/';
+    var max = 0;
+    state.documents.forEach(function (d) {
+      if (d.docNo.indexOf(prefix) === 0) {
+        var rev = parseInt(d.docNo.slice(prefix.length), 10);
+        if (!isNaN(rev) && rev > max) max = rev;
+      }
+    });
+    return prefix + String(max + 1).padStart(2, '0');
+  }
+
+  function isBatchNoTaken(batchNo) {
+    return !!getBatch(batchNo);
+  }
+
+  function createBatchWithDocuments(batch, product) {
+    if (!batch || !product) return { ok: false, error: 'Missing batch or product' };
+    if (!addBatch(batch)) return { ok: false, error: 'duplicate' };
+    var specDocNo = getNextSpecDocNo(batch.masterCode);
+    var docBase = {
+      batchNo: batch.batchNo,
+      product: batch.product,
+      pharmacopoeia: batch.pharmacopoeia,
+      masterCode: batch.masterCode,
+      submittedAt: null,
+      approvedBy: null,
+      approvedAt: null,
+      signedBy: null,
+      signedAt: null,
+      rejectReason: null
+    };
+    addDocument(Object.assign({}, docBase, {
+      docNo: specDocNo, type: 'SPEC', status: 'DRAFT', createdBy: batch.assignedQcExec
+    }));
+    addDocument(Object.assign({}, docBase, {
+      docNo: 'MOA/' + batch.masterCode + '/01', type: 'MOA', status: 'PENDING', createdBy: null
+    }));
+    addDocument(Object.assign({}, docBase, {
+      docNo: 'AWS/' + batch.masterCode + '/01', type: 'AWS', status: 'PENDING', createdBy: null
+    }));
+    addDocument(Object.assign({}, docBase, {
+      docNo: batch.coaDocNo, type: 'COA', status: 'DRAFT', createdBy: null
+    }));
+    return { ok: true, specDocNo: specDocNo };
+  }
+
+  function updateDocumentStatus(docNo, newStatus, actor, comment) {
+    var doc = getDocument(docNo);
+    if (!doc) return false;
+    doc.status = newStatus;
+    var now = 'Today · ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    if (newStatus === 'SUBMITTED') { doc.submittedAt = now; if (actor) doc.createdBy = actor; }
+    if (newStatus === 'QC_APPROVED') { doc.approvedAt = now; if (actor) doc.approvedBy = actor; }
+    if (newStatus === 'QA_SIGNED' || newStatus === 'ISSUED') { doc.signedAt = now; if (actor) doc.signedBy = actor; }
+    if (newStatus === 'REJECTED' && comment) {
+      doc.rejectReason = comment;
+      doc.rejectedBy = actor;
+      doc.rejectedAt = now;
+    }
+    if (comment && newStatus !== 'REJECTED') {
+      state.auditLog.unshift({
+        evt: 'EVT-' + Date.now(), ts: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        tt: new Date().toLocaleTimeString('en-GB'), actorUsername: actor || 'system',
+        action: newStatus, etype: 'Document', entity: docNo, field: 'Status', old: '', neu: newStatus,
+        comment: comment, ip: '10.4.2.27', geo: 'Captured'
+      });
+    }
+    persistState();
+    return true;
+  }
+
+  function resetToBaseline() {
+    localStorage.removeItem(STATE_KEY);
+    state = deepClone(BASELINE);
+    persistState();
+  }
+
+  function resetToEmpty() {
+    state.batches = [];
+    state.documents = [];
+    state.notifications = [];
+    state.auditLog = [];
+    state.timelineEvents = {};
+    state.products = [];
+    persistState();
+  }
+
+  function populateProductMaster(product) {
+    if (!product) return;
+    document.title = 'AC-QMS — Product Master · ' + product.name;
+    var revPad = String(product.currentRevision).padStart(2, '0');
+    var statusMap = {
+      DRAFT: ['pill--draft', 'Draft'],
+      SUBMITTED: ['pill--submitted', 'Submitted'],
+      QC_APPROVED: ['pill--approved', 'QC approved'],
+      QA_SIGNED: ['pill--signed', 'Signed'],
+      ISSUED: ['pill--signed', 'Active'],
+      REJECTED: ['pill--draft', 'Rejected'],
+      SUPERSEDED: ['pill--superseded', 'Superseded']
+    };
+    var st = statusMap[product.status] || ['pill--draft', product.status];
+
+    var crumbs = document.querySelectorAll('.breadcrumb .crumb');
+    crumbs.forEach(function (c) {
+      if (c.textContent === 'Glycine IP' || (c.classList.contains('current') && c.textContent.indexOf('Revision') === 0)) {
+        if (c.classList.contains('current')) {
+          c.textContent = 'Revision ' + revPad + ' · ' + st[1];
+        } else {
+          c.textContent = product.name;
+        }
+      }
+    });
+
+    var title = document.querySelector('.pm-title');
+    if (title) title.textContent = product.name;
+    document.querySelectorAll('.code-badge').forEach(function (badge) {
+      var ck = badge.querySelector('.ck');
+      if (!ck) return;
+      if (ck.textContent === 'Family') badge.innerHTML = '<span class="ck">Family</span>' + product.familyCode;
+      if (ck.textContent === 'Short') badge.innerHTML = '<span class="ck">Short</span>' + product.shortCode;
+    });
+    var pmRev = document.querySelector('.pm-rev');
+    if (pmRev) pmRev.textContent = 'Revision ' + revPad;
+    var pmPill = document.querySelector('.pm-rev-row .pill');
+    if (pmPill) pmPill.outerHTML = '<span class="pill ' + st[0] + '">' + st[1] + '</span>';
+
+    var pname = document.getElementById('pname');
+    if (pname) pname.value = product.name;
+    var formula = document.getElementById('formula');
+    if (formula) formula.value = product.molecularFormula || '';
+    var family = document.getElementById('family');
+    if (family) family.value = product.familyCode;
+    var mw = document.getElementById('mw');
+    if (mw) mw.value = product.molecularWeight || '';
+    var short = document.getElementById('short');
+    if (short) short.value = product.shortCode;
+    var ptag = document.getElementById('ptag');
+    if (ptag) ptag.value = product.pharmacopoeiaTag || '';
+    var regref = document.getElementById('regref');
+    if (regref) {
+      var phMap = { IP: 0, BP: 1, USP: 2, EP: 3 };
+      regref.selectedIndex = phMap[product.pharmacopoeia] != null ? phMap[product.pharmacopoeia] : 0;
+    }
+
+    var storage = document.getElementById('storage');
+    if (storage && product.storageConditions) storage.value = product.storageConditions;
+    var sampling = document.getElementById('sampling');
+    if (sampling && product.samplingPlan) sampling.value = product.samplingPlan;
+    var retained = document.getElementById('retained');
+    if (retained && product.retainedSampleQty) retained.value = product.retainedSampleQty;
+    var shelf = document.getElementById('shelf');
+    if (shelf && product.shelfLifeMonths) shelf.value = product.shelfLifeMonths;
+
+    var pid = encodeURIComponent(product.id);
+    document.querySelectorAll('.tab-rail .tab[href*="Test Parameter"]').forEach(function (a) {
+      a.href = 'Test Parameter Editor.html?productId=' + pid;
+    });
+    document.querySelectorAll('.tab-rail .tab[href*="MOA Section"]').forEach(function (a) {
+      a.href = 'MOA Section Editor.html?productId=' + pid;
+    });
+
+    var revLabel = document.querySelector('.rev-menu-label');
+    if (revLabel) revLabel.textContent = 'Revision history · ' + product.name;
+  }
+
   function getBatchesForQcExec(username) {
-    return DEMO_BATCHES.filter(function (b) { return b.assignedQcExec === username; });
+    return state.batches.filter(function (b) { return b.assignedQcExec === username; });
   }
 
   function getApprovalQueue(currentUser) {
     if (!currentUser) return [];
-    return DEMO_DOCUMENTS.filter(function (d) {
+    return state.documents.filter(function (d) {
       return d.status === 'SUBMITTED' && d.createdBy && d.createdBy !== currentUser.username;
     });
   }
 
   function getPendingSignatures() {
-    return DEMO_DOCUMENTS.filter(function (d) { return d.status === 'QC_APPROVED'; });
+    return state.documents.filter(function (d) { return d.status === 'QC_APPROVED'; });
   }
 
   function getDraftsForUser(username) {
-    return DEMO_DOCUMENTS.filter(function (d) {
+    return state.documents.filter(function (d) {
       return d.createdBy === username && d.status === 'DRAFT' && d.type !== 'COA';
     });
   }
 
   function getRejectedForUser(username) {
-    return DEMO_DOCUMENTS.filter(function (d) {
+    return state.documents.filter(function (d) {
       return d.createdBy === username && d.status === 'REJECTED';
     });
   }
 
   function getRejectionsByApprover(username) {
-    return DEMO_DOCUMENTS.filter(function (d) {
+    return state.documents.filter(function (d) {
       return d.rejectedBy === username && d.rejectReason;
     });
   }
@@ -342,15 +926,15 @@
   }
 
   function getNotificationsForUser(username) {
-    return DEMO_NOTIFICATIONS.filter(function (n) { return n.recipientUsername === username; });
+    return state.notifications.filter(function (n) { return n.recipientUsername === username; });
   }
 
   function getAuditLog() {
-    return DEMO_AUDIT_LOG.map(enrichAuditEntry);
+    return state.auditLog.map(enrichAuditEntry);
   }
 
   function getReleasedBatches() {
-    var released = DEMO_BATCHES.filter(function (b) { return b.status === 'RELEASED'; });
+    var released = state.batches.filter(function (b) { return b.status === 'RELEASED'; });
     if (!released.length) return [];
     return released.map(function (b, i) {
       var coa = getDocument(b.coaDocNo);
@@ -374,8 +958,8 @@
   }
 
   function getTimelineForDoc(docNo) {
-    if (DEMO_TIMELINE_EVENTS[docNo]) return DEMO_TIMELINE_EVENTS[docNo];
-    var fromAudit = DEMO_AUDIT_LOG.filter(function (e) { return e.entity === docNo; }).map(function (e) {
+    if (state.timelineEvents[docNo]) return state.timelineEvents[docNo];
+    var fromAudit = state.auditLog.filter(function (e) { return e.entity === docNo; }).map(function (e) {
       return {
         type: auditActionToTimelineType(e.action),
         date: e.ts,
@@ -400,11 +984,11 @@
         note: doc.product + ' · Batch ' + doc.batchNo
       }];
     }
-    return DEMO_TIMELINE_EVENTS[DEFAULT_DOC] || [];
+    return state.timelineEvents[DEFAULT_DOC] || [];
   }
 
   function getCoasToIssue() {
-    return DEMO_DOCUMENTS.filter(function (d) {
+    return state.documents.filter(function (d) {
       if (d.type !== 'COA' || d.status !== 'DRAFT') return false;
       var aws = pickBestDocForBatch(d.batchNo, 'AWS');
       return aws && (aws.status === 'QC_APPROVED' || aws.status === 'QA_SIGNED' || aws.status === 'ISSUED');
@@ -412,7 +996,7 @@
   }
 
   function getBatchesForPipelineColumn(column) {
-    return DEMO_BATCHES.filter(function (b) { return b.pipelineColumn === column; });
+    return state.batches.filter(function (b) { return b.pipelineColumn === column; });
   }
 
   function docUrl(page, docNo, extra) {
@@ -424,8 +1008,8 @@
   function getCoaDocNoForBatch(batchNo) {
     var batch = getBatch(batchNo);
     if (batch && batch.coaDocNo) return batch.coaDocNo;
-    for (var i = 0; i < DEMO_DOCUMENTS.length; i++) {
-      var d = DEMO_DOCUMENTS[i];
+    for (var i = 0; i < state.documents.length; i++) {
+      var d = state.documents[i];
       if (d.batchNo === batchNo && d.type === 'COA') return d.docNo;
     }
     return null;
@@ -450,6 +1034,7 @@
   function statusPillHtml(doc) {
     var map = {
       DRAFT: ['pill--draft', 'Draft'],
+      PENDING: ['pill--locked', 'Pending'],
       SUBMITTED: ['pill--submitted', 'Submitted'],
       QC_APPROVED: ['pill--approved', 'QC approved'],
       QA_SIGNED: ['pill--signed', 'QA signed'],
@@ -463,6 +1048,10 @@
 
   function renderQcExecBatchRows(tbody, batches) {
     if (!tbody) return;
+    if (!batches.length) {
+      tbody.innerHTML = '<tr><td colspan="5">' + emptyListHtml('You have no batches assigned yet. Your QC Manager will assign one when a new batch begins testing.') + '</td></tr>';
+      return;
+    }
     tbody.innerHTML = batches.map(function (b) {
       return '<tr data-batch="' + b.batchNo + '">' +
         '<td class="batch-no">' + b.batchNo + '</td>' +
@@ -501,6 +1090,10 @@
 
   function renderPendingSignatureRows(tbody, docs) {
     if (!tbody) return;
+    if (!docs.length) {
+      tbody.innerHTML = '<tr><td colspan="6">' + emptyListHtml('Nothing pending right now.') + '</td></tr>';
+      return;
+    }
     tbody.innerHTML = docs.map(function (d) {
       var appr = getUserDisplay(d.approvedBy);
       return '<tr data-doc="' + d.docNo + '">' +
@@ -531,8 +1124,8 @@
   }
 
   function findReworkDraft(rejectedDoc) {
-    for (var i = 0; i < DEMO_DOCUMENTS.length; i++) {
-      var d = DEMO_DOCUMENTS[i];
+    for (var i = 0; i < state.documents.length; i++) {
+      var d = state.documents[i];
       if (d.batchNo === rejectedDoc.batchNo && d.type === rejectedDoc.type &&
           d.status === 'DRAFT' && d.createdBy === rejectedDoc.createdBy) return d;
     }
@@ -563,6 +1156,10 @@
 
   function renderCoaIssueList(container, docs) {
     if (!container) return;
+    if (!docs.length) {
+      container.innerHTML = emptyListHtml('Nothing pending right now.');
+      return;
+    }
     container.innerHTML = docs.map(function (d) {
       var batch = getBatch(d.batchNo);
       return '<div class="coa-row">' +
@@ -576,6 +1173,10 @@
 
   function renderNotificationList(container, notifications) {
     if (!container) return;
+    if (!notifications.length) {
+      container.innerHTML = emptyListHtml('No notifications.');
+      return;
+    }
     var html = '';
     var lastDay = '';
     notifications.forEach(function (n) {
@@ -603,6 +1204,10 @@
 
   function renderBatchPipelineColumn(colBody, batches) {
     if (!colBody) return;
+    if (!batches.length) {
+      colBody.innerHTML = '<div class="list-empty" style="border:none;padding:var(--s4);font-size:var(--text-xs);">No batches in this stage</div>';
+      return;
+    }
     colBody.innerHTML = batches.map(function (b) {
       var analyst = getUserDisplay(b.assignedQcExec);
       var docs = getDocumentsForBatch(b.batchNo);
@@ -613,6 +1218,7 @@
         if (doc) {
           if (doc.status === 'QA_SIGNED' || doc.status === 'ISSUED') { cls = 'signed'; dot = 'signed'; }
           else if (t === b.currentPhase) { cls = 'progress'; dot = 'progress'; }
+          else if (doc.status === 'PENDING') { cls = 'locked'; dot = 'locked'; }
           else if (doc.status !== 'DRAFT') { cls = 'signed'; dot = 'signed'; }
         }
         return '<div class="step ' + cls + '"><span class="dot ' + dot + '"></span><span class="lbl">' + t + '</span></div>';
@@ -778,7 +1384,7 @@
     if (awsD) setCrossLink(clLinks[0], docUrl('Document Timeline.html', awsD.docNo), awsD.docNo);
     if (moaD) setCrossLink(clLinks[1], docUrl('Document Timeline.html', moaD.docNo), moaD.docNo);
     if (specD) setCrossLink(clLinks[2], docUrl('Document Timeline.html', specD.docNo), specD.docNo);
-    setCrossLink(clLinks[3], 'Product Master Editor.html', 'Product Master · ' + doc.masterCode + ' · Revision 02');
+    setCrossLink(clLinks[3], productUrl(doc.masterCode), 'Product Master · ' + doc.masterCode + ' · Revision 02');
     setCrossLink(clLinks[4], batchUrl(doc.batchNo), 'Batch summary');
   }
 
@@ -849,9 +1455,30 @@
 
     var src = document.querySelector('.source-link');
     if (src) {
-      src.href = 'Product Master Editor.html';
+      src.href = productUrl(doc.masterCode);
       src.setAttribute('title', 'Product Master ' + doc.masterCode);
     }
+  }
+
+  function populateCreateSpecFromProduct(doc) {
+    if (!doc || doc.status !== 'DRAFT' || doc.type !== 'SPEC') return;
+    var product = getProductById(doc.masterCode);
+    if (!product || !product.testParameters || !product.testParameters.length) return;
+    var list = document.querySelector('.test-list');
+    if (!list) return;
+    var mandSvg = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>';
+    list.innerHTML = product.testParameters.map(function (t, i) {
+      var sort = String(i + 1).padStart(2, '0');
+      var isQual = t.type === 'Qualitative';
+      var badge = isQual ? 'tbadge--qual' : 'tbadge--quant';
+      var badgeLabel = isQual ? 'Qualitative' : 'Quantitative · range';
+      var crit = typeof testCriteriaSummary === 'function' ? testCriteriaSummary(t) : (t.acceptanceCriteria || '—');
+      var mand = t.isMandatory ? '<span class="mand">' + mandSvg + 'Mandatory</span>' : '';
+      return '<div class="test-card locked"><div class="test-head"><div class="tc-left">' +
+        '<div class="tc-name-row"><span class="tc-sortno">' + sort + '</span><span class="tc-name">' + t.name + '</span></div>' +
+        '<div class="tc-badges"><span class="tbadge ' + badge + '">' + badgeLabel + '</span><span class="pharma">' + (t.pharmacopoeiaTag || product.pharmacopoeia) + '</span></div></div>' +
+        '<div class="tc-right"><span class="tc-criteria">' + crit + '</span><div class="tc-controls">' + mand + '</div></div></div></div>';
+    }).join('');
   }
 
   function populateCreateSpec(doc) {
@@ -869,6 +1496,7 @@
     stepLinks.forEach(function (a) {
       a.href = docUrl('Create SPEC.html', doc.docNo);
     });
+    populateCreateSpecFromProduct(doc);
   }
 
   function populateCreateSpecReview(doc) {
@@ -982,14 +1610,44 @@
     }).join('');
   }
 
-  window.DEMO_BATCHES = DEMO_BATCHES;
-  window.DEMO_DOCUMENTS = DEMO_DOCUMENTS;
-  window.DEMO_NOTIFICATIONS = DEMO_NOTIFICATIONS;
-  window.DEMO_AUDIT_LOG = DEMO_AUDIT_LOG;
-  window.DEMO_TIMELINE_EVENTS = DEMO_TIMELINE_EVENTS;
-  window.DEMO_SUBMITTERS = DEMO_SUBMITTERS;
+  window.BASELINE = deepClone(BASELINE);
+  window.getState = getState;
+  window.DEMO_BATCHES = state.batches;
+  window.DEMO_DOCUMENTS = state.documents;
+  window.DEMO_NOTIFICATIONS = state.notifications;
+  window.DEMO_AUDIT_LOG = state.auditLog;
+  window.DEMO_TIMELINE_EVENTS = state.timelineEvents;
+  window.DEMO_SUBMITTERS = state.submitters;
   window.DEFAULT_BATCH = DEFAULT_BATCH;
   window.DEFAULT_DOC = DEFAULT_DOC;
+  window.getProducts = getProducts;
+  window.getProductById = getProductById;
+  window.getProductByFamilyCode = getProductByFamilyCode;
+  window.getProductByShortCode = getProductByShortCode;
+  window.productUrl = productUrl;
+  window.productReviewUrl = productReviewUrl;
+  window.productStatusPillHtml = productStatusPillHtml;
+  window.updateProductStatus = updateProductStatus;
+  window.getProductApprovalQueue = getProductApprovalQueue;
+  window.getPendingProductSignatures = getPendingProductSignatures;
+  window.renderProductApprovalQueueRows = renderProductApprovalQueueRows;
+  window.renderPendingProductSignatureRows = renderPendingProductSignatureRows;
+  window.testCriteriaSummary = testCriteriaSummary;
+  window.addProduct = addProduct;
+  window.addBatch = addBatch;
+  window.addDocument = addDocument;
+  window.getNextARN = getNextARN;
+  window.getNextSpecDocNo = getNextSpecDocNo;
+  window.calcExpiryFromMfg = calcExpiryFromMfg;
+  window.formatMfgFromMonthInput = formatMfgFromMonthInput;
+  window.isBatchNoTaken = isBatchNoTaken;
+  window.createBatchWithDocuments = createBatchWithDocuments;
+  window.populateCreateSpecFromProduct = populateCreateSpecFromProduct;
+  window.updateDocumentStatus = updateDocumentStatus;
+  window.resetToBaseline = resetToBaseline;
+  window.resetToEmpty = resetToEmpty;
+  window.populateProductMaster = populateProductMaster;
+  window.emptyListHtml = emptyListHtml;
   window.getUserDisplay = getUserDisplay;
   window.getBatch = getBatch;
   window.getDocument = getDocument;

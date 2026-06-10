@@ -1,13 +1,13 @@
-ï»¿<!doctype html>
+<!doctype html>
 <!-- @dsCard group="Brand" name="AC-QMS Notifications" viewport="1280x800" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS â€” Notifications</title>
-  <script src="js/session.js"></script>
+  <title>AC-QMS — Notifications</title>
+  <script src="js/session.js?v=20260609"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js"></script>
+  <script src="js/demo-data.js?v=20260609"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -238,7 +238,7 @@
     .n-row.unread { background: var(--primary-soft); }
     .n-row.unread:hover { background: var(--primary-soft); filter: brightness(0.985); }
 
-    /* Category dot â€” muted neutrals only.
+    /* Category dot — muted neutrals only.
        Filled circle = pending action (your turn).
        Hollow ring   = informational (system / FYI). */
     .n-row .cat-dot {
@@ -301,7 +301,7 @@
     }
     .n-row .msg .who { color: var(--text); font-weight: 500; }
 
-    /* Unread indicator dot â€” small primary circle, top right */
+    /* Unread indicator dot — small primary circle, top right */
     .n-row .unread-mark {
       position: absolute;
       top: 14px; right: 14px;
@@ -335,7 +335,7 @@
     .p-footer .pref:hover { color: var(--text-secondary); }
     .p-footer .pref svg { width: 12px; height: 12px; }
 
-    /* ---------- Backdrop dim (just a vibe â€” shows panel is "open") ---------- */
+    /* ---------- Backdrop dim (just a vibe — shows panel is "open") ---------- */
     .dim {
       position: fixed; inset: 0; pointer-events: none;
       background: transparent;
@@ -347,7 +347,7 @@
 
   <!-- Top-bar slice: anchors the bell so the panel reads as a real popover -->
   <div class="topbar-slice">
-    <span class="env-tag"><span class="dot"></span>Prod Â· IST</span>
+    <span class="env-tag"><span class="dot"></span>Prod · IST</span>
     <div class="topbar-divider"></div>
 
     <div class="bell-wrap">
@@ -369,7 +369,7 @@
     </button>
   </div>
 
-  <!-- Dimmed backdrop â€” click to dismiss; makes the panel read as a popover -->
+  <!-- Dimmed backdrop — click to dismiss; makes the panel read as a popover -->
   <div class="scrim" id="scrim"></div>
 
   <!-- The panel itself -->
@@ -398,7 +398,7 @@
       <!-- List -->
       <div class="p-list" id="notificationList">
 
-        <span class="day-label">Today Â· 28-May-2026</span>
+        <span class="day-label">Today · 28-May-2026</span>
 
         <a class="n-row unread cat-action" tabindex="0" style="display:none">
           <span class="cat-dot"></span>
@@ -460,7 +460,7 @@
           <span class="unread-mark"></span>
         </a>
 
-        <span class="day-label">Yesterday Â· 27-May-2026</span>
+        <span class="day-label">Yesterday · 27-May-2026</span>
 
         <a class="n-row cat-action" tabindex="0">
           <span class="cat-dot"></span>
@@ -480,7 +480,7 @@
               <span class="title-text">Calibration overdue: <span class="doc">INST-HPLC-04</span></span>
               <span class="ts">Yesterday</span>
             </div>
-            <span class="msg">Next calibration was due 26-May-2026 Â· in-use locked</span>
+            <span class="msg">Next calibration was due 26-May-2026 · in-use locked</span>
           </div>
         </a>
 
@@ -491,7 +491,7 @@
               <span class="title-text">QC approved: <span class="doc">SPEC-API-0142 r3</span></span>
               <span class="ts">Yesterday</span>
             </div>
-            <span class="msg"><span class="who">A. Nair (QC)</span> marked Reviewed Â· awaiting QA</span>
+            <span class="msg"><span class="who">A. Nair (QC)</span> marked Reviewed · awaiting QA</span>
           </div>
         </a>
 
@@ -504,7 +504,7 @@
               <span class="title-text">Released: <span class="doc">BR-2026-04780</span></span>
               <span class="ts">2 d ago</span>
             </div>
-            <span class="msg">Lot A4780 â€” Paracetamol 500 mg released by QA head</span>
+            <span class="msg">Lot A4780 — Paracetamol 500 mg released by QA head</span>
           </div>
         </a>
 

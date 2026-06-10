@@ -1,0 +1,614 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Flows — Walkthrough Reference" subtitle="Step-by-step flows, demo URLs, and screen registry for QA" viewport="1200x2400" -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AC-QMS — Flows &amp; walkthrough reference</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font);
+      font-size: var(--text-base);
+      color: var(--text);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      line-height: 1.5;
+    }
+    a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+
+    .page {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: var(--s10) var(--s6) var(--s10);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s8);
+    }
+
+    .masthead { display: flex; flex-direction: column; gap: var(--s5); }
+    .lockup { display: flex; align-items: center; gap: var(--s3); }
+    .lockup img { height: 26px; display: block; }
+    .lockup .name { font-size: var(--text-lg); font-weight: 600; color: var(--primary); }
+    .lockup .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+    .title { font-size: var(--text-2xl); font-weight: 600; letter-spacing: -0.01em; }
+    .subtitle { font-size: var(--text-sm); color: var(--text-secondary); max-width: 72ch; }
+    .subtitle .mono { font-family: var(--font-mono); color: var(--text); font-weight: 500; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: var(--s3) var(--s5); font-size: var(--text-sm); }
+    .nav-links a { color: var(--text-secondary); font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+  .meta-bar {
+      display: flex; flex-wrap: wrap; gap: var(--s4);
+      padding: var(--s4) var(--s5);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    .meta-bar strong { color: var(--text); font-weight: 600; }
+
+    .section { display: flex; flex-direction: column; gap: var(--s4); }
+    .section-head { display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
+    .section-title { font-size: var(--text-md); font-weight: 600; color: var(--text); }
+    .section-count { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); }
+    .section-rule { flex: 1; height: 1px; background: var(--border); min-width: 40px; }
+    .section-desc { font-size: var(--text-sm); color: var(--text-secondary); max-width: 72ch; }
+
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: var(--s5) var(--s5) var(--s4);
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: var(--s2);
+    }
+    .flow-id {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .flow-title { font-size: var(--text-md); font-weight: 600; }
+    .flow-sub { font-size: var(--text-sm); color: var(--text-secondary); }
+
+    table.flow {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+    table.flow th,
+    table.flow td {
+      padding: var(--s3) var(--s5);
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+    table.flow th {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--canvas);
+    }
+    table.flow tr:last-child td { border-bottom: none; }
+    table.flow .step {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+      width: 2.5rem;
+    }
+    table.flow .user {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text);
+      white-space: nowrap;
+    }
+    table.flow .verify { color: var(--text-secondary); }
+    table.flow .verify ul { margin: 0; padding-left: 1.1em; }
+    table.flow .verify li { margin: 2px 0; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .badge--wired { color: var(--qc); background: var(--qc-soft); }
+    .badge--guard { color: var(--submitted); background: var(--submitted-soft); }
+    .badge--static { color: var(--text-muted); background: var(--canvas); border: 1px solid var(--border); }
+
+    table.registry { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+    table.registry th,
+    table.registry td {
+      padding: var(--s3) var(--s4);
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+    table.registry th {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--canvas);
+      position: sticky;
+      top: 0;
+    }
+    table.registry .mono { font-family: var(--font-mono); font-size: var(--text-xs); }
+    .registry-wrap { max-height: 520px; overflow: auto; }
+
+    .callout {
+      padding: var(--s5);
+      background: var(--primary-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .callout strong { color: var(--text); }
+
+    .accounts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--s3);
+    }
+    .acct {
+      padding: var(--s4);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .acct .u { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500; }
+    .acct .n { font-size: var(--text-sm); font-weight: 600; }
+    .acct .r { font-size: var(--text-xs); color: var(--text-muted); }
+
+    .foot {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: var(--s5);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      .page { padding: var(--s8) var(--s4); }
+      table.flow th:nth-child(4), table.flow td:nth-child(4) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <header class="masthead">
+      <div class="lockup">
+        <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
+        <div>
+          <div class="name">AC·QMS</div>
+          <div class="tagline">Flows reference</div>
+        </div>
+      </div>
+      <h1 class="title">Walkthrough flows &amp; screen registry</h1>
+      <p class="subtitle">
+        Use this page to verify correct click-through after any screen change.
+        Anchor batch: <span class="mono">GCN/010526</span> (Glycine IP).
+        Sign in at each step — session is shared across tabs in the same browser.
+      </p>
+      <nav class="nav-links" aria-label="Related pages">
+        <a href="index.html">Sign in</a>
+        <a href="Start Here.html">Start Here</a>
+        <a href="User Journeys.html">User Journeys (story)</a>
+      </nav>
+      <div class="meta-bar">
+        <span><strong>Prototype</strong> · Phase 1 HTML</span>
+        <span><strong>Entry</strong> · index.html</span>
+        <span><strong>Data</strong> · js/demo-data.js</span>
+        <span><strong>Updated</strong> · Jun 2026</span>
+      </div>
+    </header>
+
+    <div class="callout">
+      <strong>Multi-tab tip:</strong> One browser = one logged-in user. To run Manager and Executive flows in parallel, use a normal window plus an Incognito/Private window, or two browser profiles. Wrong-role dashboard URLs auto-redirect (e.g. <span class="mono">qc.mgr</span> on Executive → Manager).
+    </div>
+
+  <!-- Demo accounts -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Demo accounts</h2>
+        <span class="section-rule"></span>
+      </div>
+      <div class="accounts">
+        <div class="acct"><span class="u">admin</span><span class="n">Rajesh Kumar</span><span class="r">Super Admin → User Management</span></div>
+        <div class="acct"><span class="u">qc.exec</span><span class="n">Kavya Patel</span><span class="r">QC Executive dashboard</span></div>
+        <div class="acct"><span class="u">qc.mgr</span><span class="n">Priya Mehta</span><span class="r">QC Manager dashboard</span></div>
+        <div class="acct"><span class="u">qa.exec</span><span class="n">Anand Joshi</span><span class="r">QA Manager dashboard</span></div>
+        <div class="acct"><span class="u">qa.mgr</span><span class="n">Sanjay Reddy</span><span class="r">QA Manager dashboard</span></div>
+      </div>
+    </section>
+
+    <!-- Flow 1 -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Flow 01 — Glycine batch hub</h2>
+        <span class="section-count">GCN/010526 · AWS phase</span>
+        <span class="section-rule"></span>
+      </div>
+      <p class="section-desc">Primary demo batch. Four-document tracker: SPEC → MOA → AWS → COA.</p>
+      <article class="card">
+        <div class="card-head">
+          <span class="flow-id">Batch detail</span>
+          <h3 class="flow-title">Open batch and navigate documents</h3>
+          <p class="flow-sub">Sign in as <span class="mono">qc.exec</span> or <span class="mono">qc.mgr</span>.</p>
+        </div>
+        <table class="flow">
+          <thead><tr><th>#</th><th>Sign in</th><th>Open</th><th>Verify</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="step">1</td>
+              <td class="user">qc.exec</td>
+              <td><a href="index.html">index.html</a> → sign in</td>
+              <td class="verify">Lands on QC Executive dashboard; greeting shows Kavya Patel.</td>
+            </tr>
+            <tr>
+              <td class="step">2</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Batch%20Detail.html?batchNo=GCN/010526">Batch Detail · GCN/010526</a></td>
+              <td class="verify">Product Glycine IP; tracker shows SPEC/MOA/AWS/COA; doc cards link out.</td>
+            </tr>
+            <tr>
+              <td class="step">3</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Document%20Timeline.html?docNo=SPEC/FG00132/01">Document Timeline · SPEC/FG00132/01</a></td>
+              <td class="verify">Timeline events populated from demo data.</td>
+            </tr>
+            <tr>
+              <td class="step">4</td>
+              <td class="user">qc.exec</td>
+              <td><a href="AWS%20Data%20Entry.html?docNo=AWS/FG00132/01">AWS Data Entry · AWS/FG00132/01</a></td>
+              <td class="verify">Split pane; per-test sections; submit routes to Sign Modal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Flow 2 -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Flow 02 — SPEC creation &amp; submit</h2>
+        <span class="section-rule"></span>
+      </div>
+      <article class="card">
+        <div class="card-head">
+          <span class="flow-id">QC Executive</span>
+          <h3 class="flow-title">Author and submit a SPEC</h3>
+        </div>
+        <table class="flow">
+          <thead><tr><th>#</th><th>Sign in</th><th>Open</th><th>Verify</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="step">1</td>
+              <td class="user">qc.exec</td>
+              <td><a href="QC%20Executive%20Dashboard.html">QC Executive Dashboard</a></td>
+              <td class="verify"><ul><li>My assigned batches populated</li><li>Drafts and rejected lists visible</li></ul></td>
+            </tr>
+            <tr>
+              <td class="step">2</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Create%20SPEC.html?docNo=SPEC/FG00112/02">Create SPEC · SPEC/FG00112/02</a> (draft)</td>
+              <td class="verify">Paracetamol BP batch; wizard steps; Continue → review step.</td>
+            </tr>
+            <tr>
+              <td class="step">3</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Create%20SPEC%20-%20Review%20Step.html?docNo=SPEC/FG00112/02">Create SPEC — Review Step</a></td>
+              <td class="verify">Summary before submit; Submit → Sign Modal.</td>
+            </tr>
+            <tr>
+              <td class="step">4</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Sign%20Modal.html">Sign Modal</a></td>
+              <td class="verify">Password re-entry; location capture; returns per <span class="mono">?next=</span>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Flow 3 -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Flow 03 — QC Manager approval</h2>
+        <span class="section-rule"></span>
+      </div>
+      <article class="card">
+        <div class="card-head">
+          <span class="flow-id">QC Manager</span>
+          <h3 class="flow-title">Review queue, approve or reject</h3>
+        </div>
+        <table class="flow">
+          <thead><tr><th>#</th><th>Sign in</th><th>Open</th><th>Verify</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="step">1</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="QC%20Manager%20Dashboard.html">QC Manager Dashboard</a></td>
+              <td class="verify"><ul><li>Greeting: Priya Mehta</li><li>Approval queue rows (~4)</li><li>Recent rejections list</li><li>Not Executive widgets</li></ul></td>
+            </tr>
+            <tr>
+              <td class="step">2</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="Document%20Approval%20Review.html?docNo=SPEC/FG00201/01">Approval Review · SPEC/FG00201/01</a></td>
+              <td class="verify">Read-only SPEC preview scrolls; Approve / Reject actions wired.</td>
+            </tr>
+            <tr>
+              <td class="step">3</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="Document%20Approval%20Review.html?docNo=AWS/FG00522/01">Approval Review · AWS/FG00522/01</a></td>
+              <td class="verify">AWS submission from notifications queue.</td>
+            </tr>
+            <tr>
+              <td class="step">4</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="Batch%20Pipeline.html">Batch Pipeline</a></td>
+              <td class="verify">Kanban columns; batch cards link to detail.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Flow 4 -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Flow 04 — QA signature &amp; COA issue</h2>
+        <span class="section-rule"></span>
+      </div>
+      <article class="card">
+        <div class="card-head">
+          <span class="flow-id">QA Manager</span>
+          <h3 class="flow-title">QA sign-off and batch release</h3>
+        </div>
+        <table class="flow">
+          <thead><tr><th>#</th><th>Sign in</th><th>Open</th><th>Verify</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="step">1</td>
+              <td class="user">qa.mgr</td>
+              <td><a href="QA%20Manager%20Dashboard.html">QA Manager Dashboard</a></td>
+              <td class="verify">Greeting: Sanjay Reddy; pending signatures list.</td>
+            </tr>
+            <tr>
+              <td class="step">2</td>
+              <td class="user">qa.mgr</td>
+              <td><a href="Document%20Approval%20Review.html?docNo=SPEC/FG00112/03&amp;role=qa">QA Approval · SPEC/FG00112/03</a></td>
+              <td class="verify"><span class="mono">?role=qa</span> shows QA decision panel.</td>
+            </tr>
+            <tr>
+              <td class="step">3</td>
+              <td class="user">qa.mgr</td>
+              <td><a href="COA%20Sign%20%26%20Issue.html?docNo=COA/GCN/010526">COA Sign &amp; Issue · COA/GCN/010526</a></td>
+              <td class="verify">Results table; Sign &amp; issue → Sign Modal.</td>
+            </tr>
+            <tr>
+              <td class="step">4</td>
+              <td class="user">qa.mgr</td>
+              <td><a href="Released%20Batches%20Register.html">Released Batches Register</a></td>
+              <td class="verify">Released batch ASC/120526 visible in register.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Flow 5 -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Flow 05 — Rejection &amp; rework</h2>
+        <span class="section-rule"></span>
+      </div>
+      <article class="card">
+        <div class="card-head">
+          <span class="flow-id">Return path</span>
+          <h3 class="flow-title">Manager rejects → Executive reworks draft</h3>
+        </div>
+        <table class="flow">
+          <thead><tr><th>#</th><th>Sign in</th><th>Open</th><th>Verify</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="step">1</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="QC%20Manager%20Dashboard.html">QC Manager Dashboard</a> → Recent rejections</td>
+              <td class="verify">Shows SPEC/FG00112/01 rejection by Priya.</td>
+            </tr>
+            <tr>
+              <td class="step">2</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Notifications.html">Notifications</a></td>
+              <td class="verify">Returned-for-rework links to rework draft.</td>
+            </tr>
+            <tr>
+              <td class="step">3</td>
+              <td class="user">qc.exec</td>
+              <td><a href="Create%20SPEC.html?docNo=SPEC/FG00112/02">Create SPEC · SPEC/FG00112/02</a></td>
+              <td class="verify">Rework draft opens from notification route.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Flow 6 -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Flow 06 — Admin &amp; masters</h2>
+        <span class="section-rule"></span>
+      </div>
+      <article class="card">
+        <table class="flow">
+          <thead><tr><th>#</th><th>Sign in</th><th>Open</th><th>Verify</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="step">1</td>
+              <td class="user">admin</td>
+              <td><a href="User%20Management%20Console.html">User Management Console</a></td>
+              <td class="verify">User table; non-admin redirected away.</td>
+            </tr>
+            <tr>
+              <td class="step">2</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="Product%20Master%20Editor.html">Product Master Editor</a></td>
+              <td class="verify">FG00132 Glycine master row.</td>
+            </tr>
+            <tr>
+              <td class="step">3</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="Audit%20Log%20Viewer.html">Audit Log Viewer</a></td>
+              <td class="verify">Dense table; drawer detail; CSV export.</td>
+            </tr>
+            <tr>
+              <td class="step">4</td>
+              <td class="user">qc.mgr</td>
+              <td><a href="Reports%20Hub.html">Reports Hub</a></td>
+              <td class="verify">Report cards and filters.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Regression -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Regression checks</h2>
+        <span class="section-count">After page updates</span>
+        <span class="section-rule"></span>
+      </div>
+      <p class="section-desc">Run these after changing param-driven screens or dashboards.</p>
+      <article class="card">
+        <table class="flow">
+          <thead><tr><th>Check</th><th>URL</th><th>Expected</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Invalid batch</td>
+              <td><a href="Batch%20Detail.html?batchNo=NONEXISTENT">?batchNo=NONEXISTENT</a></td>
+              <td class="verify">Only error + return link; no static Glycine header.</td>
+            </tr>
+            <tr>
+              <td>Invalid document</td>
+              <td><a href="Document%20Approval%20Review.html?docNo=BADDOC">?docNo=BADDOC</a></td>
+              <td class="verify">Only error + return link; no SPEC preview.</td>
+            </tr>
+            <tr>
+              <td>Wrong AWS type</td>
+              <td><a href="AWS%20Data%20Entry.html?docNo=SPEC/FG00132/01">AWS + SPEC docNo</a></td>
+              <td class="verify">Type guard message; main content hidden.</td>
+            </tr>
+            <tr>
+              <td>Role guard</td>
+              <td>Sign in <span class="mono">qc.mgr</span> → open <a href="QC%20Executive%20Dashboard.html">Executive dashboard</a></td>
+              <td class="verify">Auto-redirect to QC Manager dashboard.</td>
+            </tr>
+            <tr>
+              <td>COA default</td>
+              <td><a href="COA%20Sign%20%26%20Issue.html">COA (no param)</a></td>
+              <td class="verify">Still loads COA/GCN/010526 demo (happy path unchanged).</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <!-- Screen registry -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Screen registry</h2>
+        <span class="section-count">27 screens</span>
+        <span class="section-rule"></span>
+      </div>
+      <p class="section-desc">Update this table when you add or rewire a screen. Status: <span class="badge badge--wired">Wired</span> demo data + navigation · <span class="badge badge--guard">Guarded</span> role/param checks · <span class="badge badge--static">Static</span> shell only.</p>
+      <div class="card registry-wrap">
+        <table class="registry">
+          <thead>
+            <tr>
+              <th>Screen</th>
+              <th>Role</th>
+              <th>Params</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="index.html">index.html</a></td><td>All</td><td class="mono">—</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="QC%20Executive%20Dashboard.html">QC Executive Dashboard</a></td><td>QC_EXEC</td><td class="mono">data-dashboard-role</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="QC%20Manager%20Dashboard.html">QC Manager Dashboard</a></td><td>QC_MGR</td><td class="mono">—</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="QA%20Manager%20Dashboard.html">QA Manager Dashboard</a></td><td>QA_MGR / QA_EXEC</td><td class="mono">—</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Batch%20Detail.html">Batch Detail</a></td><td>QC+</td><td class="mono">?batchNo=</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Batch%20Pipeline.html">Batch Pipeline</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="Create%20SPEC.html">Create SPEC</a></td><td>QC_EXEC</td><td class="mono">?docNo=</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Create%20SPEC%20-%20Review%20Step.html">Create SPEC — Review</a></td><td>QC_EXEC</td><td class="mono">?docNo=</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Document%20Approval%20Review.html">Document Approval Review</a></td><td>QC_MGR / QA</td><td class="mono">?docNo= ?role=qa</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Document%20Timeline.html">Document Timeline</a></td><td>All</td><td class="mono">?docNo=</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="AWS%20Data%20Entry.html">AWS Data Entry</a></td><td>QC_EXEC</td><td class="mono">?docNo=</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="COA%20Sign%20%26%20Issue.html">COA Sign &amp; Issue</a></td><td>QA_MGR</td><td class="mono">?docNo= opt</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Sign%20Modal.html">Sign Modal</a></td><td>All</td><td class="mono">?next=</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="Notifications.html">Notifications</a></td><td>All</td><td class="mono">—</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="User%20Management%20Console.html">User Management</a></td><td>SUPER_ADMIN</td><td class="mono">—</td><td><span class="badge badge--guard">Guarded</span></td></tr>
+            <tr><td><a href="Audit%20Log%20Viewer.html">Audit Log Viewer</a></td><td>MGR+</td><td class="mono">—</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="Reports%20Hub.html">Reports Hub</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--static">Static</span></td></tr>
+            <tr><td><a href="Released%20Batches%20Register.html">Released Batches Register</a></td><td>QA+</td><td class="mono">—</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="Product%20Master%20Editor.html">Product Master Editor</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--static">Static</span></td></tr>
+            <tr><td><a href="Test%20Parameter%20Editor.html">Test Parameter Editor</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--static">Static</span></td></tr>
+            <tr><td><a href="MOA%20Section%20Editor.html">MOA Section Editor</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--static">Static</span></td></tr>
+            <tr><td><a href="Instrument%20Master.html">Instrument Master</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--static">Static</span></td></tr>
+            <tr><td><a href="Reagent%20Master.html">Reagent Master</a></td><td>QC+</td><td class="mono">—</td><td><span class="badge badge--static">Static</span></td></tr>
+            <tr><td><a href="Start%20Here.html">Start Here</a></td><td>—</td><td class="mono">launcher</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="User%20Journeys.html">User Journeys</a></td><td>—</td><td class="mono">story</td><td><span class="badge badge--wired">Wired</span></td></tr>
+            <tr><td><a href="Flows.html">Flows</a></td><td>—</td><td class="mono">this page</td><td><span class="badge badge--wired">Wired</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">When you change a page</h2>
+        <span class="section-rule"></span>
+      </div>
+      <div class="callout">
+        <ol style="margin: 0; padding-left: 1.2em;">
+          <li>Update the screen row in the registry above (status, params, role).</li>
+          <li>Re-run the flow that contains that screen — links are in the tables.</li>
+          <li>If the screen uses <span class="mono">?docNo</span> or <span class="mono">?batchNo</span>, test invalid-param regression URLs.</li>
+          <li>If it is a role dashboard, confirm <span class="mono">data-dashboard-role</span> and wrong-role redirect.</li>
+          <li>Push to GitHub; hosted site redeploys from <span class="mono">main</span> / <span class="mono">master</span>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <footer class="foot">
+      Flows reference for internal QA and demo walkthroughs.
+      Related: <a href="Start Here.html">Start Here</a> (flow cards) · <a href="User Journeys.html">User Journeys</a> (narrative) · <a href="js/demo-data.js?v=20260609">demo-data.js</a> (IDs and routes).
+    </footer>
+
+  </main>
+</body>
+</html>

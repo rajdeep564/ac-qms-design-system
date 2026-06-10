@@ -1,13 +1,13 @@
-ï»¿<!doctype html>
+<!doctype html>
 <!-- @dsCard group="Brand" name="AC-QMS Dashboard" viewport="1440x900" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS â€” Dashboard</title>
-  <script src="js/session.js"></script>
+  <title>AC-QMS — Dashboard</title>
+  <script src="js/session.js?v=20260609"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js"></script>
+  <script src="js/demo-data.js?v=20260609"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -432,7 +432,7 @@
     }
     .timeline-row:last-child .line { display: none; }
 
-    /* Timeline action variants â€” only color is in dots */
+    /* Timeline action variants — only color is in dots */
     .timeline-row.action-approved .dot { background: var(--approved); }
     .timeline-row.action-signed   .dot { background: var(--signed); }
     .timeline-row.action-submitted .dot { background: var(--submitted); }
@@ -476,7 +476,7 @@
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
         <div class="wordmark">
-          <span class="name">AC<span class="sep">Â·</span>QMS</span>
+          <span class="name">AC<span class="sep">·</span>QMS</span>
           <span class="tagline">Quality Management</span>
         </div>
       </div>
@@ -548,6 +548,14 @@
           <span class="label">Users</span>
           <span class="admin-tag">Super</span>
         </a>
+
+        <a class="nav-item" href="Permissions Matrix.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+          </svg>
+          <span class="label">Permissions Matrix</span>
+          <span class="admin-tag">Super</span>
+        </a>
       </nav>
 
       <div class="sidebar-user" role="button">
@@ -574,7 +582,7 @@
       </nav>
 
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod Â· IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -604,7 +612,7 @@
             <div class="greeting">
               <span>Good afternoon, Rohan Patel</span>
               <span class="dept-badge dept-badge--qa">QA</span>
-              <span class="day">Wednesday Â· 28-May-2026 Â· 14:02 IST</span>
+              <span class="day">Wednesday · 28-May-2026 · 14:02 IST</span>
             </div>
           </div>
           <div class="actions">
@@ -629,7 +637,7 @@
           <div class="stat">
             <span class="label">Active batches</span>
             <span class="value">28</span>
-            <span class="delta"><b>12</b> awaiting release Â· <b>3</b> on hold</span>
+            <span class="delta"><b>12</b> awaiting release · <b>3</b> on hold</span>
           </div>
           <div class="stat">
             <span class="label">Pending approvals</span>
@@ -639,7 +647,7 @@
           <div class="stat">
             <span class="label">OOS this month</span>
             <span class="value">3</span>
-            <span class="delta"><b>1</b> over SLA Â· 2 closed</span>
+            <span class="delta"><b>1</b> over SLA · 2 closed</span>
           </div>
           <div class="stat">
             <span class="label">Issued documents</span>
@@ -655,7 +663,7 @@
           <div class="card">
             <div class="card-header">
               <span class="title">Pending actions</span>
-              <span class="link">View all 14 â†’</span>
+              <span class="link">View all 14 ?</span>
             </div>
             <div class="pending-list">
               <a class="pending-row">
@@ -664,7 +672,7 @@
                     <span class="doc-id">BR-2026-04781</span>
                     <span class="doc-rev">r1</span>
                   </div>
-                  <span class="doc-title">Paracetamol 500 mg Â· Lot A4781 â€” awaiting QA sign-off</span>
+                  <span class="doc-title">Paracetamol 500 mg · Lot A4781 — awaiting QA sign-off</span>
                 </div>
                 <span class="pill pill--submitted">Submitted</span>
                 <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
@@ -676,7 +684,7 @@
                     <span class="doc-id">OOS-2026-0089</span>
                     <span class="doc-rev">r0</span>
                   </div>
-                  <span class="doc-title">Dissolution outside spec Â· Lot A4781 â€” Phase I review</span>
+                  <span class="doc-title">Dissolution outside spec · Lot A4781 — Phase I review</span>
                 </div>
                 <span class="pill pill--oos">OOS</span>
                 <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
@@ -688,7 +696,7 @@
                     <span class="doc-id">SOP-LAB-0034</span>
                     <span class="doc-rev">r7</span>
                   </div>
-                  <span class="doc-title">HPLC method validation â€” Paracetamol assay</span>
+                  <span class="doc-title">HPLC method validation — Paracetamol assay</span>
                 </div>
                 <span class="pill pill--submitted">Submitted</span>
                 <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
@@ -700,7 +708,7 @@
                     <span class="doc-id">DEV-2026-0156</span>
                     <span class="doc-rev">r2</span>
                   </div>
-                  <span class="doc-title">Deviation â€” pH meter calibration overdue</span>
+                  <span class="doc-title">Deviation — pH meter calibration overdue</span>
                 </div>
                 <span class="pill pill--submitted">Submitted</span>
                 <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
@@ -712,7 +720,7 @@
                     <span class="doc-id">CC-2026-0212</span>
                     <span class="doc-rev">r0</span>
                   </div>
-                  <span class="doc-title">Change control â€” Supplier qualification, Excipient E-12</span>
+                  <span class="doc-title">Change control — Supplier qualification, Excipient E-12</span>
                 </div>
                 <span class="pill pill--draft">Draft</span>
                 <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
@@ -724,7 +732,7 @@
                     <span class="doc-id">SPEC-API-0142</span>
                     <span class="doc-rev">r3</span>
                   </div>
-                  <span class="doc-title">Acetaminophen API release spec â€” QA review queued</span>
+                  <span class="doc-title">Acetaminophen API release spec — QA review queued</span>
                 </div>
                 <span class="pill pill--qc-approved">QC approved</span>
                 <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
@@ -740,7 +748,7 @@
           <div class="card">
             <div class="card-header">
               <span class="title">Recent activity</span>
-              <span class="link">Audit log â†’</span>
+              <span class="link">Audit log ?</span>
             </div>
             <div class="timeline">
 
@@ -752,7 +760,7 @@
                     <span class="action"> signed </span>
                     <span class="doc">BR-2026-04781 r1</span>
                   </div>
-                  <span class="meta">14:02 IST Â· just now</span>
+                  <span class="meta">14:02 IST · just now</span>
                 </div>
               </div>
 
@@ -766,7 +774,7 @@
                     <span class="action"> on </span>
                     <span class="doc">BR-2026-04781</span>
                   </div>
-                  <span class="meta">09:14 IST Â· 5 h ago</span>
+                  <span class="meta">09:14 IST · 5 h ago</span>
                 </div>
               </div>
 
@@ -778,7 +786,7 @@
                     <span class="action"> submitted </span>
                     <span class="doc">DEV-2026-0156 r2</span>
                   </div>
-                  <span class="meta">17:39 IST Â· yesterday</span>
+                  <span class="meta">17:39 IST · yesterday</span>
                 </div>
               </div>
 
@@ -790,7 +798,7 @@
                     <span class="action"> QC-approved </span>
                     <span class="doc">SPEC-API-0142 r3</span>
                   </div>
-                  <span class="meta">11:02 IST Â· 24-May</span>
+                  <span class="meta">11:02 IST · 24-May</span>
                 </div>
               </div>
 
@@ -802,7 +810,7 @@
                     <span class="action"> issued </span>
                     <span class="doc">SPEC-EXC-0078 r5</span>
                   </div>
-                  <span class="meta">10:11 IST Â· 20-May</span>
+                  <span class="meta">10:11 IST · 20-May</span>
                 </div>
               </div>
 
@@ -814,13 +822,13 @@
                     <span class="action"> created </span>
                     <span class="doc">CC-2026-0212 r0</span>
                   </div>
-                  <span class="meta">08:02 IST Â· 25-May</span>
+                  <span class="meta">08:02 IST · 25-May</span>
                 </div>
               </div>
 
             </div>
             <div class="card-footer">
-              <span>Last 24 hours Â· all departments</span>
+              <span>Last 24 hours · all departments</span>
               <span class="link">Filter</span>
             </div>
           </div>
@@ -847,12 +855,12 @@
           : docUrl('Document Approval Review.html', d.docNo);
         return '<a class="pending-row" href="' + href + '"><div class="info"><div class="top-line">' +
           '<span class="doc-id">' + d.docNo + '</span><span class="doc-rev">' + d.type + '</span></div>' +
-          '<span class="doc-title">' + d.product + ' Â· ' + d.batchNo + '</span></div>' +
+          '<span class="doc-title">' + d.product + ' · ' + d.batchNo + '</span></div>' +
           '<span class="pill ' + pill + '">' + pillText + '</span>' +
           '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>';
       }).join('');
       var link = document.querySelector('.pending-list').closest('.card').querySelector('.card-header .link');
-      if (link) link.textContent = 'View all ' + docs.length + ' â†’';
+      if (link) link.textContent = 'View all ' + docs.length + ' ?';
     });
   </script>
 
