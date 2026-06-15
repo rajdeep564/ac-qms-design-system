@@ -7,7 +7,7 @@
   <title>AC-QMS &middot; Create SPEC &middot; GCN/010526</title>
   <script src="js/session.js?v=20260616"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260616"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -104,6 +104,10 @@
     .list-head .meta { font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; text-align: right; }
     .list-head .meta .mono { font-family: var(--font-mono); }
 
+
+    .test-group-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: var(--s3) var(--s2) var(--s1); border-top: 1px solid var(--border); margin-top: var(--s2); }
+    .test-group-label:first-child { border-top: none; margin-top: 0; }
+    tr.group-row td { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); background: var(--canvas); padding: 8px var(--s3); border-bottom: 1px solid var(--border); }
     .test-list { display: flex; flex-direction: column; gap: var(--s3); }
 
     /* ---------- Test card ---------- */
@@ -294,256 +298,10 @@
           <div>
             <div class="list-head">
               <span class="title">Test parameters</span>
-              <span class="meta">Auto-filled from Master &middot; <span class="mono">Glycine IP &middot; FG00132 &middot; Revision 00</span></span>
+              <span class="meta">Auto-filled from Master &middot; <span class="mono">Glycine IP &middot; FG00038 &middot; Revision 00</span></span>
             </div>
 
-            <div class="test-list">
-
-              <!-- 1. Description -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">01</span><span class="tc-name">Description</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--qual">Qualitative</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">A white, crystalline powder; odourless</span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 2. Solubility -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">02</span><span class="tc-name">Solubility</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--qual">Qualitative</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">Freely soluble in water; practically insoluble in ethanol</span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 3. Identification (sub-tests A/B) -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">03</span><span class="tc-name">Identification</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--passfail">Pass / Fail</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">Complies</span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-                <div class="subtests">
-                  <span class="subtests-label">Sub-tests</span>
-                  <div class="subtest">
-                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">A &middot; By infrared absorption</span><span class="pharma">IP</span></div>
-                    <span class="st-criteria">Corresponds to reference spectrum</span>
-                  </div>
-                  <div class="subtest">
-                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">B &middot; By chemical reaction</span><span class="pharma">IP</span></div>
-                    <span class="st-criteria">Complies</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 4. Appearance of solution -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">04</span><span class="tc-name">Appearance of solution</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--passfail">Pass / Fail</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">Clear and colourless</span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 5. pH (range, Reset Right Side Limit disabled because locked) -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">05</span><span class="tc-name">pH</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; range</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">5.9 &middot; 6.3</span>
-                    <div class="tc-controls">
-                      <button class="reset-btn" disabled title="Mandatory criteria are locked"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
-                      <span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 6. Chlorides (pharmacopoeia variants IP/BP/USP) -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">06</span><span class="tc-name">Chlorides</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; NMT</span><span class="pharma">IP</span><span class="pharma">BP</span><span class="pharma">USP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">NMT 100 <span class="unit">ppm</span></span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-                <div class="subtests">
-                  <span class="subtests-label">Pharmacopoeia variants</span>
-                  <div class="subtest">
-                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">Chlorides</span><span class="pharma">IP</span></div>
-                    <span class="st-criteria">NMT 100 ppm</span>
-                  </div>
-                  <div class="subtest">
-                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">Chlorides</span><span class="pharma">BP</span></div>
-                    <span class="st-criteria">NMT 100 ppm</span>
-                  </div>
-                  <div class="subtest">
-                    <div class="st-left"><span class="st-marker"></span><span class="st-variant">Chlorides</span><span class="pharma">USP</span></div>
-                    <span class="st-criteria">NMT 0.007 %</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 7. Heavy metals -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">07</span><span class="tc-name">Heavy metals</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; NMT</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">NMT 10 <span class="unit">ppm</span></span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 8. Sulphated ash -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">08</span><span class="tc-name">Sulphated ash</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; NMT</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">NMT 0.1 <span class="unit">%</span></span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 9. Loss on drying -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">09</span><span class="tc-name">Loss on drying</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; NMT</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">NMT 0.5 <span class="unit">%</span></span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 10. Assay (BETWEEN, Reset Right Side Limit disabled) -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">10</span><span class="tc-name">Assay on dried basis</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; between</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">98.5 &middot; 101.5 <span class="unit">%</span></span>
-                    <div class="tc-controls">
-                      <button class="reset-btn" disabled title="Mandatory criteria are locked"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
-                      <span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 11. Foreign matter -->
-              <div class="test-card locked">
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">11</span><span class="tc-name">Foreign matter</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--qual">Qualitative</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">No foreign matter detected</span>
-                    <div class="tc-controls"><span class="mand"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Mandatory</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ===== Customer-optional tests (toggle) ===== -->
-              <div class="list-head" style="margin-top: var(--s4);">
-                <span class="title" style="font-size: var(--text-sm); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;">Customer-optional tests</span>
-                <span class="meta">Activate per customer requirement</span>
-              </div>
-
-              <!-- 12. Sieve analysis -->
-              <div class="test-card optional off" data-optional>
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">12</span><span class="tc-name">Sieve analysis</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; NLT</span><span class="pharma">IP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">NLT 95 <span class="unit">% through #40</span></span>
-                    <div class="tc-controls">
-                      <span class="opt-label">Optional</span>
-                      <button class="switch" role="switch" aria-checked="false" aria-label="Activate Sieve analysis"></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 13. Bulk density (Reset Right Side Limit active when on) -->
-              <div class="test-card optional off" data-optional>
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">13</span><span class="tc-name">Bulk density</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; range</span><span class="pharma">USP</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">0.45 &middot; 0.65 <span class="unit">g/mL</span></span>
-                    <div class="tc-controls">
-                      <button class="reset-btn" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Reset right limit</button>
-                      <span class="opt-label">Optional</span>
-                      <button class="switch" role="switch" aria-checked="false" aria-label="Activate Bulk density"></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 14. Elemental impurities -->
-              <div class="test-card optional off" data-optional>
-                <div class="test-head">
-                  <div class="tc-left">
-                    <div class="tc-name-row"><span class="tc-sortno">14</span><span class="tc-name">Elemental impurities by AAS</span></div>
-                    <div class="tc-badges"><span class="tbadge tbadge--quant">Quantitative &middot; NMT</span><span class="pharma">ICH Q3D</span></div>
-                  </div>
-                  <div class="tc-right">
-                    <span class="tc-criteria">10 elements &middot; within Q3D limits</span>
-                    <div class="tc-controls">
-                      <span class="opt-label">Optional</span>
-                      <button class="switch" role="switch" aria-checked="false" aria-label="Activate Elemental impurities"></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
+            <div class="test-list" id="specTestList"></div>
           </div>
 
           <!-- RIGHT: sticky rail -->
@@ -567,7 +325,7 @@
               </div>
             </div>
 
-            <p class="rail-foot">Submission and signature happen on the Review step. SPEC will be numbered <span style="font-family:var(--font-mono);">SPEC/FG00132/01</span> on submit.</p>
+            <p class="rail-foot">Submission and signature happen on the Review step. SPEC will be numbered <span style="font-family:var(--font-mono);">SPEC/FG00038/01</span> on submit.</p>
           </aside>
 
         </div>

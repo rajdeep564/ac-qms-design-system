@@ -5,9 +5,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AC-QMS — Product Master · Glycine IP · Revision 03</title>
-  <script src="js/session.js?v=20260616"></script>
+  <script src="js/session.js?v=20260622"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260622"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -177,7 +177,15 @@
     .field-help { font-size: var(--text-xs); color: var(--text-muted); line-height: 1.45; }
     .field-help .formula { font-family: var(--font-mono); color: var(--text-secondary); }
 
-    .sub { font-size: 0.74em; vertical-align: -0.18em; }
+    .panel.hidden { display: none; }
+    .tab-rail .tab[data-tab] { cursor: pointer; }
+
+    .rev-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .rev-table thead th { text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: var(--s2) var(--s3); background: var(--canvas); border-bottom: 1px solid var(--border); }
+    .rev-table tbody td { padding: 9px var(--s3); font-size: var(--text-sm); border-top: 1px solid var(--border); vertical-align: top; }
+    .rev-table .rev-doc-no { font-family: var(--font-mono); font-size: var(--text-xs); }
+    .rev-table .rev-made { color: var(--text-secondary); line-height: 1.5; }
+    .rev-table .rev-cc, .rev-table .rev-date { font-family: var(--font-mono); font-size: var(--text-xs); }
 
     /* ---------- Status rail ---------- */
     .status-rail { position: sticky; top: var(--s6); display: flex; flex-direction: column; gap: var(--s4); }
@@ -294,13 +302,13 @@
           <div class="pm-head-left">
             <div class="pm-title-row">
               <h1 class="pm-title">Glycine IP</h1>
-              <span class="code-badge"><span class="ck">Family</span>FG00132</span>
+              <span class="code-badge"><span class="ck">Family</span>FG00038</span>
               <span class="code-badge"><span class="ck">Short</span>GCN</span>
             </div>
             <div class="pm-rev-row">
               <span class="pm-rev-label">Editing</span>
-              <span class="pm-rev">Revision 03</span>
-              <span class="pill pill--draft">Draft</span>
+              <span class="pm-rev">Revision 02</span>
+              <span class="pill pill--signed">Signed</span>
             </div>
           </div>
 
@@ -313,10 +321,6 @@
             <div class="rev-menu">
               <div class="rev-menu-label">Revision history · Glycine IP</div>
               <div class="rev-row current">
-                <span class="r-id">R-03</span>
-                <span class="r-meta"><span class="pill pill--draft">Draft</span><span class="r-date">editing</span></span>
-              </div>
-              <div class="rev-row">
                 <span class="r-id">R-02</span>
                 <span class="r-meta"><span class="pill pill--signed">QA-Signed</span><span class="pill pill--active">Active</span></span>
               </div>
@@ -338,17 +342,17 @@
           <!-- TAB RAIL -->
           <nav class="tab-rail" aria-label="Master sections">
             <span class="tab-rail-label">Sections</span>
-            <a class="tab active"><span class="t-num">1</span><span class="t-label">Identity</span></a>
-            <a class="tab"><span class="t-num">2</span><span class="t-label">Storage &amp; shelf life</span></a>
+            <a class="tab active" data-tab="identity"><span class="t-num">1</span><span class="t-label">Identity</span></a>
+            <a class="tab" data-tab="storage"><span class="t-num">2</span><span class="t-label">Storage &amp; shelf life</span></a>
             <a class="tab" href="Test Parameter Editor.html"><span class="t-num">3</span><span class="t-label">Test parameters</span><span class="t-warn" title="Incomplete"></span><svg class="t-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></a>
             <a class="tab" href="MOA Section Editor.html"><span class="t-num">4</span><span class="t-label">MOA sections</span><span class="t-warn" title="Incomplete"></span><svg class="t-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></a>
             <a class="tab"><span class="t-num">5</span><span class="t-label">Numbering format</span></a>
             <a class="tab"><span class="t-num">6</span><span class="t-label">Customer tab defaults</span></a>
-            <a class="tab"><span class="t-num">7</span><span class="t-label">Revision history</span></a>
+            <a class="tab" data-tab="revision"><span class="t-num">7</span><span class="t-label">Revision history</span></a>
           </nav>
 
           <!-- CONTENT PANEL -->
-          <section class="panel">
+          <section class="panel" id="panelIdentity">
             <div class="panel-head">
               <div class="panel-title">Identity</div>
               <div class="panel-sub">Core descriptors that identify this product master. Codes lock permanently after the first save.</div>
@@ -362,20 +366,45 @@
                 </div>
 
                 <div class="field">
+                  <label class="field-label" for="chemicalName">Chemical name</label>
+                  <input class="input locked" id="chemicalName" type="text" readonly />
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="technicalName">Technical name</label>
+                  <input class="input locked" id="technicalName" type="text" readonly />
+                </div>
+
+                <div class="field full">
+                  <label class="field-label" for="composition">Composition</label>
+                  <input class="input locked" id="composition" type="text" readonly />
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="originSource">Origin / source</label>
+                  <input class="input locked" id="originSource" type="text" readonly />
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="methodOfProduction">Method of production</label>
+                  <input class="input locked" id="methodOfProduction" type="text" readonly />
+                </div>
+
+                <div class="field">
                   <label class="field-label" for="formula">Molecular formula</label>
-                  <input class="input mono" id="formula" type="text" value="C₂H₅NO₂" />
+                  <input class="input mono" id="formula" type="text" value="C2H5NO2" />
                 </div>
 
                 <div class="field">
                   <label class="field-label" for="family">Family code <span class="req">*</span><span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>Locked</span></label>
-                  <input class="input mono locked" id="family" type="text" value="FG00132" disabled />
+                  <input class="input mono locked" id="family" type="text" value="FG00038" disabled />
                   <span class="field-help">Assigned once at creation. Forms the SPEC document number and cannot be changed after first save.</span>
                 </div>
 
                 <div class="field">
                   <label class="field-label" for="mw">Molecular weight</label>
-                  <input class="input mono" id="mw" type="text" value="75.07 g/mol" />
-                  <span class="field-help">Reported on dried basis. Glycine, <span class="formula">C₂H₅NO₂</span>.</span>
+                  <input class="input mono" id="mw" type="text" value="75.1 g/mole" />
+                  <span class="field-help">Reported on dried basis. Glycine, <span class="formula">C2H5NO2</span>.</span>
                 </div>
 
                 <div class="field">
@@ -406,10 +435,73 @@
 
                 <div class="field">
                   <label class="field-label" for="grade">Grade / category</label>
-                  <input class="input" id="grade" type="text" value="Pharmaceutical · Excipient" />
+                  <input class="input" id="grade" type="text" value="" />
                 </div>
 
               </div>
+            </div>
+          </section>
+
+          <section class="panel hidden" id="panelStorage">
+            <div class="panel-head">
+              <div class="panel-title">Storage &amp; packing</div>
+              <div class="panel-sub">Shelf-life, sampling, retention and packing specifications for this master.</div>
+            </div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div class="field full">
+                  <label class="field-label" for="storage">Storage conditions</label>
+                  <input class="input locked" id="storage" type="text" readonly />
+                </div>
+                <div class="field full">
+                  <label class="field-label" for="specialHandling">Special handling</label>
+                  <input class="input locked" id="specialHandling" type="text" readonly />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="packingPrimary">Packing — primary</label>
+                  <input class="input locked" id="packingPrimary" type="text" readonly />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="packingSecondary">Packing — secondary</label>
+                  <input class="input locked" id="packingSecondary" type="text" readonly />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="sampling">Sampling plan</label>
+                  <input class="input locked" id="sampling" type="text" readonly />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="retained">Retained sample quantity</label>
+                  <input class="input locked" id="retained" type="text" readonly />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="retainedRetention">Retained retention period</label>
+                  <input class="input locked" id="retainedRetention" type="text" readonly />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="shelf">Shelf life (months)</label>
+                  <input class="input locked" id="shelf" type="text" readonly />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel hidden" id="panelRevision">
+            <div class="panel-head">
+              <div class="panel-title">Revision history</div>
+              <div class="panel-sub">Controlled revision register for this product master — specification number, change description, CC reference and effective date.</div>
+            </div>
+            <div class="panel-body">
+              <table class="rev-table">
+                <thead>
+                  <tr>
+                    <th>Specification No.</th>
+                    <th>Revision Made</th>
+                    <th>Ref. CC No.</th>
+                    <th>Effective Date</th>
+                  </tr>
+                </thead>
+                <tbody id="pmRevisionHistoryTbody"></tbody>
+              </table>
             </div>
           </section>
 
@@ -510,10 +602,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var params = new URLSearchParams(location.search);
-      var productId = params.get('productId');
       var reviewMode = params.get('mode') === 'review';
       var qaRole = params.get('role') === 'qa';
-      var product = productId ? getProductById(productId) : null;
+      var product = typeof getProductFromUrl === 'function' ? getProductFromUrl() : null;
       if (!product) {
         showParamNotFound(
           'Product not found. Check the product ID in the URL.',
@@ -523,6 +614,11 @@
         return;
       }
       populateProductMaster(product);
+      var pid = productKey(product);
+      if (!params.get('productId') && pid) {
+        var fixUrl = reviewMode ? productReviewUrl(pid, qaRole ? 'qa' : null) : productUrl(pid);
+        history.replaceState(null, '', fixUrl);
+      }
 
       document.querySelectorAll('.breadcrumb .crumb').forEach(function (c) {
         if (c.textContent === 'Masters') {
@@ -535,6 +631,20 @@
       rt.addEventListener('click', function (e) { e.stopPropagation(); rh.classList.toggle('open'); });
       document.addEventListener('click', function () { rh.classList.remove('open'); });
       rh.querySelector('.rev-menu').addEventListener('click', function (e) { e.stopPropagation(); });
+
+      document.querySelectorAll('.tab-rail .tab[data-tab]').forEach(function (tab) {
+        tab.addEventListener('click', function (e) {
+          if (tab.getAttribute('href')) return;
+          e.preventDefault();
+          var target = tab.getAttribute('data-tab');
+          document.querySelectorAll('.tab-rail .tab[data-tab]').forEach(function (t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+          document.getElementById('panelIdentity').classList.toggle('hidden', target !== 'identity');
+          document.getElementById('panelStorage').classList.toggle('hidden', target !== 'storage');
+          var panelRev = document.getElementById('panelRevision');
+          if (panelRev) panelRev.classList.toggle('hidden', target !== 'revision');
+        });
+      });
 
       function roleDashboard() {
         var u = getCurrentUser();
@@ -573,12 +683,15 @@
         document.getElementById('dpRole').textContent = disp.fullName + ' · ' + disp.designation;
 
         document.getElementById('approveBtn').addEventListener('click', function () {
+          var pid = productKey(product);
           if (isQa) {
-            updateProductStatus(product.id, 'QA_SIGNED', user.username);
-            location.href = signModalUrl('Product Masters.html', 'Sign Master \u2014 ' + product.name);
+            location.href = signModalUrl('Product Masters.html', 'Sign Master \u2014 ' + product.name, {
+              signType: 'signMaster', productId: pid
+            });
           } else {
-            updateProductStatus(product.id, 'QC_APPROVED', user.username);
-            location.href = signModalUrl('QC Manager Dashboard.html', 'Approve Master \u2014 ' + product.name);
+            location.href = signModalUrl('QC Manager Dashboard.html', 'Approve Master \u2014 ' + product.name, {
+              signType: 'approveMaster', productId: pid
+            });
           }
         });
 
@@ -594,7 +707,7 @@
             hint.classList.toggle('met', n >= 10);
           });
           rejectBtn.addEventListener('click', function () {
-            updateProductStatus(product.id, 'REJECTED', user.username, ta.value.trim());
+            updateProductStatus(productKey(product), 'REJECTED', user.username, ta.value.trim());
             location.href = roleDashboard();
           });
         }
@@ -604,7 +717,10 @@
       var submitBtn = document.getElementById('submitBtn');
       submitBtn.addEventListener('click', function () {
         if (submitBtn.disabled) return;
-        location.href = signModalUrl('QC Manager Dashboard.html', 'Sign Master Submission \u2014 ' + product.name);
+        location.href = signModalUrl('QC Manager Dashboard.html', 'Sign Master Submission \u2014 ' + product.name, {
+          signType: 'submitMaster',
+          productId: productKey(product)
+        });
       });
       document.getElementById('saveDraftBtn').addEventListener('click', function () { location.href = roleDashboard(); });
       document.getElementById('discardBtn').addEventListener('click', function () { location.href = roleDashboard(); });

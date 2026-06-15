@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS \u2014 Approval review \u2014 SPEC/FG00132/01</title>
+  <title>AC-QMS \u2014 Approval review \u2014 SPEC/FG00038/01</title>
   <script src="js/session.js?v=20260616"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260618"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -130,6 +130,10 @@
     .sec-title .rule { flex: 1; height: 1px; background: var(--border); }
 
     /* Test table (read-only) */
+
+    .test-group-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: var(--s3) var(--s2) var(--s1); border-top: 1px solid var(--border); margin-top: var(--s2); }
+    .test-group-label:first-child { border-top: none; margin-top: 0; }
+    tr.group-row td { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); background: var(--canvas); padding: 8px var(--s3); border-bottom: 1px solid var(--border); }
     .doc-table { width: 100%; border-collapse: collapse; }
     .doc-table thead th { text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: 0 var(--s3) var(--s2); white-space: nowrap; }
     .doc-table thead th.crit { text-align: right; }
@@ -145,6 +149,10 @@
     .doc-table .subrow .t-name { font-weight: 400; color: var(--text-secondary); padding-left: var(--s4); position: relative; }
     .doc-table .subrow .t-name::before { content: "+"; position: absolute; left: 6px; color: var(--border-strong); }
     .doc-table .subrow td { border-top: 1px dashed var(--border); }
+    .rev-history-table .rev-doc-no { font-family: var(--font-mono); font-size: var(--text-xs); white-space: nowrap; }
+    .rev-history-table .rev-made { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.5; }
+    .rev-history-table .rev-cc { font-family: var(--font-mono); font-size: var(--text-xs); white-space: nowrap; }
+    .rev-history-table .rev-date { font-family: var(--font-mono); font-size: var(--text-xs); white-space: nowrap; }
 
     /* Customer tab section */
     .cust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s4) var(--s6); margin-bottom: var(--s5); }
@@ -276,7 +284,7 @@
         <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
         <span class="crumb">Approvals</span>
         <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-        <span class="crumb current mono">SPEC/FG00132/01</span>
+        <span class="crumb current mono">SPEC/FG00038/01</span>
       </nav>
       <div class="topbar-right">
         <span class="env-tag"><span class="dot"></span>Prod \u2014 IST</span>
@@ -299,7 +307,7 @@
       <div class="appr-head">
         <div class="ah-row">
           <div class="ah-doc-line">
-            <span class="ah-doc">SPEC/FG00132/01</span>
+            <span class="ah-doc">SPEC/FG00038/01</span>
             <span class="pill pill--spec">SPEC</span>
             <span class="pill pill--submitted">
               <svg class="pico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 18l6-6-6-6" /></svg>
@@ -334,11 +342,11 @@
                   <div class="dt-name">Finished-product specification</div>
                   <div class="dt-sub">Glycine IP \u2014 for the assessment of one batch against the registered Master</div>
                 </div>
-                <div class="dt-doc-no">SPEC/FG00132/01<br />Revision 00</div>
+                <div class="dt-doc-no">SPEC/FG00038/01<br />Revision 00</div>
               </div>
               <div class="id-grid">
                 <div class="id-cell"><span class="k">Product</span><span class="v">Glycine IP</span></div>
-                <div class="id-cell"><span class="k">Master code</span><span class="v mono">FG00132</span></div>
+                <div class="id-cell"><span class="k">Master code</span><span class="v mono">FG00038</span></div>
                 <div class="id-cell"><span class="k">Pharmacopoeia</span><span class="v">IP \u2014 BP \u2014 USP</span></div>
                 <div class="id-cell"><span class="k">Batch</span><span class="v mono">GCN/010526</span></div>
                 <div class="id-cell"><span class="k">ARN</span><span class="v mono">2026FG03</span></div>
@@ -355,7 +363,7 @@
                 <thead>
                   <tr><th class="t-no">#</th><th>Test</th><th>Type</th><th>Pharm.</th><th class="crit">Acceptance criteria</th></tr>
                 </thead>
-                <tbody>
+                <tbody id="approvalSpecTbody">
                   <tr><td class="t-no">1</td><td class="t-name">Description</td><td class="t-type">Qualitative</td><td class="t-pharma">IP</td><td class="t-crit">White, crystalline powder; odourless</td></tr>
                   <tr><td class="t-no">2</td><td class="t-name">Solubility</td><td class="t-type">Qualitative</td><td class="t-pharma">IP</td><td class="t-crit">Freely soluble in water</td></tr>
                   <tr><td class="t-no">3</td><td class="t-name">Identification</td><td class="t-type">Pass / Fail</td><td class="t-pharma">IP</td><td class="t-crit">Complies</td></tr>
@@ -391,7 +399,22 @@
             <!-- Footnote -->
             <div class="doc-section">
               <div class="sec-title"><span class="n">03</span><span class="t">Declaration</span><span class="rule"></span></div>
-              <p style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6; text-wrap: pretty;">Mandatory criteria are inherited from the registered Product Master <span style="font-family: var(--font-mono); color: var(--text);">FG00132 \u2014 Revision 00</span> and have not been altered. Customer-optional tests, where activated, are listed under the Customer tab. This specification governs the disposition of batch <span style="font-family: var(--font-mono); color: var(--text);">GCN/010526</span> only.</p>
+              <p style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6; text-wrap: pretty;">Mandatory criteria are inherited from the registered Product Master <span style="font-family: var(--font-mono); color: var(--text);">FG00038 \u2014 Revision 00</span> and have not been altered. Customer-optional tests, where activated, are listed under the Customer tab. This specification governs the disposition of batch <span style="font-family: var(--font-mono); color: var(--text);">GCN/010526</span> only.</p>
+            </div>
+
+            <div class="doc-section" id="revisionHistorySection">
+              <div class="sec-title"><span class="n">04</span><span class="t">Revision history</span><span class="rule"></span></div>
+              <table class="doc-table rev-history-table">
+                <thead>
+                  <tr>
+                    <th>Specification No.</th>
+                    <th>Revision Made</th>
+                    <th>Ref. CC No.</th>
+                    <th>Effective Date</th>
+                  </tr>
+                </thead>
+                <tbody id="revisionHistoryTbody"></tbody>
+              </table>
             </div>
           </article>
         </div>
@@ -482,7 +505,7 @@
                 <div class="tl-row created">
                   <div class="tl-rail"><span class="tl-dot"></span></div>
                   <div class="tl-content">
-                    <div class="tl-head"><span class="who">Kavya Patel</span><span class="act"> created from Master FG00132</span></div>
+                    <div class="tl-head"><span class="who">Kavya Patel</span><span class="act"> created from Master FG00038</span></div>
                     <span class="tl-time">Yesterday \u2014 13:40 IST</span>
                   </div>
                 </div>

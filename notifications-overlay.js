@@ -76,7 +76,7 @@
     }
     return [
       { day: 'Today · 28-May-2026' },
-      { cat: 'action', unread: true, title: 'Approval pending:', doc: 'AWS/FG00132/01', ts: '2 h ago', msg: '<b>Kavya Patel (QC)</b> submitted for review', route: 'Document Approval Review.html?docNo=AWS%2FFG00132%2F01' }
+      { cat: 'action', unread: true, title: 'Approval pending:', doc: 'AWS/GCN/01', ts: '2 h ago', msg: '<b>Kavya Patel (QC)</b> submitted for review', route: 'Document Approval Review.html?docNo=AWS%2FFG00038%2F01' }
     ];
   }
 

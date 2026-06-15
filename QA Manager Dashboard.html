@@ -5,9 +5,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AC-QMS &middot; QA Manager dashboard</title>
-  <script src="js/session.js?v=20260616"></script>
+  <script src="js/session.js?v=20260622"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260622"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -358,6 +358,28 @@
               </div>
             </div>
 
+            <!-- AWS Pending Issuance -->
+            <div class="card" id="awsPendingIssuanceCard">
+              <div class="card-header">
+                <span class="title">AWS Pending Issuance</span>
+                <span class="count-meta" id="awsPendingIssuanceMeta">0 awaiting issuance</span>
+              </div>
+              <div class="table-scroll" id="awsPendingIssuanceScroll">
+                <table class="qtable">
+                  <thead>
+                    <tr>
+                      <th>Doc number</th>
+                      <th>Product</th>
+                      <th>Batch</th>
+                      <th>Assigned analyst</th>
+                      <th class="right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="awsPendingIssuanceBody"></tbody>
+                </table>
+              </div>
+            </div>
+
             <!-- Product master signatures -->
             <div class="card" id="productSignatureCard">
               <div class="card-header">
@@ -532,6 +554,13 @@
       var coaList = document.querySelector('.coa-list');
       if (coaList && typeof renderCoaIssueList === 'function') {
         renderCoaIssueList(coaList, getCoasToIssue());
+      }
+      var awsPending = typeof getAwsPendingIssuance === 'function' ? getAwsPendingIssuance() : [];
+      var awsBody = document.getElementById('awsPendingIssuanceBody');
+      if (awsBody && typeof renderAwsPendingIssuanceRows === 'function') {
+        renderAwsPendingIssuanceRows(awsBody, awsPending);
+        var awsMeta = document.getElementById('awsPendingIssuanceMeta');
+        if (awsMeta) awsMeta.textContent = awsPending.length + ' awaiting issuance';
       }
       document.querySelectorAll('.link-action').forEach(function (el) {
         if (el.closest('tbody') || el.closest('.coa-list')) return;

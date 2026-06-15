@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS \u2014 AWS data entry \u2014 AWS/FG00132/01</title>
-  <script src="js/session.js?v=20260616"></script>
+  <title>AC-QMS \u2014 AWS data entry \u2014 AWS/GCN/01</title>
+  <script src="js/session.js?v=20260617"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260618"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -84,6 +84,47 @@
     .progress-txt b { color: var(--text); font-weight: 600; }
     .progress-bar { width: 140px; height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
     .progress-bar .fill { height: 100%; border-radius: 999px; background: var(--primary); width: 72.7%; transition: width 200ms ease; }
+
+    /* ---------- Issuance strip ---------- */
+    .issuance-strip { flex-shrink: 0; padding: 8px var(--s6); border-bottom: 1px solid var(--border); font-size: var(--text-xs); color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; gap: var(--s4); }
+    .issuance-strip--issued { background: var(--primary-soft); }
+    .issuance-strip--warn { background: var(--oos-soft); color: var(--text); }
+    .issuance-strip--action { background: var(--primary-soft); }
+    .issuance-strip--neutral { background: var(--canvas); color: var(--text-muted); }
+    .aws-body--locked { opacity: 0.4; pointer-events: none; }
+
+    /* ---------- Per-test signatures ---------- */
+    .aws-sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); padding: var(--s3) var(--s5) var(--s4); border-top: 1px solid var(--border); background: var(--canvas); }
+    .aws-sig-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .aws-sig-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .aws-sig-val { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-xs); }
+    .aws-sig-val .sig-name { font-weight: 500; color: var(--text); }
+    .aws-sig-val .sig-when { color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    .aws-sig-val .sig-pending { color: var(--text-muted); }
+    .btn--xs { height: 28px; padding: 0 10px; font-size: 11px; }
+
+    /* ---------- AWS secondary header ---------- */
+    .aws-secondary-header {
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--border);
+      font-size: var(--text-xs);
+    }
+    .aws-sec-cell {
+      display: grid;
+      grid-template-columns: minmax(9rem, 38%) 1fr;
+      align-items: baseline;
+      gap: var(--s3);
+      padding: 7px var(--s6);
+      border-bottom: 1px solid var(--border);
+    }
+    .aws-sec-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .aws-sec-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .aws-sec-k { color: var(--text-secondary); font-weight: 500; white-space: nowrap; }
+    .aws-sec-v { font-family: var(--font-mono); color: var(--text); font-variant-numeric: tabular-nums; word-break: break-word; }
 
     /* status pills */
     .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 16px; white-space: nowrap; }
@@ -301,7 +342,7 @@
         <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
         <span class="crumb">AWS</span>
         <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-        <span class="crumb current mono" id="crumbDoc">AWS/FG00132/01</span>
+        <span class="crumb current mono" id="crumbDoc">AWS/GCN/01</span>
       </nav>
       <div class="topbar-right">
         <span class="env-tag"><span class="dot"></span>Prod \u2014 IST</span>
@@ -320,12 +361,13 @@
     <!-- ============================== MAIN ============================== -->
     <main class="main">
 
+      <div id="issuanceRow" class="issuance-strip" hidden></div>
       <div id="roBanner" hidden style="padding:8px var(--s6);background:var(--canvas);border-bottom:1px solid var(--border);font-size:var(--text-xs);color:var(--text-muted);"></div>
 
       <!-- ===== AWS head ===== -->
       <div class="aws-head">
         <div class="ah-left">
-          <span class="ah-doc">AWS/FG00132/01</span>
+          <span class="ah-doc">AWS/GCN/01</span>
           <span class="pill pill--draft" id="awsStatusPill">Draft</span>
           <span class="ah-product">Batch GCN/010526 \u2014 Glycine IP \u2014 Customer: In-house (captive)</span>
           <span class="field-meta" id="ahAssigned">Assigned to Kavya Patel \u2014 QC Exec</span>
@@ -336,6 +378,19 @@
             <div class="progress-bar"><span class="fill" id="progFill"></span></div>
           </div>
         </div>
+      </div>
+
+      <div class="aws-secondary-header" id="awsSecondaryHeader">
+        <div class="aws-sec-cell"><span class="aws-sec-k">Mfg. Date</span><span class="aws-sec-v" id="awsMfgDate">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Exp. Date</span><span class="aws-sec-v" id="awsExpDate">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Test Request Sheet No.</span><span class="aws-sec-v" id="awsTrsNo">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">A.R. No.</span><span class="aws-sec-v" id="awsArn">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Batch Size</span><span class="aws-sec-v" id="awsBatchSize">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Quantity Sampled</span><span class="aws-sec-v" id="awsQtySampled">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Received Date</span><span class="aws-sec-v" id="awsReceivedDate">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Testing Date</span><span class="aws-sec-v" id="awsTestingDate">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Reference SPEC/MOA No.</span><span class="aws-sec-v" id="awsRefSpecMoa">—</span></div>
+        <div class="aws-sec-cell"><span class="aws-sec-k">Completion Date</span><span class="aws-sec-v" id="awsCompletionDate">—</span></div>
       </div>
 
       <!-- ===== Split ===== -->
@@ -431,7 +486,7 @@
               <div class="field">
                 <span class="field-label">Procedure (from MOA)</span>
                 <div class="procedure">
-                  <span class="src"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /></svg>MOA/FG00132/01</span>
+                  <span class="src"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /></svg>MOA/FG00038/01</span>
                   Ignite a tared silica crucible to constant weight. Add ~1 g of sample, moisten with sulphuric acid, char gently, then ignite at 600 \u2014 25 \u2014C to constant weight. Calculate % sulphated ash = (residue / sample weight) \u2014 100.
                 </div>
               </div>
@@ -516,7 +571,7 @@
               <div class="field">
                 <span class="field-label">Procedure (from MOA)</span>
                 <div class="procedure">
-                  <span class="src"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /></svg>MOA/FG00132/01</span>
+                  <span class="src"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /></svg>MOA/FG00038/01</span>
                   Weigh accurately about 2.5 g into a tared, flat-bottomed dish. Dry at 105 \u2014C for 2 hours, cool in a desiccator and weigh. Repeat to constant weight. % loss = (loss in weight / sample weight) \u2014 100.
                 </div>
               </div>
@@ -589,7 +644,7 @@
               <div class="field">
                 <span class="field-label">Procedure (from MOA)</span>
                 <div class="procedure">
-                  <span class="src"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /></svg>MOA/FG00132/01</span>
+                  <span class="src"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /></svg>MOA/FG00038/01</span>
                   Prepare standard and sample solutions per the monograph. Inject in the order given by the sequence table. Record peak areas and compute assay against the Reference Standard, corrected to the dried basis using Loss on drying.
                 </div>
               </div>
@@ -646,7 +701,7 @@
           <div class="ref-tabs">
             <button class="ref-tab active" data-tab="moa">MOA</button>
             <button class="ref-tab" data-tab="spec">SPEC</button>
-            <span class="ref-meta" id="refDocNo">MOA/FG00132/01</span>
+            <span class="ref-meta" id="refDocNo">MOA/FG00038/01</span>
           </div>
           <div class="ref-body" id="refBody">
             <!-- populated by JS -->
@@ -708,7 +763,8 @@
         return;
       }
       var user = getCurrentUser();
-      populateAwsDataEntry(doc);
+      var hydrated = populateAwsDataEntry(doc);
+      var gate = hydrated && hydrated.gate ? hydrated.gate : { locked: false };
 
       var isAssignee = user && user.username === batch.assignedQcExec;
 
@@ -721,6 +777,10 @@
         }
         var submitBtn = document.getElementById('submitBtn');
         if (submitBtn) submitBtn.style.display = 'none';
+        document.querySelectorAll(
+          '[data-warn-ack],[data-oos-ack],[data-warn-confirm],[data-oos-confirm],[data-warn-cancel],[data-oos-cancel]'
+        ).forEach(function (el) { el.style.display = 'none'; });
+      } else if (gate.locked) {
         document.querySelectorAll(
           '[data-warn-ack],[data-oos-ack],[data-warn-confirm],[data-oos-confirm],[data-warn-cancel],[data-oos-cancel]'
         ).forEach(function (el) { el.style.display = 'none'; });
@@ -738,8 +798,8 @@
       function renderRef() {
         var s = SECTIONS[activeId];
         if (!s) return;
-        var moaDoc = document.body.dataset.moa || 'MOA/FG00132/01';
-        var specDoc = document.body.dataset.spec || 'SPEC/FG00132/01';
+        var moaDoc = document.body.dataset.moa || 'MOA/FG00038/01';
+        var specDoc = document.body.dataset.spec || 'SPEC/FG00038/01';
         refDocNo.textContent = activeTab === 'moa' ? moaDoc : specDoc;
         if (activeTab === 'moa') {
           refBody.innerHTML =

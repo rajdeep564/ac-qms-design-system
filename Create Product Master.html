@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AC-QMS — Create Product Master</title>
-  <script src="js/session.js?v=20260616"></script>
+  <script src="js/session.js?v=20260622"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260622"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -205,6 +205,12 @@
                 <div class="field"><label class="field-label">Molecular weight <span class="req">*</span></label><input class="input mono" id="fMw" type="text" placeholder="176.12 g/mol" /><span class="field-error" id="errMw"></span></div>
                 <div class="field"><label class="field-label">Pharmacopoeia <span class="req">*</span></label><div class="select-wrap"><select class="input" id="fPharma"><option value="">Select…</option><option>IP</option><option>BP</option><option>USP</option><option>EP</option><option>JP</option><option>FSSAI</option><option>Customer Specification</option></select><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="m6 9 6 6 6-6" /></svg></div><span class="field-error" id="errPharma"></span></div>
                 <div class="field full"><label class="field-label">Regulatory reference <span class="req">*</span></label><input class="input" id="fRegRef" type="text" placeholder="IP 2022 · Monograph reference" /><span class="field-error" id="errRegRef"></span></div>
+                <div class="field"><label class="field-label">Chemical name</label><input class="input" id="fChemical" type="text" placeholder="e.g. Ibuprofen" /><span class="field-hint">Optional · IUPAC or common chemical name</span></div>
+                <div class="field"><label class="field-label">Technical name</label><input class="input" id="fTechnical" type="text" placeholder="e.g. 2-(4-isobutylphenyl)propionic acid" /><span class="field-hint">Optional · alternate or systematic name</span></div>
+                <div class="field full"><label class="field-label">Composition</label><input class="input" id="fComposition" type="text" placeholder="e.g. Ibuprofen IP — 100 % w/w" /><span class="field-hint">Optional · stated composition for CoA</span></div>
+                <div class="field"><label class="field-label">Origin / source</label><input class="input" id="fOrigin" type="text" placeholder="e.g. Synthetic manufacture" /><span class="field-hint">Optional</span></div>
+                <div class="field"><label class="field-label">Method of production</label><input class="input" id="fMethod" type="text" placeholder="e.g. Chemical synthesis" /><span class="field-hint">Optional</span></div>
+                <div class="field"><label class="field-label">Grade / category</label><input class="input" id="fGrade" type="text" placeholder="e.g. Pharmaceutical · API" /><span class="field-hint">Optional</span></div>
               </div>
             </div>
           </div>
@@ -405,7 +411,13 @@
           molecularFormula: document.getElementById('fFormula').value.trim(),
           molecularWeight: document.getElementById('fMw').value.trim(),
           pharmacopoeia: document.getElementById('fPharma').value,
-          regulatoryReference: document.getElementById('fRegRef').value.trim()
+          regulatoryReference: document.getElementById('fRegRef').value.trim(),
+          chemicalName: document.getElementById('fChemical').value.trim(),
+          technicalName: document.getElementById('fTechnical').value.trim(),
+          composition: document.getElementById('fComposition').value.trim(),
+          originSource: document.getElementById('fOrigin').value.trim(),
+          methodOfProduction: document.getElementById('fMethod').value.trim(),
+          gradeCategory: document.getElementById('fGrade').value.trim()
         };
         showStep(2);
       });
@@ -448,13 +460,26 @@
       function syncQuantFields() {
         var isQ = document.querySelector('input[name="afType"]:checked').value === 'Quantitative';
         document.getElementById('afQualWrap').style.display = isQ ? 'none' : '';
-        ['afQuantOp', 'afQuantMin', 'afQuantMax', 'afQuantUnit'].forEach(function (id) {
+        ['afQuantOp', 'afQuantUnit'].forEach(function (id) {
           document.getElementById(id).style.display = isQ ? '' : 'none';
         });
+        if (!isQ) return;
+        var op = document.getElementById('afOperator').value;
+        if (typeof syncQuantLimitFields === 'function') {
+          syncQuantLimitFields(op, {
+            minWrap: document.getElementById('afQuantMin'),
+            maxWrap: document.getElementById('afQuantMax'),
+            minLabel: document.querySelector('#afQuantMin .field-label'),
+            maxLabel: document.querySelector('#afQuantMax .field-label'),
+            minInput: document.getElementById('afMin'),
+            maxInput: document.getElementById('afMax')
+          });
+        }
       }
       document.querySelectorAll('input[name="afType"]').forEach(function (r) {
         r.addEventListener('change', syncQuantFields);
       });
+      document.getElementById('afOperator').addEventListener('change', syncQuantFields);
 
       var chipRow = document.getElementById('quickChips');
       Object.keys(QUICK_ADD).forEach(function (label) {
@@ -476,6 +501,7 @@
             document.getElementById('afMin').value = p.min != null ? p.min : '';
             document.getElementById('afMax').value = p.max != null ? p.max : '';
             document.getElementById('afUnit').value = p.unit || '';
+            syncQuantFields();
           }
         });
         chipRow.appendChild(b);
@@ -501,6 +527,7 @@
           t.min = document.getElementById('afMin').value !== '' ? parseFloat(document.getElementById('afMin').value) : null;
           t.max = document.getElementById('afMax').value !== '' ? parseFloat(document.getElementById('afMax').value) : null;
           t.unit = document.getElementById('afUnit').value.trim() || null;
+          if (typeof normalizeQuantTestLimits === 'function') normalizeQuantTestLimits(t);
           t.acceptanceCriteria = typeof testCriteriaSummary === 'function' ? testCriteriaSummary(t) : '';
         }
         return t;
@@ -574,8 +601,15 @@
         var testsHtml = wizardState.tests.map(function (t, i) {
           return '<div style="display:flex;gap:var(--s3);padding:8px 0;border-bottom:1px solid var(--border);font-size:var(--text-sm)"><span class="mono" style="color:var(--text-muted)">' + String(i + 1).padStart(2, '0') + '</span><span style="font-weight:500">' + esc(t.name) + '</span><span style="margin-left:auto;font-family:var(--font-mono);color:var(--text-secondary)">' + esc(testCriteriaSummary(t)) + '</span></div>';
         }).join('');
+        var optionalIdentity = '';
+        if (id.chemicalName) optionalIdentity += '<div class="kv"><span class="k">Chemical name</span><span class="v">' + esc(id.chemicalName) + '</span></div>';
+        if (id.technicalName) optionalIdentity += '<div class="kv"><span class="k">Technical name</span><span class="v">' + esc(id.technicalName) + '</span></div>';
+        if (id.composition) optionalIdentity += '<div class="kv span"><span class="k">Composition</span><span class="v">' + esc(id.composition) + '</span></div>';
+        if (id.originSource) optionalIdentity += '<div class="kv"><span class="k">Origin / source</span><span class="v">' + esc(id.originSource) + '</span></div>';
+        if (id.methodOfProduction) optionalIdentity += '<div class="kv"><span class="k">Method of production</span><span class="v">' + esc(id.methodOfProduction) + '</span></div>';
+        if (id.gradeCategory) optionalIdentity += '<div class="kv"><span class="k">Grade / category</span><span class="v">' + esc(id.gradeCategory) + '</span></div>';
         document.getElementById('reviewContent').innerHTML =
-          '<section class="rsection"><div class="rs-head"><span class="rs-title">Identity</span><span class="edit-link" data-goto="1">Edit</span></div><div class="kv-grid"><div class="kv"><span class="k">Product</span><span class="v">' + esc(id.name) + '</span><span class="k">Family</span><span class="v mono">' + esc(id.familyCode) + '</span></div><div class="kv"><span class="k">Short code</span><span class="v mono">' + esc(id.shortCode) + '</span><span class="k">Pharmacopoeia</span><span class="v">' + esc(id.pharmacopoeia) + '</span></div><div class="kv span"><span class="k">Regulatory ref</span><span class="v">' + esc(id.regulatoryReference) + '</span></div></div></section>' +
+          '<section class="rsection"><div class="rs-head"><span class="rs-title">Identity</span><span class="edit-link" data-goto="1">Edit</span></div><div class="kv-grid"><div class="kv"><span class="k">Product</span><span class="v">' + esc(id.name) + '</span><span class="k">Family</span><span class="v mono">' + esc(id.familyCode) + '</span></div><div class="kv"><span class="k">Short code</span><span class="v mono">' + esc(id.shortCode) + '</span><span class="k">Pharmacopoeia</span><span class="v">' + esc(id.pharmacopoeia) + '</span></div><div class="kv span"><span class="k">Regulatory ref</span><span class="v">' + esc(id.regulatoryReference) + '</span></div>' + optionalIdentity + '</div></section>' +
           '<section class="rsection"><div class="rs-head"><span class="rs-title">Storage &amp; shelf life</span><span class="edit-link" data-goto="2">Edit</span></div><div class="kv-grid"><div class="kv"><span class="k">Shelf life</span><span class="v">' + st.shelfLifeMonths + ' months</span><span class="k">Retention</span><span class="v">' + esc(st.retentionPeriod) + '</span></div><div class="kv span"><span class="k">Storage</span><span class="v">' + esc(st.storageConditions) + '</span></div></div></section>' +
           '<section class="rsection"><div class="rs-head"><span class="rs-title">Test parameters (' + wizardState.tests.length + ')</span><span class="edit-link" data-goto="3">Edit</span></div>' + testsHtml + '</section>' +
           '<section class="rsection"><div class="rs-head"><span class="rs-title">Revision preview</span></div><div class="docnum-card"><div><div class="docnum-value">' + esc(id.familyCode) + ' · Revision 00</div><div class="docnum-sub">When QA-signed, this product will be active as Revision 00 (R-00). All future batches will reference this revision.</div></div></div></section>';
@@ -607,6 +641,12 @@
           molecularWeight: id.molecularWeight,
           regulatoryReference: id.regulatoryReference,
           pharmacopoeiaTag: id.regulatoryReference,
+          chemicalName: id.chemicalName || '',
+          technicalName: id.technicalName || '',
+          composition: id.composition || '',
+          originSource: id.originSource || '',
+          methodOfProduction: id.methodOfProduction || '',
+          gradeCategory: id.gradeCategory || '',
           shelfLifeMonths: st.shelfLifeMonths,
           storageConditions: st.storageConditions,
           specialHandling: st.specialHandling,
@@ -616,7 +656,7 @@
           retainedSampleQty: st.retainedSampleQty,
           retentionPeriod: st.retentionPeriod,
           currentRevision: 0,
-          status: 'SUBMITTED',
+          status: 'DRAFT',
           createdBy: user.username,
           createdAt: now,
           submittedAt: 'Today · ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
@@ -627,10 +667,14 @@
           alert('Could not save product — family code may already exist.');
           return;
         }
-        location.href = signModalUrl('Product Masters.html', 'Sign Master Submission \u2014 ' + id.name);
+        location.href = signModalUrl('Product Masters.html', 'Sign Master Submission \u2014 ' + id.name, {
+          signType: 'submitMaster',
+          productId: id.familyCode
+        });
       });
 
       showStep(1);
+      syncQuantFields();
     });
   </script>
   <script src="notifications-overlay.js"></script>

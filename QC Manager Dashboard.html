@@ -1,13 +1,13 @@
-<!doctype html>
+﻿<!doctype html>
 <!-- @dsCard group="Brand" name="QC Manager Dashboard" subtitle="Priya Mehta &middot; approval queue, create batch, calibration, rejections" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AC-QMS &middot; QC Manager dashboard</title>
-  <script src="js/session.js?v=20260616"></script>
+  <script src="js/session.js?v=20260622"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260622"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -313,7 +313,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="doc-no">AWS/FG00132/01</td>
+                    <td class="doc-no">AWS/GCN/01</td>
                     <td><span class="pill pill--aws">AWS</span></td>
                     <td class="batch-no">GCN/010526</td>
                     <td class="submitter">Kavya Patel <span class="role">&middot; QC Exec</span></td>
@@ -514,37 +514,47 @@
     document.addEventListener('DOMContentLoaded', function () {
       var user = getCurrentUser();
       if (!user) return;
-      var queue = getApprovalQueue(user);
-      var pendingVal = document.querySelector('.stat.primary .value');
-      if (pendingVal) pendingVal.textContent = String(queue.length);
-      var rejections = getRejectionsByApprover(user.username);
-      renderManagerRejectionList(document.querySelector('.rej-list'), rejections);
-      var tbody = document.querySelector('.widget-grid .col .card .qtable tbody');
-      var card = tbody && tbody.closest('.card');
-      renderApprovalQueueRows(tbody, queue);
-      if (card) {
-        var countMeta = card.querySelector('.count-meta');
-        if (countMeta) countMeta.textContent = queue.length + ' submitted &middot; awaiting your review';
-        var empty = card.querySelector('.empty-state');
-        var tableScroll = card.querySelector('.table-scroll');
-        if (empty && tableScroll) {
-          empty.style.display = queue.length ? 'none' : 'block';
-          tableScroll.style.display = queue.length ? '' : 'none';
+
+      function refreshDashboard() {
+        var queue = getApprovalQueue(user);
+        var productQueue = typeof getProductApprovalQueue === 'function' ? getProductApprovalQueue(user) : [];
+        var pendingVal = document.querySelector('.stat.primary .value');
+        if (pendingVal) pendingVal.textContent = String(queue.length + productQueue.length);
+        var rejections = getRejectionsByApprover(user.username);
+        renderManagerRejectionList(document.querySelector('.rej-list'), rejections);
+        var tbody = document.querySelector('.widget-grid .col .card .qtable tbody');
+        var card = tbody && tbody.closest('.card');
+        renderApprovalQueueRows(tbody, queue);
+        if (card) {
+          var countMeta = card.querySelector('.count-meta');
+          if (countMeta) countMeta.textContent = queue.length + ' submitted &middot; awaiting your review';
+          var empty = card.querySelector('.empty-state');
+          var tableScroll = card.querySelector('.table-scroll');
+          if (empty && tableScroll) {
+            empty.style.display = queue.length ? 'none' : 'block';
+            tableScroll.style.display = queue.length ? '' : 'none';
+          }
+        }
+        var pBody = document.getElementById('productApprovalBody');
+        if (pBody && typeof renderProductApprovalQueueRows === 'function') {
+          renderProductApprovalQueueRows(pBody, productQueue);
+          var pMeta = document.getElementById('productApprovalMeta');
+          if (pMeta) pMeta.textContent = productQueue.length + ' pending';
+          var pEmpty = document.getElementById('productApprovalEmpty');
+          var pScroll = document.getElementById('productApprovalScroll');
+          if (pEmpty && pScroll) {
+            pEmpty.style.display = productQueue.length ? 'none' : 'block';
+            pScroll.style.display = productQueue.length ? '' : 'none';
+          }
         }
       }
-      var productQueue = typeof getProductApprovalQueue === 'function' ? getProductApprovalQueue(user) : [];
-      var pBody = document.getElementById('productApprovalBody');
-      if (pBody && typeof renderProductApprovalQueueRows === 'function') {
-        renderProductApprovalQueueRows(pBody, productQueue);
-        var pMeta = document.getElementById('productApprovalMeta');
-        if (pMeta) pMeta.textContent = productQueue.length + ' pending';
-        var pEmpty = document.getElementById('productApprovalEmpty');
-        var pScroll = document.getElementById('productApprovalScroll');
-        if (pEmpty && pScroll) {
-          pEmpty.style.display = productQueue.length ? 'none' : 'block';
-          pScroll.style.display = productQueue.length ? '' : 'none';
-        }
-      }
+
+      refreshDashboard();
+      window.addEventListener('ac-qms:data-changed', refreshDashboard);
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'ac-qms-demo-state') refreshDashboard();
+      });
+
       var newBatchBtn = document.querySelector('.create-card .btn--primary');
       if (newBatchBtn) {
         newBatchBtn.addEventListener('click', function () {

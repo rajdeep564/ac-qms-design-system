@@ -21,6 +21,14 @@
       signLabel: 'Executive-QC'
     },
     {
+      username: 'qc.exec2',
+      fullName: 'Meera Iyer',
+      designation: 'QC Executive (Senior)',
+      department: 'QC',
+      role: 'QC_EXEC',
+      signLabel: 'Executive-QC'
+    },
+    {
       username: 'qc.mgr',
       fullName: 'Priya Mehta',
       designation: 'QC Manager',
@@ -115,12 +123,39 @@
     return user.department.toLowerCase() === String(dept).toLowerCase();
   }
 
+  function qmsPagePath(page) {
+    return encodeURI(String(page).replace(/\.html$/i, ''));
+  }
+
+  function qmsHref(page, query) {
+    var path = qmsPagePath(page);
+    if (!query) return path;
+    if (typeof query === 'string') {
+      return path + (query.charAt(0) === '?' ? query : '?' + query);
+    }
+    var parts = [];
+    Object.keys(query).forEach(function (k) {
+      var v = query[k];
+      if (v === undefined || v === null || v === '') return;
+      parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
+    });
+    return parts.length ? path + '?' + parts.join('&') : path;
+  }
+
+  function normalizeQmsLink(href) {
+    if (!href || /^https?:\/\//i.test(href)) return href;
+    var qIdx = href.indexOf('?');
+    if (qIdx === -1) return qmsPagePath(href);
+    return qmsHref(href.slice(0, qIdx), href.slice(qIdx + 1));
+  }
+
   function getDashboardForUser(user) {
     if (!user) return 'index.html';
     switch (user.username) {
       case 'admin':
         return 'User Management Console.html';
       case 'qc.exec':
+      case 'qc.exec2':
         return 'QC Executive Dashboard.html';
       case 'qc.mgr':
         return 'QC Manager Dashboard.html';
@@ -525,10 +560,19 @@
   window.initials = initials;
   window.shortName = shortName;
 
-  function signModalUrl(next, context) {
-    var url = 'Sign Modal.html?next=' + encodeURIComponent(next);
-    if (context) url += '&context=' + encodeURIComponent(context);
-    return url;
+  function signModalUrl(next, context, action) {
+    var q = { next: normalizeQmsLink(next) };
+    if (context) q.context = context;
+    if (action) {
+      if (action.signType) q.signType = action.signType;
+      if (action.docNo) q.docNo = action.docNo;
+      if (action.testKey) q.testKey = action.testKey;
+      if (action.productId) q.productId = action.productId;
+    }
+    return qmsHref('Sign Modal.html', q);
   }
+  window.qmsPagePath = qmsPagePath;
+  window.qmsHref = qmsHref;
+  window.normalizeQmsLink = normalizeQmsLink;
   window.signModalUrl = signModalUrl;
 })();

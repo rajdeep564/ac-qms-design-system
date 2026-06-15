@@ -5,9 +5,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AC-QMS &middot; QC Executive dashboard</title>
-  <script src="js/session.js?v=20260616"></script>
+  <script src="js/session.js?v=20260622"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260612"></script>
+  <script src="js/demo-data.js?v=20260622"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -687,46 +687,26 @@
           <!-- Side column: pending submissions + rejected drafts -->
           <div class="side-col">
 
+            <!-- My product masters -->
+            <div class="card" id="myProductMastersCard">
+              <div class="card-header">
+                <span class="title">My product masters</span>
+                <span class="count-meta" id="myProductMastersMeta">0 masters</span>
+              </div>
+              <div class="submit-list" id="myProductMastersList"></div>
+              <div class="card-footer">
+                <span>Created by you ù open to view status</span>
+                <a class="link" href="Product Masters.html">View all</a>
+              </div>
+            </div>
+
             <!-- Pending submissions -->
             <div class="card">
               <div class="card-header">
                 <span class="title">Pending submissions</span>
-                <span class="count-meta">3 drafts</span>
+                <span class="count-meta" id="pendingSubmissionsMeta">0 drafts</span>
               </div>
-              <div class="submit-list">
-                <div class="submit-row">
-                  <div class="info">
-                    <div class="top-line">
-                      <span class="doc-id">AWS/FG00132/01</span>
-                      <span class="doc-type">AWS</span>
-                    </div>
-                    <span class="batch-line">Glycine IP &middot; <span class="mono">GCN/010526</span></span>
-                  </div>
-                  <a class="open-link" href="#">Open</a>
-                </div>
-
-                <div class="submit-row">
-                  <div class="info">
-                    <div class="top-line">
-                      <span class="doc-id">SPEC/FG00112/03</span>
-                      <span class="doc-type">SPEC</span>
-                    </div>
-                    <span class="batch-line">Citric Acid Monohydrate IP &middot; <span class="mono">CAM/140426</span></span>
-                  </div>
-                  <a class="open-link" href="#">Open</a>
-                </div>
-
-                <div class="submit-row">
-                  <div class="info">
-                    <div class="top-line">
-                      <span class="doc-id">SPEC/FG00079/01</span>
-                      <span class="doc-type">SPEC</span>
-                    </div>
-                    <span class="batch-line">Sodium Citrate IP &middot; <span class="mono">SCT/190526</span></span>
-                  </div>
-                  <a class="open-link" href="#">Open</a>
-                </div>
-              </div>
+              <div class="submit-list" id="pendingSubmissionsList"></div>
               <div class="card-footer">
                 <span>Drafts awaiting your submission</span>
               </div>
@@ -784,24 +764,33 @@
       var user = getCurrentUser();
       if (!user) return;
 
-      function refreshAssignedBatches() {
+      function refreshDashboard() {
         var batches = getBatchesForQcExec(user.username);
         renderQcExecBatchRows(document.querySelector('.wtable tbody'), batches);
         var countMeta = document.querySelector('.widget-grid .card .count-meta');
         if (countMeta) countMeta.textContent = batches.length + ' active';
+
+        var drafts = getDraftsForUser(user.username);
+        renderSubmitList(document.getElementById('pendingSubmissionsList'), drafts);
+        var draftMeta = document.getElementById('pendingSubmissionsMeta');
+        if (draftMeta) draftMeta.textContent = drafts.length + ' drafts';
+
+        var myProducts = typeof getProductsForUser === 'function' ? getProductsForUser(user.username) : [];
+        if (typeof renderUserProductMasterList === 'function') {
+          renderUserProductMasterList(document.getElementById('myProductMastersList'), myProducts);
+        }
+        var pmMeta = document.getElementById('myProductMastersMeta');
+        if (pmMeta) pmMeta.textContent = myProducts.length + ' master' + (myProducts.length === 1 ? '' : 's');
+
+        renderRejectList(document.querySelector('.reject-list'), getRejectedForUser(user.username));
+        var rejMeta = document.querySelector('.reject-list') && document.querySelector('.reject-list').closest('.card').querySelector('.count-meta');
+        if (rejMeta) rejMeta.textContent = getRejectedForUser(user.username).length + ' returned';
       }
 
-      refreshAssignedBatches();
-      renderSubmitList(document.querySelector('.submit-list'), getDraftsForUser(user.username));
-      var draftMeta = document.querySelector('.side-col .card .count-meta');
-      if (draftMeta) draftMeta.textContent = getDraftsForUser(user.username).length + ' drafts';
-      renderRejectList(document.querySelector('.reject-list'), getRejectedForUser(user.username));
-      var rejMeta = document.querySelector('.reject-list') && document.querySelector('.reject-list').closest('.card').querySelector('.count-meta');
-      if (rejMeta) rejMeta.textContent = getRejectedForUser(user.username).length + ' returned';
-
-      window.addEventListener('ac-qms:data-changed', refreshAssignedBatches);
+      refreshDashboard();
+      window.addEventListener('ac-qms:data-changed', refreshDashboard);
       window.addEventListener('storage', function (e) {
-        if (e.key === 'ac-qms-demo-state') refreshAssignedBatches();
+        if (e.key === 'ac-qms-demo-state') refreshDashboard();
       });
     });
   </script>
