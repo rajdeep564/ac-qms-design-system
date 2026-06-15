@@ -1,13 +1,13 @@
 <!doctype html>
-<!-- @dsCard group="Brand" name="Released Batches Register" subtitle="Regulatory report · export-ready batch table, multiselect filters, print attestation" viewport="1440x900" -->
+<!-- @dsCard group="Brand" name="Released Batches Register" subtitle="Regulatory report &middot; export-ready batch table, multiselect filters, print attestation" viewport="1440x900" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS — Released Batches Register</title>
-  <script src="js/session.js?v=20260609"></script>
+  <title>AC-QMS &middot; Released Batches Register</title>
+  <script src="js/session.js?v=20260616"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260609"></script>
+  <script src="js/demo-data.js?v=20260612"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -223,7 +223,7 @@
     <aside class="sidebar">
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
-        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+        <div class="wordmark"><span class="name">AC<span class="sep">&middot;</span>QMS</span><span class="tagline">Quality Management</span></div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-group-label">Workflow</span>
@@ -270,7 +270,7 @@
         <span class="crumb current">Released Batches Register</span>
       </nav>
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod &middot; IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
@@ -291,7 +291,7 @@
         <div class="page-head">
           <div class="ph-left">
             <h1 class="ph-title">Released Batches Register</h1>
-            <span class="ph-gen">Generated <span class="mono">08 Jun 2026 · 14:32</span> · <span class="who">Sanjay Reddy</span></span>
+            <span class="ph-gen">Generated <span class="mono">08 Jun 2026 &middot; 14:32</span> &middot; <span class="who">Sanjay Reddy</span></span>
           </div>
           <div class="action-row">
             <button class="btn btn--outline" id="exportPdf">
@@ -348,8 +348,8 @@
             </div>
             <div class="stat-line">
               <span class="count" id="batchCount">Showing 47 released batches</span>
-              <span class="sep">·</span>
-              <span class="applied" id="appliedFilters">Filters: <b>Last 90 days</b> · <b>all products</b> · <b>all customers</b></span>
+              <span class="sep">&middot;</span>
+              <span class="applied" id="appliedFilters">Filters: <b>Last 90 days</b> &middot; <b>all products</b> &middot; <b>all customers</b></span>
             </div>
           </div>
         </div>
@@ -378,7 +378,7 @@
           </div>
 
           <div class="pagination">
-            <span class="pg-info">Showing <span class="mono">1–25</span> of <span class="mono">47</span></span>
+            <span class="pg-info">Showing <span class="mono">1&middot;25</span> of <span class="mono">47</span></span>
             <div class="pg-controls">
               <button class="pg-btn" disabled aria-label="Previous"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
               <button class="pg-btn cur">1</button>
@@ -394,14 +394,14 @@
           <div class="attest-summary">
             <div class="attest-cell"><span class="k">Total batches</span><span class="v mono">47</span></div>
             <div class="attest-cell"><span class="k">Compliance rate</span><span class="v mono">100%</span></div>
-            <div class="attest-cell"><span class="k">Date range</span><span class="v mono">10 Mar 2026 — 08 Jun 2026</span></div>
+            <div class="attest-cell"><span class="k">Date range</span><span class="v mono">10 Mar 2026 &middot; 08 Jun 2026</span></div>
           </div>
           <div class="attest-sign">
             <div class="sign-block">
               <div class="sign-line"></div>
               <div class="sign-meta">
-                <span class="role">QA Manager — Authorised signatory</span>
-                <span class="desc">Name, signature &amp; date · attesting the accuracy of this register</span>
+                <span class="role">QA Manager &middot; Authorised signatory</span>
+                <span class="desc">Name, signature &amp; date &middot; attesting the accuracy of this register</span>
               </div>
             </div>
             <p class="attest-note">This register is a controlled regulatory artifact. Generated from append-only release records; figures reconcile to the Audit Log.</p>
@@ -511,14 +511,14 @@
         batchCount.textContent = 'Showing ' + filtered.length + ' released batch' + (filtered.length === 1 ? '' : 'es');
         var pLab = ps.length === 0 ? 'all products' : (ps.length === 1 ? ps[0] : ps.length + ' products');
         var cLab = cs.length === 0 ? 'all customers' : (cs.length === 1 ? cs[0] : cs.length + ' customers');
-        appliedFilters.innerHTML = 'Filters: <b>Last 90 days</b> · <b>' + pLab + '</b> · <b>' + cLab + '</b>';
+        appliedFilters.innerHTML = 'Filters: <b>Last 90 days</b> &middot; <b>' + pLab + '</b> &middot; <b>' + cLab + '</b>';
         document.querySelectorAll('.ms.open').forEach(function (m) { m.classList.remove('open'); });
       }
       document.getElementById('applyBtn').addEventListener('click', apply);
       document.getElementById('resetBtn').addEventListener('click', function () {
         msP.reset(); msC.reset(); render(BATCHES);
         batchCount.textContent = 'Showing 47 released batches';
-        appliedFilters.innerHTML = 'Filters: <b>Last 90 days</b> · <b>all products</b> · <b>all customers</b>';
+        appliedFilters.innerHTML = 'Filters: <b>Last 90 days</b> &middot; <b>all products</b> &middot; <b>all customers</b>';
       });
 
       /* ---------- Sorting ---------- */

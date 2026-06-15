@@ -1,0 +1,13 @@
+{
+  "name": "ac-qms-design-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AC-QMS Design System — static UI screens for Aditya Chemicals QMS",
+  "scripts": {
+    "start": "serve . -l 3000",
+    "serve": "npm run start"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

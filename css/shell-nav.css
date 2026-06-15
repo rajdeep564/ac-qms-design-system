@@ -1,0 +1,111 @@
+/* Canonical sidebar nav — loaded by session.js on all App Shell pages */
+
+.sidebar-nav .nav-item {
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.sidebar-nav .nav-item .label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-nav .nav-item .admin-tag {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--canvas);
+  line-height: 1;
+}
+
+.sidebar-nav .nav-item.active .admin-tag {
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+  background: var(--bg);
+}
+
+.sidebar-nav .nav-item .count {
+  flex-shrink: 0;
+}
+
+/* Canonical sidebar user chip — consistent layout on all App Shell pages */
+
+.sidebar-user .who {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-user .name {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user .role-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.sidebar-user .role {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user .dept-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  line-height: 14px;
+}
+
+.sidebar-user .dept-badge--qc {
+  color: var(--qc);
+  background: var(--qc-soft);
+}
+
+.sidebar-user .dept-badge--qa {
+  color: var(--qa);
+  background: var(--qa-soft);
+}
+
+.sidebar-user [data-ac-qms-logout] {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.sidebar-user [data-ac-qms-logout]:hover {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}

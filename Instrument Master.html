@@ -1,13 +1,13 @@
 <!doctype html>
-<!-- @dsCard group="Brand" name="Instrument Master" subtitle="Lab inventory — dense sortable table, expiry warnings, expired row indicator" viewport="1320x940" -->
+<!-- @dsCard group="Brand" name="Instrument Master" subtitle="Lab inventory &middot; dense sortable table, expiry warnings, expired row indicator" viewport="1320x940" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS — Instrument Master</title>
-  <script src="js/session.js?v=20260609"></script>
+  <title>AC-QMS &middot; Instrument Master</title>
+  <script src="js/session.js?v=20260616"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260609"></script>
+  <script src="js/demo-data.js?v=20260612"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -198,7 +198,7 @@
     <aside class="sidebar">
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
-        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+        <div class="wordmark"><span class="name">AC<span class="sep">&middot;</span>QMS</span><span class="tagline">Quality Management</span></div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-group-label">Workflow</span>
@@ -241,7 +241,7 @@
         <span class="crumb current">Instruments</span>
       </nav>
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod &middot; IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
@@ -304,7 +304,7 @@
         <div class="filterbar">
           <div class="search">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-            <input type="text" placeholder="Search by code or name…" />
+            <input type="text" placeholder="Search by code or name&middot;" />
           </div>
           <div class="filter">
             <span class="filter-label">Status</span>
@@ -327,7 +327,7 @@
             <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
           </div>
           <div class="spacer"></div>
-          <span class="result-count">47 instruments · 3 need attention</span>
+          <span class="result-count">47 instruments &middot; 3 need attention</span>
         </div>
 
         <!-- Table -->
@@ -355,12 +355,12 @@
 
         <!-- Pagination -->
         <div class="pager">
-          <span class="showing">Showing <b>1–25</b> of <b>47</b></span>
+          <span class="showing">Showing <b>1&middot;25</b> of <b>47</b></span>
           <div class="pager-nav">
             <button class="pg arrow" disabled aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
             <button class="pg active">1</button>
             <button class="pg">2</button>
-            <span class="pg-ellipsis">…</span>
+            <span class="pg-ellipsis">&middot;</span>
             <button class="pg arrow" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
           </div>
         </div>
@@ -374,8 +374,8 @@
     // ============================== DATA ==============================
     // Today = 04-Jun-2026 (IST). Dates DD/MM/YYYY.
     var INSTRUMENTS = [
-      { code:'AAS-016', name:'Atomic Absorption Spectrometer', sub:'PerkinElmer PinAAcle 900', dept:'QC', status:'expired', cal:'18/11/2025', use:'18/05/2026', useState:'expired', useText:'Expired 18/05/2026', last:'—', expiredOn:'18/05/2026' },
-      { code:'AUT-019', name:'Autoclave', sub:'Sterilisation · 121 °C', dept:'QA', status:'maint', cal:'02/04/2026', use:'02/10/2026', useState:'ok', last:'—' },
+      { code:'AAS-016', name:'Atomic Absorption Spectrometer', sub:'PerkinElmer PinAAcle 900', dept:'QC', status:'expired', cal:'18/11/2025', use:'18/05/2026', useState:'expired', useText:'Expired 18/05/2026', last:'&middot;', expiredOn:'18/05/2026' },
+      { code:'AUT-019', name:'Autoclave', sub:'Sterilisation &middot; 121 &middot;C', dept:'QA', status:'maint', cal:'02/04/2026', use:'02/10/2026', useState:'ok', last:'&middot;' },
       { code:'BAL-001', name:'Analytical Balance', sub:'Mettler Toledo XPR205', dept:'QC', status:'active', cal:'12/03/2026', use:'12/09/2026', useState:'ok', last:'2h ago' },
       { code:'BAL-017', name:'Microbalance', sub:'Sartorius Cubis II', dept:'QA', status:'active', cal:'28/02/2026', use:'28/08/2026', useState:'ok', last:'6h ago' },
       { code:'COL-025', name:'Colorimeter', sub:'Lovibond PFXi', dept:'QC', status:'active', cal:'15/01/2026', use:'15/07/2026', useState:'ok', last:'4d ago' },
@@ -385,7 +385,7 @@
       { code:'FTIR-009', name:'FTIR Spectrometer', sub:'Shimadzu IRSpirit', dept:'QC', status:'active', cal:'11/02/2026', use:'11/08/2026', useState:'ok', last:'5h ago' },
       { code:'HPLC-002', name:'HPLC System', sub:'Agilent 1260 Infinity II', dept:'QC', status:'active', cal:'05/01/2026', use:'18/06/2026', useState:'warn', useDays:14, last:'35m ago' },
       { code:'INC-020', name:'Incubator', sub:'Thermo Heratherm', dept:'QA', status:'active', cal:'17/03/2026', use:'17/09/2026', useState:'ok', last:'8h ago' },
-      { code:'KF-003', name:'Karl Fischer Titrator', sub:'Metrohm 870 KF Titrino', dept:'QC', status:'maint', cal:'08/12/2025', use:'08/06/2026', useState:'warn', useDays:4, last:'—' },
+      { code:'KF-003', name:'Karl Fischer Titrator', sub:'Metrohm 870 KF Titrino', dept:'QC', status:'maint', cal:'08/12/2025', use:'08/06/2026', useState:'warn', useDays:4, last:'&middot;' },
       { code:'LAF-021', name:'Laminar Air Flow', sub:'Klenzaids horizontal', dept:'QA', status:'active', cal:'22/12/2025', use:'22/06/2026', useState:'warn', useDays:18, last:'12h ago' },
       { code:'MP-011', name:'Melting Point Apparatus', sub:'Buchi M-565', dept:'QC', status:'active', cal:'03/03/2026', use:'03/09/2026', useState:'ok', last:'2d ago' },
       { code:'MUF-006', name:'Muffle Furnace', sub:'Nabertherm L9/11', dept:'QC', status:'active', cal:'26/02/2026', use:'26/08/2026', useState:'ok', last:'1d ago' },
@@ -393,10 +393,10 @@
       { code:'PH-004', name:'pH Meter', sub:'Mettler Toledo SevenCompact', dept:'QC', status:'active', cal:'20/02/2026', use:'20/08/2026', useState:'ok', last:'1d ago' },
       { code:'POL-012', name:'Polarimeter', sub:'Rudolph Autopol IV', dept:'QC', status:'active', cal:'14/01/2026', use:'14/07/2026', useState:'ok', last:'6d ago' },
       { code:'PSD-022', name:'Particle Size Analyzer', sub:'Malvern Mastersizer 3000', dept:'QC', status:'active', cal:'07/03/2026', use:'07/09/2026', useState:'ok', last:'9h ago' },
-      { code:'REF-013', name:'Refractometer', sub:'Anton Paar Abbemat 350', dept:'QC', status:'retired', cal:'10/06/2024', use:'10/12/2024', useState:'na', last:'—' },
-      { code:'STAB-018', name:'Stability Chamber', sub:'Thermolab 40 °C / 75 % RH', dept:'QA', status:'active', cal:'01/03/2026', use:'01/09/2026', useState:'ok', last:'10m ago' },
+      { code:'REF-013', name:'Refractometer', sub:'Anton Paar Abbemat 350', dept:'QC', status:'retired', cal:'10/06/2024', use:'10/12/2024', useState:'na', last:'&middot;' },
+      { code:'STAB-018', name:'Stability Chamber', sub:'Thermolab 40 &middot;C / 75 % RH', dept:'QA', status:'active', cal:'01/03/2026', use:'01/09/2026', useState:'ok', last:'10m ago' },
       { code:'TIT-007', name:'Potentiometric Titrator', sub:'Metrohm 905 Titrando', dept:'QC', status:'active', cal:'24/02/2026', use:'24/08/2026', useState:'ok', last:'45m ago' },
-      { code:'UV-008', name:'UV-Vis Spectrophotometer', sub:'Shimadzu UV-1900i', dept:'QC', status:'expired', cal:'02/12/2025', use:'02/06/2026', useState:'expired', useText:'Expired 02/06/2026', last:'—', expiredOn:'02/06/2026' },
+      { code:'UV-008', name:'UV-Vis Spectrophotometer', sub:'Shimadzu UV-1900i', dept:'QC', status:'expired', cal:'02/12/2025', use:'02/06/2026', useState:'expired', useText:'Expired 02/06/2026', last:'&middot;', expiredOn:'02/06/2026' },
       { code:'VIS-015', name:'Viscometer', sub:'Brookfield DV2T', dept:'QC', status:'active', cal:'16/02/2026', use:'16/08/2026', useState:'ok', last:'2d ago' },
       { code:'WAT-024', name:'Water Purification System', sub:'Milli-Q IQ 7000', dept:'QA', status:'active', cal:'05/03/2026', use:'05/09/2026', useState:'ok', last:'20m ago' }
     ];
@@ -431,7 +431,7 @@
         '<td><span class="pill ' + st.cls + '"><span class="pd"></span>' + st.label + '</span></td>' +
         '<td class="num c-date">' + escapeHtml(r.cal) + '</td>' +
         '<td class="num">' + useCell(r) + '</td>' +
-        '<td class="num ' + (r.last === '—' ? 'c-muted' : 'c-date') + '">' + escapeHtml(r.last) + '</td>' +
+        '<td class="num ' + (r.last === '&middot;' ? 'c-muted' : 'c-date') + '">' + escapeHtml(r.last) + '</td>' +
         '<td class="num"><div class="actions">' +
           '<button class="act-btn" title="Edit" aria-label="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg></button>' +
           '<button class="act-btn" title="View history" aria-label="View history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5" /><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" /><path d="M12 7v5l4 2" /></svg></button>' +

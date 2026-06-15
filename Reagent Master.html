@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS — Reagent Master</title>
-  <script src="js/session.js?v=20260609"></script>
+  <title>AC-QMS &middot; Reagent Master</title>
+  <script src="js/session.js?v=20260616"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260609"></script>
+  <script src="js/demo-data.js?v=20260612"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -160,7 +160,7 @@
     .expiry-warn { color: var(--submitted); font-weight: 500; font-variant-numeric: tabular-nums; }
     .expiry-exp { color: var(--oos); font-weight: 500; font-variant-numeric: tabular-nums; }
 
-    /* Reference-standard badge — the only elevated element on the screen */
+    /* Reference-standard badge &middot; the only elevated element on the screen */
     .ref-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 15px; color: var(--primary); background: var(--primary-soft); border: 1px solid rgba(15,85,96,0.22); white-space: nowrap; }
     .ref-badge svg { width: 11px; height: 11px; }
     .ref-none { color: var(--text-muted); font-size: 13px; }
@@ -214,7 +214,7 @@
     <aside class="sidebar">
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
-        <div class="wordmark"><span class="name">AC<span class="sep">·</span>QMS</span><span class="tagline">Quality Management</span></div>
+        <div class="wordmark"><span class="name">AC<span class="sep">&middot;</span>QMS</span><span class="tagline">Quality Management</span></div>
       </div>
       <nav class="sidebar-nav">
         <span class="nav-group-label">Workflow</span>
@@ -257,7 +257,7 @@
         <span class="crumb current">Reagents</span>
       </nav>
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod &middot; IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
@@ -320,7 +320,7 @@
         <div class="filterbar">
           <div class="search">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-            <input type="text" placeholder="Search by name or lot number…" />
+            <input type="text" placeholder="Search by name or lot number&middot;" />
           </div>
           <div class="filter">
             <span class="filter-label">Status</span>
@@ -337,7 +337,7 @@
             <span class="switch"></span>
           </div>
           <div class="spacer"></div>
-          <span class="result-count">62 reagents · 5 need attention</span>
+          <span class="result-count">62 reagents &middot; 5 need attention</span>
         </div>
 
         <!-- Table -->
@@ -366,12 +366,12 @@
 
         <!-- Pagination -->
         <div class="pager">
-          <span class="showing">Showing <b>1–25</b> of <b>62</b></span>
+          <span class="showing">Showing <b>1&middot;25</b> of <b>62</b></span>
           <div class="pager-nav">
             <button class="pg arrow" disabled aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
             <button class="pg active">1</button>
             <button class="pg">2</button>
-            <span class="pg-ellipsis">…</span>
+            <span class="pg-ellipsis">&middot;</span>
             <button class="pg arrow" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
           </div>
         </div>
@@ -386,15 +386,15 @@
     // Today = 05-Jun-2026 (IST). Dates DD/MM/YYYY. Expiry: <14d => warn, past => expired.
     var REAGENTS = [
       { name:'Acetonitrile, HPLC grade', conc:'= 99.9 %', lot:'AC-26-0412', prep:'02/03/2026', exp:'02/03/2027', expState:'ok', supplier:'Merck', status:'active', ref:false },
-      { name:'Buffer Solution pH 4.01', conc:'—', lot:'BF-26-0188', prep:'11/05/2026', exp:'11/11/2026', expState:'ok', supplier:'Merck', status:'active', ref:false },
-      { name:'Buffer Solution pH 7.00', conc:'—', lot:'BF-26-0190', prep:'11/05/2026', exp:'11/11/2026', expState:'ok', supplier:'Merck', status:'active', ref:false },
+      { name:'Buffer Solution pH 4.01', conc:'&middot;', lot:'BF-26-0188', prep:'11/05/2026', exp:'11/11/2026', expState:'ok', supplier:'Merck', status:'active', ref:false },
+      { name:'Buffer Solution pH 7.00', conc:'&middot;', lot:'BF-26-0190', prep:'11/05/2026', exp:'11/11/2026', expState:'ok', supplier:'Merck', status:'active', ref:false },
       { name:'Crystal Violet TS', conc:'0.5 % w/v', lot:'IND-26-0067', prep:'28/05/2026', exp:'27/06/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
       { name:'Dilute Hydrochloric Acid', conc:'10 % v/v', lot:'IH-26-0231', prep:'18/05/2026', exp:'18/08/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
       { name:'Disodium EDTA, 0.05 M VS', conc:'0.05 M', lot:'VS-26-0144', prep:'21/04/2026', exp:'21/07/2026', expState:'ok', supplier:'In-house', status:'active', ref:false },
       { name:'Ferric Chloride TS', conc:'10.5 % w/v', lot:'IND-26-0051', prep:'14/03/2026', exp:'14/06/2026', expState:'warn', expDays:9, supplier:'In-house', status:'active', ref:false },
       { name:'Glycine Reference Standard', conc:'99.8 % assigned', lot:'RS-GLY-0231', prep:'12/01/2026', exp:'12/01/2027', expState:'ok', supplier:'IPRS', status:'active', ref:true },
       { name:'Heavy Metals Standard Soln', conc:'10 ppm Pb', lot:'RS-HM-0098', prep:'05/02/2026', exp:'05/08/2026', expState:'ok', supplier:'Sigma-Aldrich', status:'active', ref:true },
-      { name:'Hydrochloric Acid, conc.', conc:'35–38 % w/w', lot:'AC-26-0301', prep:'09/02/2026', exp:'09/02/2028', expState:'ok', supplier:'Rankem', status:'active', ref:false },
+      { name:'Hydrochloric Acid, conc.', conc:'35&middot;38 % w/w', lot:'AC-26-0301', prep:'09/02/2026', exp:'09/02/2028', expState:'ok', supplier:'Rankem', status:'active', ref:false },
       { name:'Methanol, HPLC grade', conc:'= 99.9 %', lot:'AC-26-0410', prep:'02/03/2026', exp:'02/03/2027', expState:'ok', supplier:'Merck', status:'active', ref:false },
       { name:'Mobile Phase Buffer pH 2.5', conc:'Phosphate, 0.02 M', lot:'MP-26-0233', prep:'03/06/2026', exp:'10/06/2026', expState:'warn', expDays:5, supplier:'In-house', status:'active', ref:false },
       { name:'Mobile Phase Buffer pH 7.2', conc:'Phosphate, 0.05 M', lot:'MP-26-0207', prep:'04/05/2026', exp:'04/06/2026', expState:'expired', expText:'Expired 04/06/2026', expOn:'04/06/2026', supplier:'In-house', status:'expired', ref:false },
@@ -408,7 +408,7 @@
       { name:'Starch TS', conc:'1 % w/v', lot:'IND-26-0072', prep:'30/05/2026', exp:'13/06/2026', expState:'warn', expDays:8, supplier:'In-house', status:'active', ref:false },
       { name:'Sulphuric Acid, conc.', conc:'98 % w/w', lot:'AC-26-0288', prep:'10/02/2026', exp:'10/02/2028', expState:'ok', supplier:'Rankem', status:'active', ref:false },
       { name:'Toluene, AR grade', conc:'= 99.8 %', lot:'AC-26-0395', prep:'01/03/2026', exp:'01/03/2027', expState:'ok', supplier:'Rankem', status:'active', ref:false },
-      { name:'Water, Milli-Q (Type I)', conc:'18.2 MO·cm', lot:'WQ-26-0605', prep:'05/06/2026', exp:'06/06/2026', expState:'warn', expDays:1, supplier:'In-house', status:'active', ref:false },
+      { name:'Water, Milli-Q (Type I)', conc:'18.2 MO&middot;cm', lot:'WQ-26-0605', prep:'05/06/2026', exp:'06/06/2026', expState:'warn', expDays:1, supplier:'In-house', status:'active', ref:false },
       { name:'Zinc Sulphate, 0.1 M VS', conc:'0.1 M', lot:'VS-26-0133', prep:'28/02/2026', exp:'28/05/2026', expState:'consumed', supplier:'In-house', status:'consumed', ref:false }
     ];
 
@@ -422,13 +422,13 @@
 
     function expiryCell(r){
       if (r.expState === 'expired')  return '<span class="expiry-exp">' + escapeHtml(r.expText) + '</span>';
-      if (r.expState === 'warn')     return '<span class="expiry-warn">' + escapeHtml(r.exp) + ' · ' + r.expDays + 'd</span>';
+      if (r.expState === 'warn')     return '<span class="expiry-warn">' + escapeHtml(r.exp) + ' &middot; ' + r.expDays + 'd</span>';
       if (r.expState === 'consumed') return '<span class="c-muted">' + escapeHtml(r.exp) + '</span>';
       return '<span class="c-date">' + escapeHtml(r.exp) + '</span>';
     }
 
     function refCell(r){
-      if (!r.ref) return '<span class="ref-none">—</span>';
+      if (!r.ref) return '<span class="ref-none">&middot;</span>';
       return '<span class="ref-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z" /></svg>Ref</span>';
     }
 
@@ -436,7 +436,7 @@
       var st = STATUS[r.status];
       var isExp = r.status === 'expired';
       var tip = isExp ? '<span class="row-tip">Expired on ' + escapeHtml(r.expOn) + '</span>' : '';
-      var conc = r.conc === '—' ? '<span class="c-muted">—</span>' : '<span class="c-date">' + escapeHtml(r.conc) + '</span>';
+      var conc = r.conc === '&middot;' ? '<span class="c-muted">&middot;</span>' : '<span class="c-date">' + escapeHtml(r.conc) + '</span>';
       return '<tr class="' + (isExp ? 'row-expired' : '') + '">' +
         '<td class="tip-cell"><div class="c-name">' + escapeHtml(r.name) + '</div>' + tip + '</td>' +
         '<td><span class="c-code">' + escapeHtml(r.lot) + '</span></td>' +

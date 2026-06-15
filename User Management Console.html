@@ -1,13 +1,13 @@
 <!doctype html>
-<!-- @dsCard group="Brand" name="User Management Console" subtitle="Super Admin · user table, status/dept badges, locked row, Add User modal" viewport="1440x900" -->
+<!-- @dsCard group="Brand" name="User Management Console" subtitle="Super Admin &middot; user table, status/dept badges, locked row, Add User modal" viewport="1440x900" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AC-QMS — User management</title>
-  <script src="js/session.js?v=20260609"></script>
+  <title>AC-QMS &middot; User management</title>
+  <script src="js/session.js?v=20260616"></script>
   <script src="js/shell-init.js"></script>
-  <script src="js/demo-data.js?v=20260609"></script>
+  <script src="js/demo-data.js?v=20260612"></script>
   <link rel="stylesheet" href="colors_and_type.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
@@ -264,7 +264,7 @@
       <div class="sidebar-lockup">
         <img src="assets/aditya-chemicals-logo.png" alt="Aditya Chemicals" />
         <div class="wordmark">
-          <span class="name">AC<span class="sep">·</span>QMS</span>
+          <span class="name">AC<span class="sep">&middot;</span>QMS</span>
           <span class="tagline">Quality Management</span>
         </div>
       </div>
@@ -327,7 +327,7 @@
         <span class="crumb current">Users</span>
       </nav>
       <div class="topbar-right">
-        <span class="env-tag"><span class="dot"></span>Prod · IST</span>
+        <span class="env-tag"><span class="dot"></span>Prod &middot; IST</span>
         <div class="topbar-divider"></div>
         <button class="icon-btn" aria-label="Notifications" onclick="openNotifications()">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
@@ -348,7 +348,7 @@
         <div class="page-head">
           <div class="ph-left">
             <h1 class="ph-title">User Management</h1>
-            <p class="ph-sub"><span class="mono">5</span> users<span class="sep">·</span><span class="mono">4</span> active<span class="sep">·</span><span class="mono">1</span> locked</p>
+            <p class="ph-sub"><span class="mono">5</span> users<span class="sep">&middot;</span><span class="mono">4</span> active<span class="sep">&middot;</span><span class="mono">1</span> locked</p>
           </div>
           <div class="ph-actions">
             <a class="ph-link" href="Permissions Matrix.html">View Permissions Matrix ?</a>
@@ -484,7 +484,7 @@
                   </td>
                 </tr>
 
-                <!-- Row: Anand Joshi — LOCKED -->
+                <!-- Row: Anand Joshi &middot; LOCKED -->
                 <tr class="locked" data-name="Anand Joshi" data-username="qa.exec" data-role="QA Executive" data-dept="QA" data-status="Locked" data-fails="5" data-login="5">
                   <td><div class="u-name"><span class="avatar">AJ</span><span class="nm">Anand Joshi</span></div></td>
                   <td><span class="u-uname">qa.exec</span></td>
@@ -507,13 +507,13 @@
                   </td>
                 </tr>
 
-                <!-- Row: Rajesh Kumar — Super Admin -->
+                <!-- Row: Rajesh Kumar &middot; Super Admin -->
                 <tr data-name="Rajesh Kumar" data-username="admin" data-role="Super Admin" data-dept="" data-status="Active" data-fails="0" data-login="0">
                   <td><div class="u-name"><span class="avatar">RK</span><span class="nm">Rajesh Kumar</span></div></td>
                   <td><span class="u-uname">admin</span></td>
                   <td><span class="u-email" title="rajesh.kumar@adityachemicals.com">rajesh.kumar@adityachemicals.com</span></td>
                   <td><span class="role-chip">Super Admin</span></td>
-                  <td><span class="dept-none">—</span></td>
+                  <td><span class="dept-none">&middot;</span></td>
                   <td><span class="status-pill status-pill--active"><span class="sdot"></span>Active</span></td>
                   <td><span class="fails">0</span></td>
                   <td><span class="last-login">Just now</span></td>
@@ -531,7 +531,7 @@
 
           <!-- Pagination -->
           <div class="pagination">
-            <span class="pg-info" id="pgInfo">Showing <span class="mono">1–5</span> of <span class="mono">5</span></span>
+            <span class="pg-info" id="pgInfo">Showing <span class="mono">1&middot;5</span> of <span class="mono">5</span></span>
             <div class="pg-controls">
               <button class="pg-btn" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>Prev</button>
               <button class="pg-btn" disabled>Next<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
@@ -572,7 +572,7 @@
         <div class="field select-field">
           <label>Role<span class="req">*</span></label>
           <select id="modalRole">
-            <option value="" disabled selected>Select a role…</option>
+            <option value="" disabled selected>Select a role&middot;</option>
             <option>Super Admin</option>
             <option>QC Executive</option>
             <option>QC Manager</option>
@@ -584,7 +584,7 @@
         <div class="field select-field" id="deptField">
           <label>Department<span class="req">*</span></label>
           <select id="modalDept">
-            <option value="" disabled selected>Select a department…</option>
+            <option value="" disabled selected>Select a department&middot;</option>
             <option>QC</option>
             <option>QA</option>
           </select>
@@ -595,7 +595,7 @@
           <input type="password" id="modalPw" placeholder="Set a temporary password" />
           <div class="pw-strength" id="pwStrength" data-level="0">
             <div class="pw-bars"><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span></div>
-            <div class="pw-label" id="pwLabel" data-level="0"><span>Strength</span><span class="lv">—</span></div>
+            <div class="pw-label" id="pwLabel" data-level="0"><span>Strength</span><span class="lv">&middot;</span></div>
           </div>
         </div>
         <div class="helper">
@@ -716,7 +716,7 @@
       var pw = document.getElementById('modalPw');
       var strength = document.getElementById('pwStrength');
       var label = document.getElementById('pwLabel');
-      var labels = ['—', 'Weak', 'Fair', 'Good', 'Strong'];
+      var labels = ['&middot;', 'Weak', 'Fair', 'Good', 'Strong'];
       pw.addEventListener('input', function () {
         var v = pw.value, score = 0;
         if (v.length >= 8) score++;

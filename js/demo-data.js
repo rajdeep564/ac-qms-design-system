@@ -875,6 +875,14 @@
     return state.batches.filter(function (b) { return b.assignedQcExec === username; });
   }
 
+  function getActiveBatchCount() {
+    return state.batches.filter(function (b) { return b.status !== 'RELEASED'; }).length;
+  }
+
+  function getAssignedBatchCount(username) {
+    return getBatchesForQcExec(username).length;
+  }
+
   function getApprovalQueue(currentUser) {
     if (!currentUser) return [];
     return state.documents.filter(function (d) {
@@ -1655,6 +1663,8 @@
   window.getDocFromUrl = getDocFromUrl;
   window.getBatchFromUrl = getBatchFromUrl;
   window.getBatchesForQcExec = getBatchesForQcExec;
+  window.getActiveBatchCount = getActiveBatchCount;
+  window.getAssignedBatchCount = getAssignedBatchCount;
   window.getApprovalQueue = getApprovalQueue;
   window.getPendingSignatures = getPendingSignatures;
   window.getDraftsForUser = getDraftsForUser;
